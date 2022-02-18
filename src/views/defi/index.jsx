@@ -1,13 +1,16 @@
 import React from 'react'
 import { Table } from 'antd'
+import { useHistory } from 'react-router'
 
 const Defi = () => {
+  const history = useHistory()
+
   const columns = [
     {
       title: 'Pool',
       dataIndex: 'tokens',
       render: (tokens) => (
-        <a>
+        <a onClick={() => history.push('/defi/pool')}>
           {tokens.map((token) => (
             <div>{token.symbol}</div>
           ))}
@@ -15,7 +18,7 @@ const Defi = () => {
       ),
     },
     {
-      title: 'Unleveraged Start Position',
+      title: 'Principal',
       dataIndex: 'tokens',
       render: (tokens) => (
         <div>
@@ -32,12 +35,15 @@ const Defi = () => {
       dataIndex: 'tokens',
       render: (tokens) => (
         <div>
-          {tokens.map((token) => (
-            <div>
-              {token.startPosition} {token.symbol} ({token.startBorrowPosition}
-              Borrowed)
-            </div>
-          ))}
+          <>
+            {tokens.map((token) => (
+              <div>
+                {token.startPosition} {token.symbol} (
+                {token.startBorrowPosition} Borrow)
+              </div>
+            ))}
+          </>
+          <div>Date: 11/02/2022</div>
         </div>
       ),
     },
@@ -46,12 +52,15 @@ const Defi = () => {
       dataIndex: 'tokens',
       render: (tokens) => (
         <div>
-          {tokens.map((token) => (
-            <div>
-              {token.currentPosition} {token.symbol} ({token.borrowPosition}
-              Borrowed)
-            </div>
-          ))}
+          <>
+            {tokens.map((token) => (
+              <div>
+                {token.currentPosition} {token.symbol} ({token.borrowPosition}{' '}
+                Borrow)
+              </div>
+            ))}
+          </>
+          <div>Date: 18/02/2022</div>
         </div>
       ),
     },
@@ -153,7 +162,7 @@ const Defi = () => {
     <div className="page">
       <div style={{ fontSize: 20, marginBottom: 20 }}>Alpha Homora V2</div>
       <div>
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={data} size="small" />
       </div>
     </div>
   )

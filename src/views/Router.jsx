@@ -3,11 +3,16 @@ import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
 import Defi from './defi'
+import Pool from './pool'
 
 export const routes = [
   {
     path: '/defi',
     comp: Defi,
+  },
+  {
+    path: '/defi/pool',
+    comp: Pool,
   },
 ]
 
