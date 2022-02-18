@@ -16,6 +16,18 @@
         "currentValue": 55612.69
       }
     ],
+    "interest": {
+      "yearToDate": 128,
+      "daily": 21,
+      "yearly": 7816.17,
+      "apy": 0.3731
+    },
+    "fee": {
+      "yearToDate": 226.88,
+      "daily": 37.81,
+      "yearly": 13801.93,
+      "apy": 0.6293
+    },
     "reward": {
       "yearToDate": 170.34,
       "daily": 28.39,
@@ -58,6 +70,18 @@
         "currentValue": 55612.69
       }
     ],
+    "interest": {
+      "yearToDate": 128,
+      "daily": 21,
+      "yearly": 7816.17,
+      "apy": 0.3731
+    },
+    "fee": {
+      "yearToDate": 226.88,
+      "daily": 37.81,
+      "yearly": 13801.93,
+      "apy": 0.6293
+    },
     "reward": {
       "yearToDate": 170.34,
       "daily": 28.39,
@@ -100,6 +124,18 @@
         "currentValue": 55612.69
       }
     ],
+    "interest": {
+      "yearToDate": 128,
+      "daily": 21,
+      "yearly": 7816.17,
+      "apy": 0.3731
+    },
+    "fee": {
+      "yearToDate": 226.88,
+      "daily": 37.81,
+      "yearly": 13801.93,
+      "apy": 0.6293
+    },
     "reward": {
       "yearToDate": 170.34,
       "daily": 28.39,

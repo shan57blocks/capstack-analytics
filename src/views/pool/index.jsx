@@ -77,6 +77,26 @@ const Pool = () => {
         </div>
       ),
     },
+    {
+      title: 'Intrest',
+      dataIndex: 'interest',
+      render: (interest) => (
+        <div>
+          <div>${interest.yearToDate}</div>
+          <div>APY: {(interest.apy * 100).toFixed(2)}%</div>
+        </div>
+      ),
+    },
+    {
+      title: 'Fees',
+      dataIndex: 'fee',
+      render: (fee) => (
+        <div>
+          <div>${fee.yearToDate}</div>
+          <div>APY: {(fee.apy * 100).toFixed(2)}%</div>
+        </div>
+      ),
+    },
   ]
 
   return (
