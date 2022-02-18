@@ -16,7 +16,7 @@ const Pool = () => {
       render: (tokens) => (
         <div>
           {tokens.map((token) => (
-            <div>
+            <div key={token.symbol}>
               {token.currentPosition} {token.symbol}
             </div>
           ))}
@@ -29,7 +29,7 @@ const Pool = () => {
       render: (tokens) => (
         <div>
           {tokens.map((token) => (
-            <div>
+            <div key={token.symbol}>
               {token.currentPosition} {token.symbol}
             </div>
           ))}
@@ -42,7 +42,7 @@ const Pool = () => {
       render: (tokens) => (
         <div>
           {tokens.map((token) => (
-            <div>${token.currentValue}</div>
+            <div key={token.symbol}>${token.currentValue}</div>
           ))}
         </div>
       ),
@@ -53,8 +53,6 @@ const Pool = () => {
       render: (feeAndIL) => (
         <div>
           <div>Current: ${feeAndIL.yearToDate}</div>
-          {/* <div>Daily: ${feeAndIL.daily}</div>
-          <div>Yearly: ${feeAndIL.yearly}</div> */}
           <div>APY: {(feeAndIL.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -65,8 +63,6 @@ const Pool = () => {
       render: (net) => (
         <div>
           <div>Current: ${net.yearToDate}</div>
-          {/* <div>Daily: ${net.daily}</div>
-          <div>Yearly: ${net.yearly}</div> */}
           <div>APY: {(net.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -77,8 +73,6 @@ const Pool = () => {
       render: (reward) => (
         <div>
           <div>Current: ${reward.yearToDate}</div>
-          {/* <div>Daily: ${reward.daily}</div>
-          <div>Yearly: ${reward.yearly}</div> */}
           <div>APY: {(reward.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -127,7 +121,7 @@ const Summary = () => {
       render: (tokens) => (
         <div>
           {tokens.map((token) => (
-            <div>
+            <div key={token.symbol}>
               {token.unleveragePositioin} {token.symbol}
             </div>
           ))}
@@ -137,17 +131,17 @@ const Summary = () => {
     {
       title: 'Start Position',
       dataIndex: 'tokens',
-      render: (tokens) => (
+      render: (tokens, item) => (
         <div>
           <>
             {tokens.map((token) => (
-              <div>
+              <div key={token.symbol}>
                 {token.startPosition} {token.symbol} (
                 {token.startBorrowPosition} Borrow)
               </div>
             ))}
           </>
-          <div>Date: 11/02/2022</div>
+          <div>Leverage: {item.leverage}X (11/02/2022)</div>
         </div>
       ),
     },
@@ -158,13 +152,13 @@ const Summary = () => {
         <div>
           <>
             {tokens.map((token) => (
-              <div>
+              <div key={token.symbol}>
                 {token.currentPosition} {token.symbol} ({token.borrowPosition}{' '}
                 Borrow)
               </div>
             ))}
           </>
-          <div>Date: 18/02/2022</div>
+          <div>18/02/2022</div>
         </div>
       ),
     },
@@ -174,15 +168,10 @@ const Summary = () => {
       render: (tokens) => (
         <div>
           {tokens.map((token) => (
-            <div>${token.currentValue}</div>
+            <div key={token.symbol}>${token.currentValue}</div>
           ))}
         </div>
       ),
-    },
-    {
-      title: 'Leverage',
-      dataIndex: 'leverage',
-      key: 'leverage',
     },
     {
       title: 'Net Yield',
