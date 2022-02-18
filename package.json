@@ -1,8 +1,7 @@
 {
-  "name": "platform",
+  "name": "analytics",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/platform",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
     "antd": "4.4.2",

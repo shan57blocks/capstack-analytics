@@ -1,17 +1,15 @@
+import 'antd/dist/antd.css'
+
+import { ConfigProvider } from 'antd'
+import zhCN from 'antd/es/locale/zh_CN'
+import { ConnectedRouter } from 'connected-react-router'
+import { createHashHistory } from 'history'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'antd/dist/antd.css'
-import { createHashHistory } from 'history'
-import zhCN from 'antd/es/locale/zh_CN'
-import { ConfigProvider } from 'antd'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
+
 import configStore from './store'
 import App from './views/App'
-import CustomTable from 'src/components/CustomTable'
-import api from './utils/api'
-
-CustomTable.api = api
 
 const history = createHashHistory()
 const store = configStore(history)
