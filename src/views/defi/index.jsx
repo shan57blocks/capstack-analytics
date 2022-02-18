@@ -82,7 +82,7 @@ const Defi = () => {
       dataIndex: 'feeAndIL',
       render: (feeAndIL) => (
         <div>
-          <div>Current: ${feeAndIL.yearToDate}</div>
+          <div>${feeAndIL.yearToDate}</div>
           <div>APY: {(feeAndIL.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -92,7 +92,7 @@ const Defi = () => {
       dataIndex: 'net',
       render: (net) => (
         <div>
-          <div>Current: ${net.yearToDate}</div>
+          <div>${net.yearToDate}</div>
           <div>APY: {(net.apy * 100).toFixed(2)}%</div>
         </div>
       ),

@@ -30,7 +30,7 @@ const Pool = () => {
         <div>
           {tokens.map((token) => (
             <div key={token.symbol}>
-              {token.currentPosition} {token.symbol}
+              {token.borrowPosition} {token.symbol}
             </div>
           ))}
         </div>
@@ -52,7 +52,7 @@ const Pool = () => {
       dataIndex: 'feeAndIL',
       render: (feeAndIL) => (
         <div>
-          <div>Current: ${feeAndIL.yearToDate}</div>
+          <div>${feeAndIL.yearToDate}</div>
           <div>APY: {(feeAndIL.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -62,7 +62,7 @@ const Pool = () => {
       dataIndex: 'net',
       render: (net) => (
         <div>
-          <div>Current: ${net.yearToDate}</div>
+          <div>${net.yearToDate}</div>
           <div>APY: {(net.apy * 100).toFixed(2)}%</div>
         </div>
       ),
@@ -72,7 +72,7 @@ const Pool = () => {
       dataIndex: 'reward',
       render: (reward) => (
         <div>
-          <div>Current: ${reward.yearToDate}</div>
+          <div>${reward.yearToDate}</div>
           <div>APY: {(reward.apy * 100).toFixed(2)}%</div>
         </div>
       ),

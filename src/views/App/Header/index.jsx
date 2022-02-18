@@ -2,12 +2,19 @@ import './index.less'
 
 import { Select } from 'antd'
 import React from 'react'
+import logo from 'src/images/logo.png'
+import { Link } from 'react-router-dom'
 
 const { Option } = Select
 
 const Header = () => {
   return (
     <div className="header">
+      <div className="header-logo">
+        <Link to="/">
+          <img src={logo} alt={logo} />
+        </Link>
+      </div>
       <div className="header-right">
         <div className="header-right__welcome">Capstack Analytics </div>
         <div className="header-right__user">
