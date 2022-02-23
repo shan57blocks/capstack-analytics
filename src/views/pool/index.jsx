@@ -118,8 +118,8 @@ const Pool = () => {
       render: (_, history) => {
         return (
           <div>
-            <div>${history.rewards.yearToDate.toFixed(3)}</div>
-            <div>APY: {(history.rewards.apy * 100).toFixed(2)}%</div>
+            <div>${history.rewardInfo.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.rewardInfo.apy * 100).toFixed(2)}%</div>
           </div>
         )
       },
@@ -308,8 +308,8 @@ const Summary = () => {
         const { currentHistory } = position
         return (
           <div>
-            <div>${currentHistory.rewards.yearToDate.toFixed(3)}</div>
-            <div>APY: {(currentHistory.rewards.apy * 100).toFixed(2)}%</div>
+            <div>${currentHistory.rewardInfo.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.rewardInfo.apy * 100).toFixed(2)}%</div>
           </div>
         )
       },

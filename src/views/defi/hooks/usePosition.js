@@ -85,17 +85,17 @@ const calApy = (startPosition, currentPosition) => {
     interest -= result[i].currentInterest
   }
 
-  let rewards = 0
+  let rewardNumber = 0
   for (let i = 0; i < currentPosition.rewards.length; i++) {
     const reward = currentPosition.rewards[i]
-    rewards += reward.balance * reward.price
+    rewardNumber += reward.balance * reward.price
   }
 
   const diffInTime = currentPosition.timestamp - Number(startPosition.openDate)
   const diffInDays = diffInTime / (3600 * 24)
   const fee_interest = IL_fee_interest - IL
   const fee = fee_interest - interest
-  const netWithoutIL = fee + rewards + interest
+  const netWithoutIL = fee + rewardNumber + interest
   const net = netWithoutIL + IL
 
   const get_daily_yearly_apy = (value) => {
@@ -110,7 +110,7 @@ const calApy = (startPosition, currentPosition) => {
   currentPosition.IL = get_daily_yearly_apy(IL)
   currentPosition.interest = get_daily_yearly_apy(interest)
   currentPosition.fee = get_daily_yearly_apy(fee)
-  currentPosition.rewards = get_daily_yearly_apy(rewards)
+  currentPosition.rewardInfo = get_daily_yearly_apy(rewardNumber)
   currentPosition.netWithoutIL = get_daily_yearly_apy(netWithoutIL)
   currentPosition.net = get_daily_yearly_apy(net)
 }

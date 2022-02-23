@@ -147,8 +147,8 @@ const Defi = () => {
         const { currentHistory } = position
         return (
           <div>
-            <div>${currentHistory.rewards.yearToDate.toFixed(3)}</div>
-            <div>APY: {(currentHistory.rewards.apy * 100).toFixed(2)}%</div>
+            <div>${currentHistory.rewardInfo.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.rewardInfo.apy * 100).toFixed(2)}%</div>
           </div>
         )
       },
