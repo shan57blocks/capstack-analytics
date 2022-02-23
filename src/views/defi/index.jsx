@@ -1,11 +1,13 @@
-import React from 'react'
 import { Table } from 'antd'
+import React from 'react'
 import { useHistory } from 'react-router'
+import usePosition from './hooks/usePosition'
 
 import pools from './pools.json'
 
 const Defi = () => {
   const history = useHistory()
+  const test = usePosition()
 
   const columns = [
     {
