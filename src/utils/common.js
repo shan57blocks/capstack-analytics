@@ -1,22 +1,12 @@
 import { message } from 'antd'
 import moment from 'moment'
 
-import { EntityStatus, useTypes } from './const'
-
 /**
  * @param {*} value long值型的时间值
  * @format {*} format 时间格式
  */
-export const formatTime = (value, format = 'YYYY-MM-DD') => {
-  if (['string', 'number'].includes(typeof value)) {
-    return moment(value).format(format)
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) => moment(item).format(format))
-  }
-
-  return []
+export const formatTime = (value, format = 'MM/DD/YYYY') => {
+  return moment.unix(Number(value)).format(format)
 }
 
 export const findById = (obj, id, prop = 'id') => {
@@ -61,18 +51,6 @@ export const buildParameters = (path, parameters) => {
   return path
 }
 
-export const buildFormPath = (path, parameters) => {
-  path += '?'
-  Object.keys(parameters).forEach((key) => {
-    path += `&${key}=${encodeURIComponent(parameters[key] ?? '')}`
-  })
-  return path
-}
-
-export const getStatus = (isEdit) => {
-  return isEdit ? EntityStatus.EDIT : EntityStatus.CREATE
-}
-
 // 复制指定内容
 export const copyToClipboard = (clipboardContent) => {
   var textArea = document.createElement('textarea')
@@ -96,8 +74,4 @@ export const copyToClipboard = (clipboardContent) => {
     message.error('不能使用这种方法复制内容')
   }
   document.body.removeChild(textArea)
-}
-
-export const findUseType = (useTypeId) => {
-  return Object.values(useTypes).find((item) => item.id === String(useTypeId))
 }

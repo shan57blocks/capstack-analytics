@@ -1,48 +1,28 @@
-import { useMemo } from 'react'
-import useFetch from 'src/hooks/useFetch'
+import result from './positions.json'
+import pools from './pools.json'
 
 const usePosition = () => {
-  const [result] = useFetch(`/defi/positions`)
-
-  const accountPosition = useMemo(() => {
-    if (!result) {
-      return
-    }
-    result.positions = result.positions.map((position) => {
-      position.principals = JSON.parse(position.principals)
-      position.borrows = JSON.parse(position.borrows)
-      return position
-    })
-    result.positionHistories = result.positionHistories.map(
-      (positionHistory) => {
-        positionHistory.assets = JSON.parse(positionHistory.assets)
-        positionHistory.borrows = JSON.parse(positionHistory.borrows)
-        positionHistory.rewards = JSON.parse(positionHistory.rewards)
-        return positionHistory
-      }
+  result.positionHistories.forEach((history) => {
+    const startPosition = result.positions.find(
+      (position) => position.id === history.positionId
     )
-
-    result.positionHistories.forEach((history, index) => {
-      const startPosition = result.positions.find(
-        (position) => position.id === history.positionId
-      )
-      if (index === 11) {
-        calApy(startPosition, history)
-      }
-    })
-
-    return result
-  }, [result])
-
-  return accountPosition
+    calApy(startPosition, history)
+  })
+  result.positions.forEach((position) => {
+    const pool = pools.find((pool) => pool.id === position.poolId)
+    position.pool = pool
+    const histories = result.positionHistories.filter(
+      (history) => history.positionId === position.id
+    )
+    position.histories = histories
+    position.currentHistory = histories[histories.length - 1]
+  })
+  return result
 }
 
 export default usePosition
 
 const calApy = (startPosition, currentPosition) => {
-  console.log('startPosition', startPosition)
-  console.log('currentPosition', currentPosition)
-
   const startPrincipals = startPosition.principals
   const startBorrows = startPosition.borrows
   const startAssets = startPosition.principals.map((principal, index) => {
@@ -117,10 +97,20 @@ const calApy = (startPosition, currentPosition) => {
   const fee = fee_interest - interest
   const netWithoutIL = fee + rewards + interest
   const net = netWithoutIL + IL
-  const daily_fee_interest = fee_interest / diffInDays
-  const yearly_fee_interest = daily_fee_interest * 365
-  const apy_fee_interest = yearly_fee_interest / holdValue
-  console.log('daily_fee_interest', daily_fee_interest)
-  console.log('yearly_fee_interest', yearly_fee_interest)
-  console.log('apy_fee_interest', apy_fee_interest)
+
+  const get_daily_yearly_apy = (value) => {
+    return {
+      yearToDate: value,
+      daily: value / diffInDays,
+      yearly: (value / diffInDays) * 365,
+      apy: ((value / diffInDays) * 365) / holdValue,
+    }
+  }
+
+  currentPosition.IL = get_daily_yearly_apy(IL)
+  currentPosition.interest = get_daily_yearly_apy(interest)
+  currentPosition.fee = get_daily_yearly_apy(fee)
+  currentPosition.rewards = get_daily_yearly_apy(rewards)
+  currentPosition.netWithoutIL = get_daily_yearly_apy(netWithoutIL)
+  currentPosition.net = get_daily_yearly_apy(net)
 }
