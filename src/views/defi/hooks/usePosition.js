@@ -14,8 +14,8 @@ const usePosition = () => {
     const histories = result.positionHistories.filter(
       (history) => history.positionId === position.id
     )
-    position.histories = histories
-    position.currentHistory = histories[histories.length - 1]
+    position.histories = histories.reverse()
+    position.currentHistory = position.histories[0]
   })
   return result
 }

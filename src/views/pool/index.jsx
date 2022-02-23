@@ -1,101 +1,150 @@
 import { Table } from 'antd'
 import React from 'react'
-import historyData from './history.json'
-import summaryData from './summary.json'
+import { useParams } from 'react-router'
+import { formatTime } from 'src/utils/common'
+import usePosition from '../defi/hooks/usePosition'
+
+const symbolMap = {
+  '0x50b7545627a5162f82a992c33b87adc75187b218': 'WBTC.e',
+  '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7': 'WAVAX',
+  '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab': 'WETH.e',
+  '0xc7198437980c041c805a1edcba50c1ce5db95118': 'USDT.e',
+  '0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664': 'USDC.e',
+  '0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd': 'JOE',
+}
 
 const Pool = () => {
+  const { id: poolId } = useParams()
+  const positions = usePosition()
+  const position = positions.positions.find(
+    (position) => position.poolId === Number(poolId)
+  )
   const columns = [
     {
       title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'timestamp',
+      render: (timestamp) => <div>{formatTime(timestamp)}</div>,
     },
     {
-      title: 'Position',
-      dataIndex: 'tokens',
-      render: (tokens) => (
-        <div>
-          {tokens.map((token) => (
-            <div key={token.symbol}>
-              {token.currentPosition} {token.symbol}
-            </div>
-          ))}
-        </div>
-      ),
+      title: 'Current Position',
+      render: (_, history) => {
+        const { assets, borrows } = history
+        return (
+          <div>
+            {assets.map((asset, index) => {
+              const symbol = symbolMap[asset.address.toLowerCase()]
+              return (
+                <div key={symbol}>
+                  {asset.balance.toFixed(3)} {symbol} (
+                  {borrows[index].balance.toFixed(3)} Borrow)
+                </div>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
       title: 'Borrow',
-      dataIndex: 'tokens',
-      render: (tokens) => (
-        <div>
-          {tokens.map((token) => (
-            <div key={token.symbol}>
-              {token.borrowPosition} {token.symbol}
-            </div>
-          ))}
-        </div>
-      ),
+      render: (_, history) => {
+        const { borrows } = history
+        return (
+          <div>
+            {borrows.map((borrow) => {
+              const symbol = symbolMap[borrow.address.toLowerCase()]
+              return (
+                <div key={symbol}>
+                  {borrow.balance.toFixed(3)} {symbol}
+                </div>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
       title: 'Value',
-      dataIndex: 'tokens',
-      render: (tokens) => (
-        <div>
-          {tokens.map((token) => (
-            <div key={token.symbol}>${token.currentValue}</div>
-          ))}
-        </div>
-      ),
+      render: (_, history) => {
+        const { assets } = history
+        return (
+          <div>
+            {assets.map((asset) => {
+              const symbol = symbolMap[asset.address.toLowerCase()]
+              return (
+                <div key={symbol}>
+                  ${(asset.balance * asset.price).toFixed(3)}
+                </div>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
-      title: 'Net Yield',
-      dataIndex: 'feeAndIL',
-      render: (feeAndIL) => (
-        <div>
-          <div>${feeAndIL.yearToDate}</div>
-          <div>APY: {(feeAndIL.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Interest',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.interest.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.interest.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
     {
-      title: 'Net Yield (Exclude IL)',
-      dataIndex: 'net',
-      render: (net) => (
-        <div>
-          <div>${net.yearToDate}</div>
-          <div>APY: {(net.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Fee',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.fee.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.fee.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
     {
-      title: 'Reward',
-      dataIndex: 'reward',
-      render: (reward) => (
-        <div>
-          <div>${reward.yearToDate}</div>
-          <div>APY: {(reward.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'IL',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.IL.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.IL.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
     {
-      title: 'Intrest',
-      dataIndex: 'interest',
-      render: (interest) => (
-        <div>
-          <div>${interest.yearToDate}</div>
-          <div>APY: {(interest.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Rewards',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.rewards.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.rewards.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
     {
-      title: 'Fees',
-      dataIndex: 'fee',
-      render: (fee) => (
-        <div>
-          <div>${fee.yearToDate}</div>
-          <div>APY: {(fee.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Net without IL',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.netWithoutIL.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.netWithoutIL.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
+    },
+    {
+      title: 'Net',
+      render: (_, history) => {
+        return (
+          <div>
+            <div>${history.net.yearToDate.toFixed(3)}</div>
+            <div>APY: {(history.net.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
   ]
 
@@ -125,7 +174,7 @@ const Pool = () => {
         >
           History
         </div>
-        <Table columns={columns} dataSource={historyData} size="small" />
+        <Table columns={columns} dataSource={position.histories} size="small" />
       </div>
     </div>
   )
@@ -134,91 +183,171 @@ const Pool = () => {
 export default Pool
 
 const Summary = () => {
+  const { id: poolId } = useParams()
+  const positions = usePosition()
   const columns = [
     {
       title: 'Principal',
-      dataIndex: 'tokens',
-      render: (tokens) => (
+      dataIndex: 'principals',
+      render: (principals) => (
         <div>
-          {tokens.map((token) => (
-            <div key={token.symbol}>
-              {token.unleveragePositioin} {token.symbol}
-            </div>
-          ))}
+          {principals.map((principal) => {
+            const symbol = symbolMap[principal.address.toLowerCase()]
+            return (
+              <div key={symbol}>
+                {principal.balance.toFixed(3)} {symbol}
+              </div>
+            )
+          })}
         </div>
       ),
     },
     {
       title: 'Start Position',
-      dataIndex: 'tokens',
-      render: (tokens, item) => (
+      render: (_, position) => (
         <div>
           <>
-            {tokens.map((token) => (
-              <div key={token.symbol}>
-                {token.startPosition} {token.symbol} (
-                {token.startBorrowPosition} Borrow)
-              </div>
-            ))}
+            {position.principals.map((principal, index) => {
+              const { borrows } = position
+              const symbol = symbolMap[principal.address.toLowerCase()]
+              return (
+                <div key={symbol}>
+                  {(principal.balance + borrows[index].balance).toFixed(3)}{' '}
+                  {principal.symbol} ({borrows[index].balance.toFixed(3)}{' '}
+                  Borrow)
+                </div>
+              )
+            })}
           </>
-          <div>Leverage: {item.leverage}X (11/02/2022)</div>
+          <div>
+            Leverage: {position.leverage.toFixed(1)}X (
+            {formatTime(Number(position.openDate))})
+          </div>
         </div>
       ),
     },
     {
       title: 'Current Position',
-      dataIndex: 'tokens',
-      render: (tokens) => (
-        <div>
-          <>
-            {tokens.map((token) => (
-              <div key={token.symbol}>
-                {token.currentPosition} {token.symbol} ({token.borrowPosition}{' '}
-                Borrow)
-              </div>
-            ))}
-          </>
-          <div>18/02/2022</div>
-        </div>
-      ),
+      render: (_, position) => {
+        const { assets, borrows, timestamp } = position.currentHistory
+        return (
+          <div>
+            <>
+              {assets.map((asset, index) => {
+                const symbol = symbolMap[asset.address.toLowerCase()]
+                return (
+                  <div key={symbol}>
+                    {asset.balance.toFixed(3)} {symbol} (
+                    {borrows[index].balance.toFixed(3)} Borrow)
+                  </div>
+                )
+              })}
+            </>
+            <div>{formatTime(timestamp, 'MM/DD/YYYY HH:MM')}</div>
+          </div>
+        )
+      },
     },
     {
       title: 'Current Value',
-      dataIndex: 'tokens',
-      render: (tokens) => (
-        <div>
-          {tokens.map((token) => (
-            <div key={token.symbol}>${token.currentValue}</div>
-          ))}
-        </div>
-      ),
+      render: (_, position) => {
+        const { assets } = position.currentHistory
+        return (
+          <div>
+            {assets.map((asset) => {
+              const symbol = symbolMap[asset.address.toLowerCase()]
+              return (
+                <div key={symbol}>
+                  ${(asset.balance * asset.price).toFixed(3)}
+                </div>
+              )
+            })}
+          </div>
+        )
+      },
     },
     {
-      title: 'Net Yield',
-      dataIndex: 'feeAndIL',
-      render: (feeAndIL) => (
-        <div>
-          <div>${feeAndIL.yearToDate}</div>
-          <div>APY: {(feeAndIL.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Interest',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.interest.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.interest.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
     {
-      title: 'Net Yield (Exclude IL)',
-      dataIndex: 'net',
-      render: (net) => (
-        <div>
-          <div>${net.yearToDate}</div>
-          <div>APY: {(net.apy * 100).toFixed(2)}%</div>
-        </div>
-      ),
+      title: 'Fee',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.fee.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.fee.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
+    },
+    {
+      title: 'IL',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.IL.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.IL.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
+    },
+    {
+      title: 'Rewards',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.rewards.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.rewards.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
+    },
+    {
+      title: 'Net without IL',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.netWithoutIL.yearToDate.toFixed(3)}</div>
+            <div>
+              APY: {(currentHistory.netWithoutIL.apy * 100).toFixed(2)}%
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      title: 'Net',
+      render: (_, position) => {
+        const { currentHistory } = position
+        return (
+          <div>
+            <div>${currentHistory.net.yearToDate.toFixed(3)}</div>
+            <div>APY: {(currentHistory.net.apy * 100).toFixed(2)}%</div>
+          </div>
+        )
+      },
     },
   ]
 
   return (
     <Table
       columns={columns}
-      dataSource={summaryData}
+      dataSource={positions.positions.filter(
+        (position) => position.poolId === Number(poolId)
+      )}
       pagination={false}
       size="small"
     />

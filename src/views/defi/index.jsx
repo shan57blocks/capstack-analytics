@@ -22,7 +22,7 @@ const Defi = () => {
       title: 'Pool',
       dataIndex: 'pool',
       render: (pool) => (
-        <a onClick={() => history.push('/defi/pool')}>{pool.name}</a>
+        <a onClick={() => history.push(`/defi/pool/${pool.id}`)}>{pool.name}</a>
       ),
     },
     {

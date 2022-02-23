@@ -11,7 +11,7 @@ export const routes = [
     comp: Defi,
   },
   {
-    path: '/defi/pool',
+    path: '/defi/pool/:id',
     comp: Pool,
   },
 ]
