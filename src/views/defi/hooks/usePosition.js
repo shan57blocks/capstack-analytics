@@ -62,7 +62,7 @@ const calApy = (startPosition, currentPosition) => {
     const startBorrow = startBorrows[index]
     const currentBorrow = currentPosition.borrows[index]
 
-    const currentPrincipal = currentAsset.balance - startBorrow.balance
+    const currentPrincipal = currentAsset.balance - currentBorrow.balance
     const startValue = startAsset.balance * currentPrice
     const currentNetInvestment = currentPrincipal * currentPrice
     const currentIL = calculatedValues[index] - startValue

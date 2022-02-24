@@ -3,7 +3,7 @@ import './index.less'
 import { Select } from 'antd'
 import React from 'react'
 import logo from 'src/images/logo.png'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 
@@ -11,10 +11,12 @@ const { Option } = Select
 
 const Header = () => {
   const dispatch = useDispatch()
+  const history = useHistory()
   const { accounts } = useSelector((state) => state.app)
 
   const selectAccount = (id) => {
     dispatch(appAction.selectAccount(id))
+    history.push('/defi')
   }
 
   return (
