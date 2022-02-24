@@ -153,7 +153,7 @@ const Pool = () => {
   return (
     <div className="page">
       <div style={{ fontSize: 20, marginBottom: 10 }}>
-        WBTC.e/WAVAX (Alpha Homora V2)
+        {position?.pool.name} (Alpha Homora V2)
       </div>
       <div>
         <div
