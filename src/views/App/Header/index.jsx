@@ -4,10 +4,19 @@ import { Select } from 'antd'
 import React from 'react'
 import logo from 'src/images/logo.png'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import * as appAction from 'src/actions/app'
 
 const { Option } = Select
 
 const Header = () => {
+  const dispatch = useDispatch()
+  const { accounts } = useSelector((state) => state.app)
+
+  const selectAccount = (id) => {
+    dispatch(appAction.selectAccount(id))
+  }
+
   return (
     <div className="header">
       <div className="header-logo">
@@ -16,20 +25,20 @@ const Header = () => {
         </Link>
       </div>
       <div className="header-right">
-        <div className="header-right__welcome">Capstack Analytics </div>
+        <div className="header-right__welcome">Capstack Analytics</div>
         <div className="header-right__user">
           <div className="header-right__user-signout">
             <span>Account: </span>
             <Select
-              defaultValue="0x7c43375fc06deD6169DB079a3f5f9b75fa0ceC1D"
-              style={{ width: 400 }}
+              defaultValue={accounts[0].id}
+              style={{ width: 360 }}
+              onChange={selectAccount}
             >
-              <Option value="0x7c43375fc06deD6169DB079a3f5f9b75fa0ceC1D">
-                0x7c43375fc06deD6169DB079a3f5f9b75fa0ceC1D
-              </Option>
-              <Option value="8qPKSiDVxXYmvopt4AHQWCd15xjtLv9uESU7jwY1EtAr">
-                8qPKSiDVxXYmvopt4AHQWCd15xjtLv9uESU7jwY1EtAr
-              </Option>
+              {accounts.map((account) => (
+                <Option key={account.id} value={account.id}>
+                  {account.address}
+                </Option>
+              ))}
             </Select>
           </div>
         </div>

@@ -16,7 +16,7 @@ const symbolMap = {
 const Pool = () => {
   const { id: poolId } = useParams()
   const positions = usePosition()
-  const position = positions.positions.find(
+  const position = positions?.positions.find(
     (position) => position.poolId === Number(poolId)
   )
   const columns = [
@@ -147,6 +147,8 @@ const Pool = () => {
       },
     },
   ]
+
+  if (!positions) return null
 
   return (
     <div className="page">
@@ -341,6 +343,8 @@ const Summary = () => {
       },
     },
   ]
+
+  if (!positions) return null
 
   return (
     <Table

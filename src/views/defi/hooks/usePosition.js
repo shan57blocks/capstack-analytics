@@ -1,7 +1,12 @@
-import result from './positions.json'
 import pools from './pools.json'
+import { useSelector } from 'react-redux'
 
 const usePosition = () => {
+  const { positions: result } = useSelector((state) => state.app)
+  if (!result) {
+    return
+  }
+
   result.positionHistories.forEach((history) => {
     const startPosition = result.positions.find(
       (position) => position.id === history.positionId

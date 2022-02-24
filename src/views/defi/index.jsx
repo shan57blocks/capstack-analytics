@@ -181,6 +181,8 @@ const Defi = () => {
     },
   ]
 
+  if (!positions) return null
+
   return (
     <div className="page">
       <div style={{ fontSize: 20, marginBottom: 20 }}>Alpha Homora V2</div>
