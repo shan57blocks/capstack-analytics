@@ -2,7 +2,6 @@ import { Table } from 'antd'
 import React from 'react'
 import { useHistory } from 'react-router'
 import {
-  getApyRow,
   getClosedApyRow,
   getExitRow,
   getExitValueRow,
