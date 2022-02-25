@@ -8,7 +8,7 @@ const usePosition = () => {
     pools,
   } = useSelector((state) => state.app)
   if (!positions || !protocols || !pools) {
-    return
+    return {}
   }
 
   positionHistories.forEach((history) => {
@@ -59,7 +59,7 @@ const usePosition = () => {
     }
   })
 
-  return result
+  return { positionInfos: result, positions }
 }
 
 export default usePosition

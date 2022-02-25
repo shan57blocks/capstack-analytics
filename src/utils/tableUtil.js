@@ -10,6 +10,12 @@ const symbolMap = {
   '0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd': 'JOE',
 }
 
+export const getDateRow = () => ({
+  title: 'Date',
+  dataIndex: 'timestamp',
+  render: (timestamp) => <div>{formatTime(timestamp)}</div>,
+})
+
 export const getPoolNameRow = (history) => ({
   title: 'Pool',
   dataIndex: 'pool',
@@ -21,11 +27,11 @@ export const getPoolNameRow = (history) => ({
 export const getApyRow = (title, field) => ({
   title,
   render: (_, position) => {
-    const { currentHistory } = position
+    const apy = position.currentHistory || position
     return (
       <div>
-        <div>${currentHistory[field].yearToDate.toFixed(3)}</div>
-        <div>APY: {(currentHistory[field].apy * 100).toFixed(2)}%</div>
+        <div>${apy[field].yearToDate.toFixed(3)}</div>
+        <div>APY: {(apy[field].apy * 100).toFixed(2)}%</div>
       </div>
     )
   },
@@ -72,10 +78,10 @@ export const getStartPositionRow = () => ({
   ),
 })
 
-export const getCurrentPositionRow = () => ({
+export const getCurrentPositionRow = (showTime = true) => ({
   title: 'Current Position',
   render: (_, position) => {
-    const { assets, borrows, timestamp } = position.currentHistory
+    const { assets, borrows, timestamp } = position.currentHistory || position
     return (
       <div>
         <>
@@ -89,7 +95,7 @@ export const getCurrentPositionRow = () => ({
             )
           })}
         </>
-        <div>{formatTime(timestamp, 'MM/DD/YYYY HH:MM')}</div>
+        {showTime && <div>{formatTime(timestamp, 'MM/DD/YYYY HH:MM')}</div>}
       </div>
     )
   },
@@ -105,6 +111,42 @@ export const getCurrentValueRow = () => ({
           const symbol = symbolMap[asset.address.toLowerCase()]
           return (
             <div key={symbol}>${(asset.balance * asset.price).toFixed(3)}</div>
+          )
+        })}
+      </div>
+    )
+  },
+})
+
+export const getValueRow = () => ({
+  title: 'Value',
+  render: (_, position) => {
+    const { assets } = position
+    return (
+      <div>
+        {assets.map((asset) => {
+          const symbol = symbolMap[asset.address.toLowerCase()]
+          return (
+            <div key={symbol}>${(asset.balance * asset.price).toFixed(3)}</div>
+          )
+        })}
+      </div>
+    )
+  },
+})
+
+export const getBorrowRow = () => ({
+  title: 'Borrow',
+  render: (_, history) => {
+    const { borrows } = history
+    return (
+      <div>
+        {borrows.map((borrow) => {
+          const symbol = symbolMap[borrow.address.toLowerCase()]
+          return (
+            <div key={symbol}>
+              {borrow.balance.toFixed(3)} {symbol}
+            </div>
           )
         })}
       </div>

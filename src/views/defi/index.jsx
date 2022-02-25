@@ -7,7 +7,7 @@ import Pool from './Pool'
 import PoolClosed from './PoolClosed'
 
 const Defi = () => {
-  const positionInfos = usePosition()
+  const { positionInfos } = usePosition()
 
   if (!positionInfos) return null
 
