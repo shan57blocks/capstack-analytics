@@ -27,7 +27,7 @@ export const getPoolNameRow = (history) => ({
 export const getApyRow = (title, field) => ({
   title,
   render: (_, position) => {
-    const apy = position.currentHistory
+    const apy = position.currentHistory || position
     return (
       <div>
         <div>${apy[field].yearToDate.toFixed(3)}</div>
@@ -40,9 +40,6 @@ export const getApyRow = (title, field) => ({
 export const getClosedApyRow = (title, field) => ({
   title,
   render: (_, position) => {
-    if (field === 'exitReward') {
-      console.log(333)
-    }
     return (
       <div>
         {field === 'exitReward' &&
