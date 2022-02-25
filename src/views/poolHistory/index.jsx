@@ -13,7 +13,7 @@ const symbolMap = {
   '0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd': 'JOE',
 }
 
-const Pool = () => {
+const PoolHistory = () => {
   const { id: poolId } = useParams()
   const positions = usePosition()
   const position = positions?.find(
@@ -183,7 +183,7 @@ const Pool = () => {
   )
 }
 
-export default Pool
+export default PoolHistory
 
 const Summary = () => {
   const { id: poolId } = useParams()

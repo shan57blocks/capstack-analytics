@@ -2,30 +2,64 @@ import { useSelector } from 'react-redux'
 import { caseIgEqual } from 'src/utils/common'
 
 const usePosition = () => {
-  const { positions: result, protocols, pools } = useSelector(
-    (state) => state.app
-  )
-  if (!result || !protocols || !pools) {
+  const {
+    positions: { positions, positionHistories },
+    protocols,
+    pools,
+  } = useSelector((state) => state.app)
+  if (!positions || !protocols || !pools) {
     return
   }
 
-  result.positionHistories.forEach((history) => {
-    const startPosition = result.positions.find(
+  positionHistories.forEach((history) => {
+    const startPosition = positions.find(
       (position) => position.id === history.positionId
     )
     calApy(startPosition, history)
     calCloseApy(startPosition)
   })
-  result.positions.forEach((position) => {
+  positions.forEach((position) => {
     const pool = pools.find((pool) => pool.id === position.poolId)
     position.pool = pool
-    const histories = result.positionHistories.filter(
+    const histories = positionHistories.filter(
       (history) => history.positionId === position.id
     )
     position.histories = histories.reverse()
     position.currentHistory = position.histories[0]
   })
-  return result.positions
+
+  const result = []
+
+  protocols.forEach((protocol) => {
+    const protocolPools = pools.filter(
+      (pool) => pool.protocolId === protocol.id
+    )
+    const protocolPositions = positions.filter(
+      (position) => !!protocolPools.find((pool) => pool.id === position.poolId)
+    )
+    const activePositions = protocolPositions.filter(
+      (position) => !position.exit
+    )
+    const closedPositions = protocolPositions.filter(
+      (position) => position.exit
+    )
+    if (activePositions.length) {
+      result.push({
+        protocol,
+        status: 'active',
+        positions: activePositions,
+      })
+    }
+    if (closedPositions.length) {
+      result.push({
+        protocol,
+        status: 'closed',
+        positions: closedPositions,
+      })
+    }
+  })
+
+  return result
 }
 
 export default usePosition
@@ -161,6 +195,7 @@ const calCloseApy = (position) => {
       }
     }
 
+    position.exitTokens = exitTokens
     position.rewardInfo = get_daily_yearly_apy(rewardValue)
     position.net = get_daily_yearly_apy(net)
   }

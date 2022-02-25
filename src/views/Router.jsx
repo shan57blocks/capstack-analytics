@@ -3,7 +3,7 @@ import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
 import Defi from './defi'
-import Pool from './pool'
+import PoolHistory from './poolHistory'
 
 export const routes = [
   {
@@ -12,7 +12,7 @@ export const routes = [
   },
   {
     path: '/defi/pool/:id',
-    comp: Pool,
+    comp: PoolHistory,
   },
 ]
 

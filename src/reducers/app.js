@@ -18,7 +18,7 @@ const initState = {
   selectedAccount: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
   protocols: null,
   pools: null,
-  positions: null,
+  positions: { positions: null, positionHistories: null },
 }
 
 const app = handleActions(
