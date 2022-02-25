@@ -11,13 +11,17 @@ const usePosition = () => {
     return {}
   }
 
+  positions.forEach((position) => {
+    calCloseApy(position)
+  })
+
   positionHistories.forEach((history) => {
     const startPosition = positions.find(
       (position) => position.id === history.positionId
     )
     calApy(startPosition, history)
-    calCloseApy(startPosition)
   })
+
   positions.forEach((position) => {
     const pool = pools.find((pool) => pool.id === position.poolId)
     position.pool = pool
@@ -160,7 +164,7 @@ const calApy = (startPosition, currentPosition) => {
 const calCloseApy = (position) => {
   if (position.exit) {
     const { principals, exit, openDate, closeDate } = position
-    const rewards = exit.filter((token) => token.type === 'reward')
+    const rewards = exit.filter((token) => token.type === 'rewards')
     const exitTokens = []
     principals.forEach((principal) => {
       const exitToken = exit.find((token) =>
@@ -196,7 +200,7 @@ const calCloseApy = (position) => {
     }
 
     position.exitTokens = exitTokens
-    position.rewardInfo = get_daily_yearly_apy(rewardValue)
-    position.net = get_daily_yearly_apy(net)
+    position.exitReward = get_daily_yearly_apy(rewardValue)
+    position.exitNet = get_daily_yearly_apy(net)
   }
 }

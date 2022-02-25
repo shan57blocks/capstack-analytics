@@ -30,17 +30,31 @@ export const getApyRow = (title, field) => ({
     const apy = position.currentHistory || position
     return (
       <div>
-        {field === 'rewardInfo' &&
-          apy.rewards.map((reward) => {
-            const symbol = symbolMap[reward.address.toLowerCase()]
-            return (
-              <div key={reward.address}>
-                {reward.balance.toFixed(3)} {symbol}
-              </div>
-            )
-          })}
         <div>${apy[field].yearToDate.toFixed(3)}</div>
         <div>APY: {(apy[field].apy * 100).toFixed(2)}%</div>
+      </div>
+    )
+  },
+})
+
+export const getClosedApyRow = (title, field) => ({
+  title,
+  render: (_, position) => {
+    return (
+      <div>
+        {field === 'exitReward' &&
+          position.exit
+            .filter((token) => token.type === 'rewards')
+            .map((reward) => {
+              const symbol = symbolMap[reward.address.toLowerCase()]
+              return (
+                <div key={reward.address}>
+                  {reward.balance.toFixed(3)} {symbol}
+                </div>
+              )
+            })}
+        <div>${position[field].yearToDate.toFixed(3)}</div>
+        <div>APY: {(position[field].apy * 100).toFixed(2)}%</div>
       </div>
     )
   },
