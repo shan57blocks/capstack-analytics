@@ -187,11 +187,7 @@ const Defi = () => {
     <div className="page">
       <div style={{ fontSize: 20, marginBottom: 20 }}>Alpha Homora V2</div>
       <div>
-        <Table
-          columns={columns}
-          dataSource={positions.positions}
-          size="small"
-        />
+        <Table columns={columns} dataSource={positions} size="small" />
       </div>
     </div>
   )

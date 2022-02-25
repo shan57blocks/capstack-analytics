@@ -1,27 +1,31 @@
 import { useSelector } from 'react-redux'
+import { caseIgEqual } from 'src/utils/common'
 
 const usePosition = () => {
-  const { positions, protocols, pools } = useSelector((state) => state.app)
-  if (!positions || !protocols || !pools) {
+  const { positions: result, protocols, pools } = useSelector(
+    (state) => state.app
+  )
+  if (!result || !protocols || !pools) {
     return
   }
 
-  positions.positionHistories.forEach((history) => {
-    const startPosition = positions.positions.find(
+  result.positionHistories.forEach((history) => {
+    const startPosition = result.positions.find(
       (position) => position.id === history.positionId
     )
     calApy(startPosition, history)
+    calCloseApy(startPosition)
   })
-  positions.positions.forEach((position) => {
+  result.positions.forEach((position) => {
     const pool = pools.find((pool) => pool.id === position.poolId)
     position.pool = pool
-    const histories = positions.positionHistories.filter(
+    const histories = result.positionHistories.filter(
       (history) => history.positionId === position.id
     )
     position.histories = histories.reverse()
     position.currentHistory = position.histories[0]
   })
-  return positions
+  return result.positions
 }
 
 export default usePosition
@@ -89,17 +93,17 @@ const calApy = (startPosition, currentPosition) => {
     interest -= result[i].currentInterest
   }
 
-  let rewardNumber = 0
+  let rewardValue = 0
   for (let i = 0; i < currentPosition.rewards.length; i++) {
     const reward = currentPosition.rewards[i]
-    rewardNumber += reward.balance * reward.price
+    rewardValue += reward.balance * reward.price
   }
 
   const diffInTime = currentPosition.timestamp - Number(startPosition.openDate)
   const diffInDays = diffInTime / (3600 * 24)
   const fee_interest = IL_fee_interest - IL
   const fee = fee_interest - interest
-  const netWithoutIL = fee + rewardNumber + interest
+  const netWithoutIL = fee + rewardValue + interest
   const net = netWithoutIL + IL
 
   const get_daily_yearly_apy = (value) => {
@@ -114,7 +118,50 @@ const calApy = (startPosition, currentPosition) => {
   currentPosition.IL = get_daily_yearly_apy(IL)
   currentPosition.interest = get_daily_yearly_apy(interest)
   currentPosition.fee = get_daily_yearly_apy(fee)
-  currentPosition.rewardInfo = get_daily_yearly_apy(rewardNumber)
+  currentPosition.rewardInfo = get_daily_yearly_apy(rewardValue)
   currentPosition.netWithoutIL = get_daily_yearly_apy(netWithoutIL)
   currentPosition.net = get_daily_yearly_apy(net)
+}
+
+const calCloseApy = (position) => {
+  if (position.exit) {
+    const { principals, exit, openDate, closeDate } = position
+    const rewards = exit.filter((token) => token.type === 'reward')
+    const exitTokens = []
+    principals.forEach((principal) => {
+      const exitToken = exit.find((token) =>
+        caseIgEqual(principal.address, token.address)
+      )
+      exitTokens.push(exitToken)
+    })
+
+    let holdValue = 0
+    for (let i = 0; i < principals.length; i++) {
+      holdValue += principals[i].balance * exitTokens[i].price
+    }
+    let exitValue = 0
+    for (let i = 0; i < exitTokens.length; i++) {
+      exitValue += exitTokens[i].balance * exitTokens[i].price
+    }
+    let rewardValue = 0
+    for (let i = 0; i < rewards.length; i++) {
+      rewardValue += rewards[i].balance * rewards[i].price
+    }
+
+    const diffInTime = Number(closeDate) - Number(openDate)
+    const diffInDays = diffInTime / (3600 * 24)
+    const net = exitValue + rewardValue - holdValue
+
+    const get_daily_yearly_apy = (value) => {
+      return {
+        yearToDate: value,
+        daily: value / diffInDays,
+        yearly: (value / diffInDays) * 365,
+        apy: ((value / diffInDays) * 365) / holdValue,
+      }
+    }
+
+    position.rewardInfo = get_daily_yearly_apy(rewardValue)
+    position.net = get_daily_yearly_apy(net)
+  }
 }

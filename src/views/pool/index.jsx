@@ -16,9 +16,10 @@ const symbolMap = {
 const Pool = () => {
   const { id: poolId } = useParams()
   const positions = usePosition()
-  const position = positions?.positions.find(
+  const position = positions?.find(
     (position) => position.poolId === Number(poolId)
   )
+
   const columns = [
     {
       title: 'Date',
@@ -349,7 +350,7 @@ const Summary = () => {
   return (
     <Table
       columns={columns}
-      dataSource={positions.positions.filter(
+      dataSource={positions.filter(
         (position) => position.poolId === Number(poolId)
       )}
       pagination={false}
