@@ -15,6 +15,11 @@ const App = () => {
   const { loading, selectedAccount } = useSelector((state) => state.app)
 
   useEffect(() => {
+    dispatch(appAction.getProtocols())
+    dispatch(appAction.getPools())
+  }, [dispatch])
+
+  useEffect(() => {
     dispatch(appAction.getPositions(selectedAccount))
   }, [dispatch, selectedAccount])
 

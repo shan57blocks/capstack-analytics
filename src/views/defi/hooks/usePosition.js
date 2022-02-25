@@ -1,28 +1,27 @@
-import pools from './pools.json'
 import { useSelector } from 'react-redux'
 
 const usePosition = () => {
-  const { positions: result } = useSelector((state) => state.app)
-  if (!result) {
+  const { positions, protocols, pools } = useSelector((state) => state.app)
+  if (!positions || !protocols || !pools) {
     return
   }
 
-  result.positionHistories.forEach((history) => {
-    const startPosition = result.positions.find(
+  positions.positionHistories.forEach((history) => {
+    const startPosition = positions.positions.find(
       (position) => position.id === history.positionId
     )
     calApy(startPosition, history)
   })
-  result.positions.forEach((position) => {
+  positions.positions.forEach((position) => {
     const pool = pools.find((pool) => pool.id === position.poolId)
     position.pool = pool
-    const histories = result.positionHistories.filter(
+    const histories = positions.positionHistories.filter(
       (history) => history.positionId === position.id
     )
     position.histories = histories.reverse()
     position.currentHistory = position.histories[0]
   })
-  return result
+  return positions
 }
 
 export default usePosition
