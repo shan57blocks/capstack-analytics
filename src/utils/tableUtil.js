@@ -177,7 +177,7 @@ export const getExitRow = () => ({
           )
         })}
       </>
-      <div>{formatTime(Number(position.openDate), 'MM/DD/YYYY HH:MM')}</div>
+      <div>{formatTime(Number(position.closeDate), 'MM/DD/YYYY HH:MM')}</div>
     </div>
   ),
 })
