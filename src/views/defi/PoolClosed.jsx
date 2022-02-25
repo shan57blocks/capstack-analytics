@@ -3,6 +3,7 @@ import React from 'react'
 import { useHistory } from 'react-router'
 import {
   getApyRow,
+  getClosedApyRow,
   getExitRow,
   getExitValueRow,
   getPoolNameRow,
@@ -34,6 +35,6 @@ const getColumns = (history) => [
   getPrincipalRow(),
   getExitRow(),
   getExitValueRow(),
-  getApyRow('Rewards', 'rewardInfo'),
-  getApyRow('Net', 'net'),
+  getClosedApyRow('Rewards', 'exitReward'),
+  getClosedApyRow('Net', 'exitNet'),
 ]

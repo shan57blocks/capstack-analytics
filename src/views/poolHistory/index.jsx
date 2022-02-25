@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 import {
   getApyRow,
   getBorrowRow,
+  getClosedApyRow,
   getCurrentPositionRow,
   getCurrentValueRow,
   getDateRow,
@@ -101,6 +102,6 @@ const closedPoolColumns = [
   getPrincipalRow(),
   getExitRow(),
   getExitValueRow(),
-  getApyRow('Rewards', 'rewardInfo'),
-  getApyRow('Net', 'net'),
+  getClosedApyRow('Rewards', 'exitReward'),
+  getClosedApyRow('Net', 'exitNet'),
 ]
