@@ -6,6 +6,7 @@ export const APP_CLOSE_LOADING = 'APP_CLOSE_LOADING'
 
 export const GET_PROTOCOLS = 'GET_PROTOCOLS'
 export const GET_POOLS = 'GET_POOLS'
+export const GET_CURRENT_POSITIONS = 'GET_CURRENT_POSITIONS'
 export const GET_POSITIONS = 'GET_POSITIONS'
 
 export const SELECT_ACCOUNT = 'SELECT_ACCOUNT'
@@ -22,6 +23,11 @@ export const getPools = createAction(GET_POOLS, () => api.get(`/defi/pools`))
 
 export const getPositions = createAction(GET_POSITIONS, (account) =>
   api.get(`/defi/positions?wallet=${account}`)
+)
+
+export const getCurrentPositions = createAction(
+  GET_CURRENT_POSITIONS,
+  (account) => api.get(`/defi/current-positions?wallet=${account}`)
 )
 
 export const selectAccount = createAction(

@@ -7,6 +7,7 @@ import {
   GET_POSITIONS,
   GET_PROTOCOLS,
   GET_POOLS,
+  GET_CURRENT_POSITIONS,
 } from 'src/actions/app'
 
 const initState = {
@@ -18,7 +19,9 @@ const initState = {
   selectedAccount: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
   protocols: null,
   pools: null,
-  positions: { positions: null, positionHistories: null },
+  positions: null,
+  positionHistories: null,
+  currentPositions: [],
 }
 
 const app = handleActions(
@@ -50,7 +53,14 @@ const app = handleActions(
     [GET_POSITIONS]: (state, { payload }) => {
       return {
         ...state,
-        positions: payload,
+        positions: payload.positions,
+        positionHistories: payload.positionHistories,
+      }
+    },
+    [GET_CURRENT_POSITIONS]: (state, { payload }) => {
+      return {
+        ...state,
+        currentPositions: payload,
       }
     },
     [SELECT_ACCOUNT]: (state, { payload }) => {

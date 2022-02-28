@@ -21,6 +21,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(appAction.getPositions(selectedAccount))
+    dispatch(appAction.getCurrentPositions(selectedAccount))
   }, [dispatch, selectedAccount])
 
   return (

@@ -127,7 +127,7 @@ export const getCurrentPositionRow = (showTime = true) => ({
             )
           })}
         </>
-        {showTime && <div>{formatTime(timestamp, 'MM/DD/YYYY HH:MM')}</div>}
+        {showTime && <div>{formatTime(timestamp, 'MM/DD/YYYY HH:mm')}</div>}
       </div>
     )
   },
@@ -200,7 +200,7 @@ export const getExitRow = () => ({
           )
         })}
       </>
-      <div>{formatTime(Number(position.closeDate), 'MM/DD/YYYY HH:MM')}</div>
+      <div>{formatTime(Number(position.closeDate), 'MM/DD/YYYY HH:mm')}</div>
     </div>
   ),
 })

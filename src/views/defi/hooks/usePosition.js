@@ -3,19 +3,23 @@ import { caseIgEqual } from 'src/utils/common'
 
 const usePosition = () => {
   const {
-    positions: { positions, positionHistories },
     protocols,
     pools,
+    positions,
+    positionHistories,
+    currentPositions,
   } = useSelector((state) => state.app)
   if (!positions || !protocols || !pools) {
     return {}
   }
 
+  const totalHistories = positionHistories.concat(currentPositions)
+
   positions.forEach((position) => {
     calCloseApy(position)
   })
 
-  positionHistories.forEach((history) => {
+  totalHistories.forEach((history) => {
     const startPosition = positions.find(
       (position) => position.id === history.positionId
     )
@@ -25,10 +29,10 @@ const usePosition = () => {
   positions.forEach((position) => {
     const pool = pools.find((pool) => pool.id === position.poolId)
     position.pool = pool
-    const histories = positionHistories.filter(
+    const histories = totalHistories.filter(
       (history) => history.positionId === position.id
     )
-    position.histories = histories.reverse()
+    position.histories = histories.sort(sortTimestamp)
     position.currentHistory = position.histories[0]
   })
 
@@ -203,4 +207,14 @@ const calCloseApy = (position) => {
     position.exitReward = get_daily_yearly_apy(rewardValue)
     position.exitNet = get_daily_yearly_apy(net)
   }
+}
+
+export const sortTimestamp = (a, b) => {
+  if (a.timestamp < b.timestamp) {
+    return 1
+  }
+  if (a.timestamp > b.timestamp) {
+    return -1
+  }
+  return 0
 }
