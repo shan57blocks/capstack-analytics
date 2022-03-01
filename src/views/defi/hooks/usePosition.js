@@ -77,11 +77,14 @@ export default usePosition
 const calApy = (startPosition, currentPosition) => {
   const startPrincipals = startPosition.principals
   const startBorrows = startPosition.borrows
-  const startAssets = startPosition.principals.map((principal, index) => {
+  let startAssets = startPosition.principals.map((principal, index) => {
     const asset = { ...principal }
     asset.balance = principal.balance + startBorrows[index].balance
     return asset
   })
+  if (startPosition.assets && startPosition.assets.length) {
+    startAssets = startPosition.assets
+  }
 
   const calculatedValue0 =
     Math.sqrt(

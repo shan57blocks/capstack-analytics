@@ -91,13 +91,13 @@ export const getStartPositionRow = () => ({
   render: (_, position) => (
     <div>
       <>
-        {position.principals.map((principal, index) => {
+        {position.assets.map((asset, index) => {
           const { borrows } = position
-          const symbol = symbolMap[principal.address.toLowerCase()]
+          const symbol = symbolMap[asset.address.toLowerCase()]
           return (
             <div key={symbol}>
-              {(principal.balance + borrows[index].balance).toFixed(3)}{' '}
-              {principal.symbol} ({borrows[index].balance.toFixed(3)} Borrow)
+              {asset.balance.toFixed(3)} {asset.symbol} (
+              {borrows[index].balance.toFixed(3)} Borrow)
             </div>
           )
         })}
