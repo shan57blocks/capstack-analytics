@@ -23,7 +23,9 @@ const usePosition = () => {
     const startPosition = positions.find(
       (position) => position.id === history.positionId
     )
-    calApy(startPosition, history)
+    if (startPosition) {
+      calApy(startPosition, history)
+    }
   })
 
   positions.forEach((position) => {
