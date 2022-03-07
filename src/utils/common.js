@@ -76,6 +76,6 @@ export const copyToClipboard = (clipboardContent) => {
   document.body.removeChild(textArea)
 }
 
-export const caseIgEqual = (source, target) => {
+export const equal = (source, target) => {
   return source && target && source.toLowerCase() === target.toLowerCase()
 }

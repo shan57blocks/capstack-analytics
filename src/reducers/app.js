@@ -4,11 +4,10 @@ import {
   APP_SHOW_LOADING,
   APP_CLOSE_LOADING,
   SELECT_ACCOUNT,
-  GET_POSITIONS,
-  GET_PROTOCOLS,
-  GET_POOLS,
+  GET_PROTOCOL_POSITIONS,
   GET_CURRENT_POSITIONS,
 } from 'src/actions/app'
+import { mapPosition } from 'src/utils/apy'
 
 const initState = {
   loading: false,
@@ -17,11 +16,8 @@ const initState = {
     { id: 2, address: '0x7c43375fc06ded6169db079a3f5f9b75fa0cec1d' },
   ],
   selectedAccount: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
-  protocols: null,
-  pools: null,
-  positions: null,
-  positionHistories: null,
-  currentPositions: [],
+  protocolPositions: null,
+  protocolClosedPositions: null,
 }
 
 const app = handleActions(
@@ -38,23 +34,36 @@ const app = handleActions(
         loading: false,
       }
     },
-    [GET_PROTOCOLS]: (state, { payload }) => {
+    [GET_PROTOCOL_POSITIONS]: (state, { payload }) => {
+      const protocolPositions = []
+      const protocolClosedPositions = []
+
+      payload.forEach((protocolPosition) => {
+        const positions = protocolPosition.positions
+          .filter((position) => !position.closed)
+          .map((position) => mapPosition(position))
+        const closedPositions = protocolPosition.positions
+          .filter((position) => position.closed)
+          .map((position) => mapPosition(position))
+
+        if (positions.length) {
+          protocolPositions.push({
+            protocol: protocolPosition.protocol,
+            positions,
+          })
+        }
+        if (closedPositions.length) {
+          protocolClosedPositions.push({
+            protocol: protocolPosition.protocol,
+            positions: closedPositions,
+          })
+        }
+      })
+
       return {
         ...state,
-        protocols: payload,
-      }
-    },
-    [GET_POOLS]: (state, { payload }) => {
-      return {
-        ...state,
-        pools: payload,
-      }
-    },
-    [GET_POSITIONS]: (state, { payload }) => {
-      return {
-        ...state,
-        positions: payload.positions,
-        positionHistories: payload.positionHistories,
+        protocolPositions: protocolPositions,
+        protocolClosedPositions: protocolClosedPositions,
       }
     },
     [GET_CURRENT_POSITIONS]: (state, { payload }) => {

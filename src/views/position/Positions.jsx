@@ -10,7 +10,7 @@ import {
   getStartPositionRow,
 } from 'src/utils/tableUtil'
 
-const Pool = ({ positionInfo }) => {
+const Positions = ({ positionInfo }) => {
   const { protocol, positions } = positionInfo
   const history = useHistory()
 
@@ -28,7 +28,7 @@ const Pool = ({ positionInfo }) => {
   )
 }
 
-export default Pool
+export default Positions
 
 const getColumns = (history) => [
   getPoolNameRow(history),

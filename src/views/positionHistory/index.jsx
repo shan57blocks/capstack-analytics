@@ -15,14 +15,14 @@ import {
   getValueRow,
 } from 'src/utils/tableUtil'
 
-import usePosition from '../defi/hooks/usePosition'
-
-const PoolHistory = () => {
-  const { id: poolId } = useParams()
-  const { positions } = usePosition()
-  const position = positions?.find(
-    (position) => position.poolId === Number(poolId)
-  )
+const PositionHistory = () => {
+  const positions = null
+  const position = null
+  // const { id: poolId } = useParams()
+  // const { positions } = usePositions()
+  // const position = positions?.find(
+  //   (position) => position.poolId === Number(poolId)
+  // )
 
   const columns = [
     getDateRow(),
@@ -71,7 +71,7 @@ const PoolHistory = () => {
   )
 }
 
-export default PoolHistory
+export default PositionHistory
 
 const Summary = ({ position }) => {
   const columns = position.exit ? closedPoolColumns : activePoolColumns

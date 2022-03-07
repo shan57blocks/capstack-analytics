@@ -9,7 +9,7 @@ import {
   getPrincipalRow,
 } from 'src/utils/tableUtil'
 
-const PoolClosed = ({ positionInfo }) => {
+const PositionsClosed = ({ positionInfo }) => {
   const { protocol, positions } = positionInfo
   const history = useHistory()
 
@@ -27,7 +27,7 @@ const PoolClosed = ({ positionInfo }) => {
   )
 }
 
-export default PoolClosed
+export default PositionsClosed
 
 const getColumns = (history) => [
   getPoolNameRow(history),

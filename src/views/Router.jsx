@@ -2,17 +2,17 @@ import React from 'react'
 import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
-import Defi from './defi'
-import PoolHistory from './poolHistory'
+import Position from './position'
+import PositionHistory from './positionHistory'
 
 export const routes = [
   {
     path: '/defi',
-    comp: Defi,
+    comp: Position,
   },
   {
     path: '/defi/pool/:id',
-    comp: PoolHistory,
+    comp: PositionHistory,
   },
 ]
 
