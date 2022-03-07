@@ -1,27 +1,21 @@
 import React from 'react'
 import { formatTime } from './common'
 
-const symbolMap = {
-  '0x50b7545627a5162f82a992c33b87adc75187b218': 'WBTC.e',
-  '0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7': 'WAVAX',
-  '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab': 'WETH.e',
-  '0xc7198437980c041c805a1edcba50c1ce5db95118': 'USDT.e',
-  '0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664': 'USDC.e',
-  '0x6e84a6216ea6dacc71ee8e6b0a5b7322eebc0fdd': 'JOE',
-}
-
 export const getDateRow = () => ({
   title: 'Date',
   dataIndex: 'timestamp',
   render: (timestamp) => <div>{formatTime(timestamp)}</div>,
 })
 
-export const getPoolNameRow = (history) => ({
-  title: 'Pool',
-  dataIndex: 'pool',
-  render: (pool) => (
-    <a onClick={() => history.push(`/defi/pool/${pool.id}`)}>{pool.name}</a>
-  ),
+export const getPositionNameRow = (history) => ({
+  title: 'Position',
+  render: (position) => {
+    return (
+      <a onClick={() => history.push(`/defi/position/${position.id}`)}>
+        <span>{position.tokens.map((token) => token.symbol).join('/')}</span>
+      </a>
+    )
+  },
 })
 
 export const getApyRow = (title, field) => ({
@@ -32,10 +26,9 @@ export const getApyRow = (title, field) => ({
       <div>
         {field === 'rewardInfo' &&
           apy.rewards.map((reward) => {
-            const symbol = symbolMap[reward.address.toLowerCase()]
             return (
-              <div key={reward.address}>
-                {reward.balance.toFixed(3)} {symbol}
+              <div key={reward.symbol}>
+                {reward.balance.toFixed(3)} {reward.symbol}
               </div>
             )
           })}
@@ -55,10 +48,9 @@ export const getClosedApyRow = (title, field) => ({
           position.exit
             .filter((token) => token.type === 'rewards')
             .map((reward) => {
-              const symbol = symbolMap[reward.address.toLowerCase()]
               return (
-                <div key={reward.address}>
-                  {reward.balance.toFixed(3)} {symbol}
+                <div key={reward.symbol}>
+                  {reward.balance.toFixed(3)} {reward.symbol}
                 </div>
               )
             })}
@@ -71,57 +63,57 @@ export const getClosedApyRow = (title, field) => ({
 
 export const getPrincipalRow = () => ({
   title: 'Principal',
-  dataIndex: 'principals',
-  render: (principals) => (
-    <div>
-      {principals.map((principal) => {
-        const symbol = symbolMap[principal.address.toLowerCase()]
-        return (
-          <div key={symbol}>
-            {principal.balance.toFixed(3)} {symbol}
-          </div>
-        )
-      })}
-    </div>
-  ),
+  render: (position) => {
+    const { principals, tokens } = position
+    return (
+      <div>
+        {principals.map((principal, index) => {
+          return (
+            <div key={index}>
+              {principal.balance.toFixed(3)} {tokens[index].symbol}
+            </div>
+          )
+        })}
+      </div>
+    )
+  },
 })
 
 export const getStartPositionRow = () => ({
   title: 'Start Position',
-  render: (_, position) => (
-    <div>
-      <>
-        {position.assets.map((asset, index) => {
-          const { borrows } = position
-          const symbol = symbolMap[asset.address.toLowerCase()]
+  render: (position) => {
+    return (
+      <div>
+        {position.startAssets.map((asset, index) => {
+          const { borrows, tokens } = position
           return (
-            <div key={symbol}>
-              {asset.balance.toFixed(3)} {asset.symbol} (
+            <div key={index}>
+              {asset.balance.toFixed(3)} {tokens[index].symbol} (
               {borrows[index].balance.toFixed(3)} Borrow)
             </div>
           )
         })}
-      </>
-      <div>
-        Leverage: {position.leverage.toFixed(1)}X (
-        {formatTime(Number(position.openDate))})
+        <div>
+          Leverage: {position.leverage.toFixed(1)}X (
+          {formatTime(Number(position.openDate))})
+        </div>
       </div>
-    </div>
-  ),
+    )
+  },
 })
 
 export const getCurrentPositionRow = (showTime = true) => ({
   title: 'Current Position',
-  render: (_, position) => {
+  render: (position) => {
     const { assets, borrows, timestamp } = position.currentHistory || position
+    const { tokens } = position
     return (
       <div>
         <>
           {assets.map((asset, index) => {
-            const symbol = symbolMap[asset.address.toLowerCase()]
             return (
-              <div key={symbol}>
-                {asset.balance.toFixed(3)} {symbol} (
+              <div key={index}>
+                {asset.balance.toFixed(3)} {tokens[index].symbol} (
                 {borrows[index].balance.toFixed(3)} Borrow)
               </div>
             )
@@ -135,14 +127,13 @@ export const getCurrentPositionRow = (showTime = true) => ({
 
 export const getCurrentValueRow = () => ({
   title: 'Current Value',
-  render: (_, position) => {
+  render: (position) => {
     const { assets } = position.currentHistory
     return (
       <div>
-        {assets.map((asset) => {
-          const symbol = symbolMap[asset.address.toLowerCase()]
+        {assets.map((asset, index) => {
           return (
-            <div key={symbol}>${(asset.balance * asset.price).toFixed(3)}</div>
+            <div key={index}>${(asset.balance * asset.price).toFixed(3)}</div>
           )
         })}
       </div>
@@ -152,14 +143,13 @@ export const getCurrentValueRow = () => ({
 
 export const getValueRow = () => ({
   title: 'Value',
-  render: (_, position) => {
+  render: (position) => {
     const { assets } = position
     return (
       <div>
-        {assets.map((asset) => {
-          const symbol = symbolMap[asset.address.toLowerCase()]
+        {assets.map((asset, index) => {
           return (
-            <div key={symbol}>${(asset.balance * asset.price).toFixed(3)}</div>
+            <div key={index}>${(asset.balance * asset.price).toFixed(3)}</div>
           )
         })}
       </div>
@@ -169,12 +159,12 @@ export const getValueRow = () => ({
 
 export const getBorrowRow = () => ({
   title: 'Borrow',
-  render: (_, history) => {
-    const { borrows } = history
+  render: (position) => {
+    const { borrows, tokens } = position
     return (
       <div>
-        {borrows.map((borrow) => {
-          const symbol = symbolMap[borrow.address.toLowerCase()]
+        {borrows.map((borrow, index) => {
+          const { symbol } = tokens[index]
           return (
             <div key={symbol}>
               {borrow.balance.toFixed(3)} {symbol}
@@ -188,18 +178,18 @@ export const getBorrowRow = () => ({
 
 export const getExitRow = () => ({
   title: 'Exit Position',
-  render: (_, position) => (
+  render: (position) => (
     <div>
-      <>
-        {position.exitTokens.map((token) => {
-          const symbol = symbolMap[token.address.toLowerCase()]
-          return (
-            <div key={symbol}>
-              {token.balance.toFixed(3)} {symbol}
-            </div>
-          )
-        })}
-      </>
+      {position.exitTokens.map((token, index) => {
+        const { symbol } = position.tokens[index]
+
+        return (
+          <div key={symbol}>
+            {token.balance.toFixed(3)} {symbol}
+          </div>
+        )
+      })}
+
       <div>{formatTime(Number(position.closeDate), 'MM/DD/YYYY HH:mm')}</div>
     </div>
   ),
@@ -207,12 +197,12 @@ export const getExitRow = () => ({
 
 export const getExitValueRow = () => ({
   title: 'Exit Value',
-  render: (_, position) => {
+  render: (position) => {
     const { exitTokens } = position
     return (
       <div>
-        {exitTokens.map((token) => {
-          const symbol = symbolMap[token.address.toLowerCase()]
+        {exitTokens.map((token, index) => {
+          const { symbol } = position.tokens[index]
           return (
             <div key={symbol}>${(token.balance * token.price).toFixed(3)}</div>
           )

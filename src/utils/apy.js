@@ -137,8 +137,21 @@ export const mapPosition = (position) => {
   if (position.closed) {
     position = calCloseApy(position)
   }
-  position.histories = position.histories.map((history) => {
-    return calApy(position, history)
-  })
+  position.histories = position.histories
+    .map((history) => {
+      return calApy(position, history)
+    })
+    .sort(sortTimestamp)
+  position.currentHistory = position.histories[0]
   return position
+}
+
+const sortTimestamp = (a, b) => {
+  if (a.timestamp < b.timestamp) {
+    return 1
+  }
+  if (a.timestamp > b.timestamp) {
+    return -1
+  }
+  return 0
 }

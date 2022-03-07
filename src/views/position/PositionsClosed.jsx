@@ -5,13 +5,13 @@ import {
   getClosedApyRow,
   getExitRow,
   getExitValueRow,
-  getPoolNameRow,
+  getPositionNameRow,
   getPrincipalRow,
 } from 'src/utils/tableUtil'
 
-const PositionsClosed = ({ positionInfo }) => {
-  const { protocol, positions } = positionInfo
+const PositionsClosed = ({ protocolPosition }) => {
   const history = useHistory()
+  const { protocol, positions } = protocolPosition
 
   return (
     <div className="position-pool">
@@ -30,7 +30,7 @@ const PositionsClosed = ({ positionInfo }) => {
 export default PositionsClosed
 
 const getColumns = (history) => [
-  getPoolNameRow(history),
+  getPositionNameRow(history),
   getPrincipalRow(),
   getExitRow(),
   getExitValueRow(),

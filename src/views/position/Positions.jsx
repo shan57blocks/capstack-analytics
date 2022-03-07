@@ -5,14 +5,14 @@ import {
   getApyRow,
   getCurrentPositionRow,
   getCurrentValueRow,
-  getPoolNameRow,
+  getPositionNameRow,
   getPrincipalRow,
   getStartPositionRow,
 } from 'src/utils/tableUtil'
 
-const Positions = ({ positionInfo }) => {
-  const { protocol, positions } = positionInfo
+const Positions = ({ protocolPosition }) => {
   const history = useHistory()
+  const { protocol, positions } = protocolPosition
 
   return (
     <div className="position-pool">
@@ -31,7 +31,7 @@ const Positions = ({ positionInfo }) => {
 export default Positions
 
 const getColumns = (history) => [
-  getPoolNameRow(history),
+  getPositionNameRow(history),
   getPrincipalRow(),
   getStartPositionRow(),
   getCurrentPositionRow(),

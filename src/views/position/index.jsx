@@ -11,12 +11,24 @@ const Position = () => {
     (state) => state.app
   )
 
+  if (!protocolPositions && !protocolClosedPositions) {
+    return null
+  }
+
   return (
     <div className="page position">
-      {/* <Positions protocolPositions={protocolPositions}></Positions>
-      <PositionsClosed
-        protocolPositions={protocolClosedPositions}
-      ></PositionsClosed> */}
+      {protocolPositions.map((protocolPosition, index) => (
+        <div key={`position_${index}`}>
+          <Positions protocolPosition={protocolPosition}></Positions>
+        </div>
+      ))}
+      {protocolClosedPositions.map((protocolPosition, index) => (
+        <div key={`closed_position_${index}`}>
+          <PositionsClosed
+            protocolPosition={protocolPosition}
+          ></PositionsClosed>
+        </div>
+      ))}
     </div>
   )
 }
