@@ -1,5 +1,3 @@
-import { equal } from './common'
-
 export const calApy = (startPosition, currentPosition) => {
   const startPrincipals = startPosition.principals
   const startBorrows = startPosition.borrows
