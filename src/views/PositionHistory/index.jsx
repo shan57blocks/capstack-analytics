@@ -19,13 +19,17 @@ import {
 import { usePositionHistory } from './hooks/usePositionHistory'
 
 const PositionHistory = () => {
-  const position = usePositionHistory()
+  const { protocol, position } = usePositionHistory()
 
   if (!position) return null
 
   return (
     <div className="page position-history">
-      <div className="position-name">{position.symbol} (Alpha Homora V2)</div>
+      <div className="position-name">
+        <span>
+          {position.symbol} ({protocol.name})
+        </span>
+      </div>
       <div>
         <div className="position-summary-title">Summary</div>
         <Summary position={position}></Summary>

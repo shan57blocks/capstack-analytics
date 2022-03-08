@@ -16,24 +16,26 @@ export const usePositionHistory = () => {
   }, [dispatch, positionId])
 
   if (!protocolPositions || !histories) {
-    return null
+    return {}
   }
 
+  let clonedProtocol
   let clonedPosition
-  protocolPositions.forEach(({ positions }) => {
+  protocolPositions.forEach(({ protocol, positions }) => {
     const positionIndex = positions.findIndex(
       (position) => position.id === Number(positionId)
     )
     if (positionIndex > -1) {
+      clonedProtocol = deepClone(protocol)
       clonedPosition = deepClone(positions[positionIndex])
     }
   })
 
   if (!clonedPosition) {
     history.push('/')
-    return null
+    return {}
   }
 
   clonedPosition.histories = clonedPosition.histories.concat(histories)
-  return mapPosition(clonedPosition)
+  return { position: mapPosition(clonedPosition), protocol: clonedProtocol }
 }
