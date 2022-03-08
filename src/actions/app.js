@@ -21,7 +21,7 @@ export const getProtocolPositions = createAction(
 )
 
 export const getPositionHistory = createAction(GET_POSITION_HISTORY, (id) =>
-  api.get(`/strategy/positions/${id}`)
+  api.get(`/strategy/positions/${id}/histories`)
 )
 
 export const selectAccount = createAction(

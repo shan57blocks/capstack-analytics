@@ -1,10 +1,7 @@
 import './index.less'
 
 import { Table } from 'antd'
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
-import * as appAction from 'src/actions/app'
+import React from 'react'
 import {
   getApyRow,
   getBorrowRow,
@@ -19,14 +16,10 @@ import {
   getValueRow,
 } from 'src/utils/tableUtil'
 
-const PositionHistory = () => {
-  const dispatch = useDispatch()
-  const { id: positionId } = useParams()
-  const { position } = useSelector((state) => state.app)
+import { usePositionHistory } from './hooks/usePositionHistory'
 
-  useEffect(() => {
-    dispatch(appAction.getPositionHistory(positionId))
-  }, [dispatch, positionId])
+const PositionHistory = () => {
+  const position = usePositionHistory()
 
   if (!position) return null
 

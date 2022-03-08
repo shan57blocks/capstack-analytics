@@ -4,20 +4,17 @@ import React from 'react'
 
 import Positions from './Positions'
 import PositionsClosed from './PositionsClosed'
-import { useSelector } from 'react-redux'
+import { usePosition } from './hooks/usePosition'
 
 const Position = () => {
-  const { protocolPositions, protocolClosedPositions } = useSelector(
-    (state) => state.app
-  )
-
-  if (!protocolPositions && !protocolClosedPositions) {
+  const { protocolOpenedPositions, protocolClosedPositions } = usePosition()
+  if (!protocolOpenedPositions && !protocolClosedPositions) {
     return null
   }
 
   return (
     <div className="page position">
-      {protocolPositions.map((protocolPosition, index) => (
+      {protocolOpenedPositions.map((protocolPosition, index) => (
         <div key={`position_${index}`}>
           <Positions protocolPosition={protocolPosition}></Positions>
         </div>

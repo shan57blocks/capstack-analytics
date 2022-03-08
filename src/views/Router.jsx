@@ -3,16 +3,16 @@ import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
 import Position from './position'
-import PositionHistory from './positionHistory'
+import PositionHistory from './PositionHistory'
 
 export const routes = [
   {
-    path: '/positions/:id',
-    comp: PositionHistory,
-  },
-  {
     path: '/positions',
     comp: Position,
+  },
+  {
+    path: '/positions/:id',
+    comp: PositionHistory,
   },
 ]
 
