@@ -91,23 +91,17 @@ export const calApy = (startPosition, currentPosition) => {
 }
 
 export const calCloseApy = (position) => {
-  const { principals, exit, openDate, closeDate } = position
-  const rewards = exit.filter((token) => token.type === 'rewards')
-  const exitTokens = []
-  principals.forEach((principal) => {
-    const exitToken = exit.find((token) =>
-      equal(principal.address, token.address)
-    )
-    exitTokens.push(exitToken)
-  })
+  const { principals, closeAssets, openDate, closeDate } = position
+  const rewards = closeAssets.filter((token) => token.type === 'rewards')
+  const closeTokens = closeAssets.filter((token) => !token.type)
 
   let holdValue = 0
   for (let i = 0; i < principals.length; i++) {
-    holdValue += principals[i].balance * exitTokens[i].price
+    holdValue += principals[i].balance * closeTokens[i].price
   }
-  let exitValue = 0
-  for (let i = 0; i < exitTokens.length; i++) {
-    exitValue += exitTokens[i].balance * exitTokens[i].price
+  let closeValue = 0
+  for (let i = 0; i < closeTokens.length; i++) {
+    closeValue += closeTokens[i].balance * closeTokens[i].price
   }
   let rewardValue = 0
   for (let i = 0; i < rewards.length; i++) {
@@ -116,7 +110,7 @@ export const calCloseApy = (position) => {
 
   const diffInTime = Number(closeDate) - Number(openDate)
   const diffInDays = diffInTime / (3600 * 24)
-  const net = exitValue + rewardValue - holdValue
+  const net = closeValue + rewardValue - holdValue
 
   const get_daily_yearly_apy = (value) => {
     return {
@@ -127,9 +121,9 @@ export const calCloseApy = (position) => {
     }
   }
 
-  position.exitTokens = exitTokens
-  position.exitReward = get_daily_yearly_apy(rewardValue)
-  position.exitNet = get_daily_yearly_apy(net)
+  position.closeTokens = closeTokens
+  position.closeReward = get_daily_yearly_apy(rewardValue)
+  position.closeNet = get_daily_yearly_apy(net)
   return position
 }
 

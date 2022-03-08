@@ -9,8 +9,8 @@ import {
   getCurrentPositionRow,
   getCurrentValueRow,
   getDateRow,
-  getExitRow,
-  getExitValueRow,
+  getCloseRow,
+  getCloseValueRow,
   getPrincipalRow,
   getStartPositionRow,
   getValueRow,
@@ -80,8 +80,8 @@ const activePositionColumns = [
 
 const closedPositionColumns = [
   getPrincipalRow(),
-  getExitRow(),
-  getExitValueRow(),
-  getClosedApyRow('Rewards', 'exitReward'),
-  getClosedApyRow('Net', 'exitNet'),
+  getCloseRow(),
+  getCloseValueRow(),
+  getClosedApyRow('Rewards', 'closeReward'),
+  getClosedApyRow('Net', 'closeNet'),
 ]

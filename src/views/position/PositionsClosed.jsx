@@ -3,8 +3,8 @@ import React from 'react'
 import { useHistory } from 'react-router'
 import {
   getClosedApyRow,
-  getExitRow,
-  getExitValueRow,
+  getCloseRow,
+  getCloseValueRow,
   getPositionNameRow,
   getPrincipalRow,
 } from 'src/utils/tableUtil'
@@ -32,8 +32,8 @@ export default PositionsClosed
 const getColumns = (history) => [
   getPositionNameRow(history),
   getPrincipalRow(),
-  getExitRow(),
-  getExitValueRow(),
-  getClosedApyRow('Rewards', 'exitReward'),
-  getClosedApyRow('Net', 'exitNet'),
+  getCloseRow(),
+  getCloseValueRow(),
+  getClosedApyRow('Rewards', 'closeReward'),
+  getClosedApyRow('Net', 'closeNet'),
 ]

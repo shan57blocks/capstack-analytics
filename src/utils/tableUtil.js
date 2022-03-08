@@ -44,8 +44,8 @@ export const getClosedApyRow = (title, field) => ({
   render: (_, position) => {
     return (
       <div>
-        {field === 'exitReward' &&
-          position.exit
+        {field === 'closeReward' &&
+          position.closeAssets
             .filter((token) => token.type === 'rewards')
             .map((reward) => {
               return (
@@ -176,11 +176,11 @@ export const getBorrowRow = () => ({
   },
 })
 
-export const getExitRow = () => ({
-  title: 'Exit Position',
+export const getCloseRow = () => ({
+  title: 'Close Position',
   render: (position) => (
     <div>
-      {position.exitTokens.map((token, index) => {
+      {position.closeTokens.map((token, index) => {
         const { symbol } = position.tokens[index]
 
         return (
@@ -195,13 +195,13 @@ export const getExitRow = () => ({
   ),
 })
 
-export const getExitValueRow = () => ({
-  title: 'Exit Value',
+export const getCloseValueRow = () => ({
+  title: 'Close Value',
   render: (position) => {
-    const { exitTokens } = position
+    const { closeTokens } = position
     return (
       <div>
-        {exitTokens.map((token, index) => {
+        {closeTokens.map((token, index) => {
           const { symbol } = position.tokens[index]
           return (
             <div key={symbol}>${(token.balance * token.price).toFixed(3)}</div>
