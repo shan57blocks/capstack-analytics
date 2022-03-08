@@ -3,7 +3,7 @@ import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
 import Position from './position'
-import PositionHistory from './positionHistorys'
+import PositionHistory from './PositionHistory'
 
 export const routes = [
   {
