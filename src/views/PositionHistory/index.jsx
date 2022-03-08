@@ -59,7 +59,6 @@ const Summary = ({ position }) => {
 const columns = [
   getDateRow(),
   getCurrentPositionRow(false),
-  getBorrowRow(),
   getValueRow(),
   getApyRow('Interest', 'interest'),
   getApyRow('Fee', 'fee'),
