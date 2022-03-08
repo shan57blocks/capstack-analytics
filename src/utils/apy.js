@@ -134,11 +134,13 @@ export const calCloseApy = (position) => {
 }
 
 export const mapPosition = (position) => {
+  position.symbol = position.tokens.map((token) => token.symbol).join('/')
   if (position.closed) {
     position = calCloseApy(position)
   }
   position.histories = position.histories
     .map((history) => {
+      history.tokens = position.tokens
       return calApy(position, history)
     })
     .sort(sortTimestamp)

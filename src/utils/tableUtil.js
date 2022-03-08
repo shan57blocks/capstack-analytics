@@ -11,8 +11,8 @@ export const getPositionNameRow = (history) => ({
   title: 'Position',
   render: (position) => {
     return (
-      <a onClick={() => history.push(`/defi/position/${position.id}`)}>
-        <span>{position.tokens.map((token) => token.symbol).join('/')}</span>
+      <a onClick={() => history.push(`/positions/${position.id}`)}>
+        <span>{position.symbol}</span>
       </a>
     )
   },

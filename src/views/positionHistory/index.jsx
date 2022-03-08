@@ -1,6 +1,10 @@
+import './index.less'
+
 import { Table } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
+import * as appAction from 'src/actions/app'
 import {
   getApyRow,
   getBorrowRow,
@@ -16,55 +20,23 @@ import {
 } from 'src/utils/tableUtil'
 
 const PositionHistory = () => {
-  const positions = null
-  const position = null
-  // const { id: poolId } = useParams()
-  // const { positions } = usePositions()
-  // const position = positions?.find(
-  //   (position) => position.poolId === Number(poolId)
-  // )
+  const dispatch = useDispatch()
+  const { id: positionId } = useParams()
+  const { position } = useSelector((state) => state.app)
 
-  const columns = [
-    getDateRow(),
-    getCurrentPositionRow(false),
-    getBorrowRow(),
-    getValueRow(),
-    getApyRow('Interest', 'interest'),
-    getApyRow('Fee', 'fee'),
-    getApyRow('IL', 'IL'),
-    getApyRow('Rewards', 'rewardInfo'),
-    getApyRow('Net without IL', 'netWithoutIL'),
-    getApyRow('Net', 'net'),
-  ]
+  useEffect(() => {
+    dispatch(appAction.getPositionHistory(positionId))
+  }, [dispatch, positionId])
 
-  if (!positions) return null
+  if (!position) return null
 
   return (
-    <div className="page">
-      <div style={{ fontSize: 20, marginBottom: 10 }}>
-        {position?.pool.name} (Alpha Homora V2)
-      </div>
+    <div className="page position-history">
+      <div className="position-name">{position.symbol} (Alpha Homora V2)</div>
       <div>
-        <div
-          style={{
-            fontSize: 16,
-            marginBottom: 10,
-            fontWeight: 'bold',
-          }}
-        >
-          Summary
-        </div>
+        <div className="position-summary-title">Summary</div>
         <Summary position={position}></Summary>
-        <div
-          style={{
-            fontSize: 16,
-            marginTop: 20,
-            marginBottom: 10,
-            fontWeight: 'bold',
-          }}
-        >
-          History
-        </div>
+        <div className="position-history-title">History</div>
         <Table columns={columns} dataSource={position.histories} size="small" />
       </div>
     </div>
@@ -74,7 +46,9 @@ const PositionHistory = () => {
 export default PositionHistory
 
 const Summary = ({ position }) => {
-  const columns = position.exit ? closedPoolColumns : activePoolColumns
+  const columns = position.closed
+    ? closedPositionColumns
+    : activePositionColumns
   return (
     <Table
       columns={columns}
@@ -85,7 +59,20 @@ const Summary = ({ position }) => {
   )
 }
 
-const activePoolColumns = [
+const columns = [
+  getDateRow(),
+  getCurrentPositionRow(false),
+  getBorrowRow(),
+  getValueRow(),
+  getApyRow('Interest', 'interest'),
+  getApyRow('Fee', 'fee'),
+  getApyRow('IL', 'IL'),
+  getApyRow('Rewards', 'rewardInfo'),
+  getApyRow('Net without IL', 'netWithoutIL'),
+  getApyRow('Net', 'net'),
+]
+
+const activePositionColumns = [
   getPrincipalRow(),
   getStartPositionRow(),
   getCurrentPositionRow(),
@@ -98,7 +85,7 @@ const activePoolColumns = [
   getApyRow('Net', 'net'),
 ]
 
-const closedPoolColumns = [
+const closedPositionColumns = [
   getPrincipalRow(),
   getExitRow(),
   getExitValueRow(),

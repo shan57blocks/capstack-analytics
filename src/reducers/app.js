@@ -5,7 +5,7 @@ import {
   APP_CLOSE_LOADING,
   SELECT_ACCOUNT,
   GET_PROTOCOL_POSITIONS,
-  GET_CURRENT_POSITIONS,
+  GET_POSITION_HISTORY,
 } from 'src/actions/app'
 import { mapPosition } from 'src/utils/apy'
 
@@ -18,6 +18,7 @@ const initState = {
   selectedAccount: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
   protocolPositions: null,
   protocolClosedPositions: null,
+  position: null,
 }
 
 const app = handleActions(
@@ -66,10 +67,10 @@ const app = handleActions(
         protocolClosedPositions: protocolClosedPositions,
       }
     },
-    [GET_CURRENT_POSITIONS]: (state, { payload }) => {
+    [GET_POSITION_HISTORY]: (state, { payload }) => {
       return {
         ...state,
-        currentPositions: payload,
+        position: mapPosition(payload),
       }
     },
     [SELECT_ACCOUNT]: (state, { payload }) => {

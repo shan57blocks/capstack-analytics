@@ -7,12 +7,12 @@ import PositionHistory from './positionHistory'
 
 export const routes = [
   {
-    path: '/defi',
-    comp: Position,
+    path: '/positions/:id',
+    comp: PositionHistory,
   },
   {
-    path: '/defi/pool/:id',
-    comp: PositionHistory,
+    path: '/positions',
+    comp: Position,
   },
 ]
 
@@ -24,7 +24,7 @@ const Router = () => (
     })}
     <Redirect
       to={{
-        pathname: '/defi',
+        pathname: '/positions',
       }}
     />
   </Switch>
