@@ -2,6 +2,7 @@ import React from 'react'
 import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
+import Login from './Login'
 import Position from './position'
 import PositionHistory from './PositionHistory'
 
@@ -14,6 +15,7 @@ export const routes = [
     path: '/positions/:id',
     comp: PositionHistory,
   },
+  { path: '/login', comp: Login },
 ]
 
 const Router = () => (

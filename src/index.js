@@ -1,7 +1,7 @@
 import 'antd/dist/antd.css'
 
 import { ConfigProvider } from 'antd'
-import zhCN from 'antd/es/locale/zh_CN'
+import enUS from 'antd/es/locale/en_US'
 import { ConnectedRouter } from 'connected-react-router'
 import { createHashHistory } from 'history'
 import React from 'react'
@@ -15,7 +15,7 @@ const history = createHashHistory()
 const store = configStore(history)
 
 ReactDOM.render(
-  <ConfigProvider locale={zhCN}>
+  <ConfigProvider locale={enUS}>
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <App />
