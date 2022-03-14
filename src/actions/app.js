@@ -17,7 +17,7 @@ export const closeLoadingBar = createAction(APP_CLOSE_LOADING)
 
 export const getProtocolPositions = createAction(
   GET_PROTOCOL_POSITIONS,
-  (account) => api.get(`/strategy/positions?wallet=${account}`)
+  (account) => api.get(`/strategy/positions?account=${account}`)
 )
 
 export const getPositionHistory = createAction(GET_POSITION_HISTORY, (id) =>
