@@ -36,7 +36,7 @@ const app = handleActions(
     [GET_PROTOCOL_POSITIONS]: (state, { payload }) => {
       return {
         ...state,
-        protocolPositions: payload,
+        protocolPositions: fillBorrows(payload),
       }
     },
     [GET_POSITION_HISTORY]: (state, { payload }) => {
@@ -57,3 +57,28 @@ const app = handleActions(
 )
 
 export default app
+
+const fillBorrows = (protocolPositions) => {
+  const result = protocolPositions.map((protocolPosition) => {
+    protocolPosition.positions = protocolPosition.positions.map((position) => {
+      position.histories = position.histories.map((history) => {
+        if (!history.borrows) {
+          history.borrows = genBorrows(history.assets.length)
+        }
+        return history
+      })
+      return position
+    })
+    return protocolPosition
+  })
+  console.log(result)
+  return result
+}
+
+const genBorrows = (length) => {
+  const result = []
+  for (let i = 0; i < length; i++) {
+    result.push({ balance: 0 })
+  }
+  return result
+}
