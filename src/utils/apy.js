@@ -3,23 +3,27 @@ export const calApy = (startPosition, currentPosition) => {
   const startBorrows = startPosition.borrows
   const startAssets = startPosition.startAssets
 
-  const calculatedValue0 =
-    Math.sqrt(
-      (startAssets[0].balance *
-        startAssets[1].balance *
-        currentPosition.assets[1].price) /
-        currentPosition.assets[0].price
-    ) * currentPosition.assets[0].price
-  const calculatedValue1 =
-    Math.sqrt(
-      (startAssets[0].balance *
-        startAssets[1].balance *
-        currentPosition.assets[0].price) /
-        currentPosition.assets[1].price
-    ) * currentPosition.assets[1].price
   const calculatedValues = {
-    0: calculatedValue0,
-    1: calculatedValue1,
+    0: null,
+    1: null,
+  }
+  if (startAssets.length === 2) {
+    const calculatedValue0 =
+      Math.sqrt(
+        (startAssets[0].balance *
+          startAssets[1].balance *
+          currentPosition.assets[1].price) /
+          currentPosition.assets[0].price
+      ) * currentPosition.assets[0].price
+    const calculatedValue1 =
+      Math.sqrt(
+        (startAssets[0].balance *
+          startAssets[1].balance *
+          currentPosition.assets[0].price) /
+          currentPosition.assets[1].price
+      ) * currentPosition.assets[1].price
+    calculatedValues['0'] = calculatedValue0
+    calculatedValues['1'] = calculatedValue1
   }
 
   const result = currentPosition.assets.map((currentAsset, index) => {
@@ -32,7 +36,9 @@ export const calApy = (startPosition, currentPosition) => {
     const currentPrincipal = currentAsset.balance - currentBorrow.balance
     const startValue = startAsset.balance * currentPrice
     const currentNetInvestment = currentPrincipal * currentPrice
-    const currentIL = calculatedValues[index] - startValue
+    const currentIL = calculatedValues[index]
+      ? calculatedValues[index] - startValue
+      : 0
     const currentHoldValue = startPrincipal.balance * currentPrice
     const current_IL_fee_interest = currentNetInvestment - currentHoldValue
     const currentInterestBalance = currentBorrow.balance - startBorrow.balance
