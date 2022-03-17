@@ -22,6 +22,8 @@ const PositionHistory = () => {
 
   if (!position) return null
 
+  const historiesExcludeCurrent = position.histories.slice(1)
+
   return (
     <div className="page position-history">
       <div className="position-name">
@@ -33,7 +35,11 @@ const PositionHistory = () => {
         <div className="position-summary-title">Summary</div>
         <Summary position={position}></Summary>
         <div className="position-history-title">History</div>
-        <Table columns={columns} dataSource={position.histories} size="small" />
+        <Table
+          columns={columns}
+          dataSource={historiesExcludeCurrent}
+          size="small"
+        />
       </div>
     </div>
   )

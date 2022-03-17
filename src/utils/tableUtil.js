@@ -1,4 +1,5 @@
 import React from 'react'
+import CapTooltip from 'src/components/CapTooltip'
 import { formatTime } from './common'
 
 export const getDateRow = () => ({
@@ -28,11 +29,17 @@ export const getApyRow = (title, field) => ({
           apy.rewards.map((reward) => {
             return (
               <div key={reward.symbol}>
-                {reward.balance.toFixed(3)} {reward.symbol}
+                <CapTooltip title={reward.balance}>
+                  {reward.balance.toFixed(3)} {reward.symbol}
+                </CapTooltip>
               </div>
             )
           })}
-        <div>${apy[field].yearToDate.toFixed(3)}</div>
+        <div>
+          <CapTooltip title={apy[field].yearToDate}>
+            ${apy[field].yearToDate.toFixed(3)}
+          </CapTooltip>
+        </div>
         <div>APY: {(apy[field].apy * 100).toFixed(2)}%</div>
       </div>
     )
@@ -50,11 +57,17 @@ export const getClosedApyRow = (title, field) => ({
             .map((reward) => {
               return (
                 <div key={reward.symbol}>
-                  {reward.balance.toFixed(3)} {reward.symbol}
+                  <CapTooltip title={reward.balance}>
+                    {reward.balance.toFixed(3)} {reward.symbol}
+                  </CapTooltip>
                 </div>
               )
             })}
-        <div>${position[field].yearToDate.toFixed(3)}</div>
+        <div>
+          <CapTooltip title={position[field].yearToDate}>
+            ${position[field].yearToDate.toFixed(3)}
+          </CapTooltip>
+        </div>
         <div>APY: {(position[field].apy * 100).toFixed(2)}%</div>
       </div>
     )
@@ -70,7 +83,9 @@ export const getPrincipalRow = () => ({
         {principals.map((principal, index) => {
           return (
             <div key={index}>
-              {principal.balance.toFixed(3)} {tokens[index].symbol}
+              <CapTooltip title={principal.balance}>
+                {principal.balance.toFixed(3)} {tokens[index].symbol}
+              </CapTooltip>
             </div>
           )
         })}
@@ -88,8 +103,12 @@ export const getStartPositionRow = () => ({
           const { borrows, tokens } = position
           return (
             <div key={index}>
-              {asset.balance.toFixed(3)} {tokens[index].symbol} (
-              {borrows[index].balance.toFixed(3)} Borrow)
+              <CapTooltip title={asset.balance}>
+                {asset.balance.toFixed(3)} {tokens[index].symbol}
+              </CapTooltip>
+              <CapTooltip title={borrows[index].balance}>
+                ({borrows[index].balance.toFixed(3)} Borrow)
+              </CapTooltip>
             </div>
           )
         })}
@@ -113,8 +132,12 @@ export const getCurrentPositionRow = (showTime = true) => ({
           {assets.map((asset, index) => {
             return (
               <div key={index}>
-                {asset.balance.toFixed(3)} {tokens[index].symbol} (
-                {borrows[index].balance.toFixed(3)} Borrow)
+                <CapTooltip title={asset.balance}>
+                  {asset.balance.toFixed(3)} {tokens[index].symbol}
+                </CapTooltip>
+                <CapTooltip title={borrows[index].balance}>
+                  ({borrows[index].balance.toFixed(3)} Borrow)
+                </CapTooltip>
               </div>
             )
           })}
@@ -133,7 +156,11 @@ export const getCurrentValueRow = () => ({
       <div>
         {assets.map((asset, index) => {
           return (
-            <div key={index}>${(asset.balance * asset.price).toFixed(3)}</div>
+            <div key={index}>
+              <CapTooltip title={asset.balance * asset.price}>
+                ${(asset.balance * asset.price).toFixed(3)}
+              </CapTooltip>
+            </div>
           )
         })}
       </div>
@@ -149,7 +176,11 @@ export const getValueRow = () => ({
       <div>
         {assets.map((asset, index) => {
           return (
-            <div key={index}>${(asset.balance * asset.price).toFixed(3)}</div>
+            <div key={index}>
+              <CapTooltip title={asset.balance * asset.price}>
+                ${(asset.balance * asset.price).toFixed(3)}
+              </CapTooltip>
+            </div>
           )
         })}
       </div>
@@ -167,7 +198,9 @@ export const getBorrowRow = () => ({
           const { symbol } = tokens[index]
           return (
             <div key={symbol}>
-              {borrow.balance.toFixed(3)} {symbol}
+              <CapTooltip title={borrow.balance}>
+                {borrow.balance.toFixed(3)} {symbol}
+              </CapTooltip>
             </div>
           )
         })}
@@ -185,7 +218,9 @@ export const getCloseRow = () => ({
 
         return (
           <div key={symbol}>
-            {token.balance.toFixed(3)} {symbol}
+            <CapTooltip title={token.balance}>
+              {token.balance.toFixed(3)} {symbol}
+            </CapTooltip>
           </div>
         )
       })}
@@ -204,7 +239,11 @@ export const getCloseValueRow = () => ({
         {closeTokens.map((token, index) => {
           const { symbol } = position.tokens[index]
           return (
-            <div key={symbol}>${(token.balance * token.price).toFixed(3)}</div>
+            <div key={symbol}>
+              <CapTooltip title={token.balance * token.price}>
+                ${(token.balance * token.price).toFixed(3)}
+              </CapTooltip>
+            </div>
           )
         })}
       </div>
