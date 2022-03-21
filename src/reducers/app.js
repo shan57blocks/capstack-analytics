@@ -65,6 +65,9 @@ const fillBorrows = (protocolPositions) => {
         if (!history.borrows) {
           history.borrows = genBorrows(history.assets.length)
         }
+        if (!history.rewards) {
+          history.rewards = []
+        }
         return history
       })
       return position
