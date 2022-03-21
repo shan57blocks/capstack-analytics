@@ -8,6 +8,7 @@ export const GET_PROTOCOLS = 'GET_PROTOCOLS'
 export const GET_POOLS = 'GET_POOLS'
 export const GET_POSITION_HISTORY = 'GET_POSITION_HISTORY'
 export const GET_PROTOCOL_POSITIONS = 'GET_POSITIONS'
+export const GET_PROTOCOL_POSITIONS_V2 = 'GET_POSITIONS_V2'
 
 export const SELECT_ACCOUNT = 'SELECT_ACCOUNT'
 
@@ -18,6 +19,11 @@ export const closeLoadingBar = createAction(APP_CLOSE_LOADING)
 export const getProtocolPositions = createAction(
   GET_PROTOCOL_POSITIONS,
   (account) => api.get(`/strategy/positions?account=${account}`)
+)
+
+export const getProtocolPositionsV2 = createAction(
+  GET_PROTOCOL_POSITIONS_V2,
+  (protocol) => api.get(`/strategy/positions/protocol/${protocol}`)
 )
 
 export const getPositionHistory = createAction(GET_POSITION_HISTORY, (id) =>

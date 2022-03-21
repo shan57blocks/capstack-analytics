@@ -12,11 +12,13 @@ import Router from '../Router'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { loading, selectedAccount } = useSelector((state) => state.app)
+  const { loading, protocols } = useSelector((state) => state.app)
 
   useEffect(() => {
-    dispatch(appAction.getProtocolPositions(selectedAccount))
-  }, [dispatch, selectedAccount])
+    protocols.forEach((protocol) => {
+      dispatch(appAction.getProtocolPositionsV2(protocol))
+    })
+  }, [dispatch, protocols])
 
   return (
     <div className={classnames('app')}>

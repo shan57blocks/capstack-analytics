@@ -3,18 +3,20 @@ import { handleActions } from 'redux-actions'
 import {
   APP_SHOW_LOADING,
   APP_CLOSE_LOADING,
-  SELECT_ACCOUNT,
-  GET_PROTOCOL_POSITIONS,
   GET_POSITION_HISTORY,
+  GET_PROTOCOL_POSITIONS_V2,
 } from 'src/actions/app'
+import { deepClone } from 'src/utils/common'
 
 const initState = {
   loading: false,
-  accounts: [
-    { id: 1, address: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c' },
-    { id: 2, address: '0x7c43375fc06ded6169db079a3f5f9b75fa0cec1d' },
+  protocols: [
+    'alpha-finance',
+    'alpaca-finance',
+    'badger-dao',
+    'tokemak',
+    'joe',
   ],
-  selectedAccount: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
   protocolPositions: null,
   histories: null,
 }
@@ -33,23 +35,20 @@ const app = handleActions(
         loading: false,
       }
     },
-    [GET_PROTOCOL_POSITIONS]: (state, { payload }) => {
+    [GET_PROTOCOL_POSITIONS_V2]: (state, { payload }) => {
+      const newProtocolPositions = state.protocolPositions
+        ? deepClone(state.protocolPositions)
+        : []
+      newProtocolPositions.push(payload)
       return {
         ...state,
-        protocolPositions: fillBorrows(payload),
+        protocolPositions: fillBorrows(newProtocolPositions),
       }
     },
     [GET_POSITION_HISTORY]: (state, { payload }) => {
       return {
         ...state,
         histories: payload,
-      }
-    },
-    [SELECT_ACCOUNT]: (state, { payload }) => {
-      const account = state.accounts.find((account) => account.id === payload)
-      return {
-        ...state,
-        selectedAccount: account.address,
       }
     },
   },
