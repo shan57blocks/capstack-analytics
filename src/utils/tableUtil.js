@@ -1,3 +1,4 @@
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import React from 'react'
 import CapTooltip from 'src/components/CapTooltip'
 import { formatTime } from './common'
@@ -19,8 +20,20 @@ export const getPositionNameRow = (history) => ({
   },
 })
 
-export const getApyRow = (title, field) => ({
-  title,
+export const getApyRow = (title, field, titleTooltip = false) => ({
+  title: () => (
+    <div>
+      {titleTooltip && (
+        <div style={{}}>
+          <span style={{ marginRight: 3 }}>{title}</span>
+          <CapTooltip title={titleTooltip}>
+            <QuestionCircleOutlined />
+          </CapTooltip>
+        </div>
+      )}
+      {!titleTooltip && <div>{title}</div>}
+    </div>
+  ),
   render: (_, position) => {
     const apy = position.currentHistory || position
     return (
