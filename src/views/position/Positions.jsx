@@ -37,11 +37,7 @@ const getColumns = (history) => [
   getCurrentPositionRow(),
   getCurrentValueRow(),
   getApyRow('Interest', 'interest'),
-  getApyRow(
-    'Fee + Price + Swapping',
-    'fee',
-    'Fee includes price change impact and swapping impact'
-  ),
+  getApyRow('yield + price change + slippage + swapping fees', 'fee'),
   getApyRow('IL', 'IL'),
   getApyRow('Rewards', 'rewardInfo'),
   getApyRow('Net without IL', 'netWithoutIL'),
