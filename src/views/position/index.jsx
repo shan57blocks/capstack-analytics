@@ -1,14 +1,24 @@
 import './index.less'
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as appAction from 'src/actions/app'
 
-import Positions from './Positions'
-import PositionsClosed from './PositionsClosed'
 import { usePosition } from './hooks/usePosition'
+import Positions from './Positions'
 
 const Position = () => {
-  const { protocolOpenedPositions, protocolClosedPositions } = usePosition()
-  if (!protocolOpenedPositions && !protocolClosedPositions) {
+  const dispatch = useDispatch()
+  const { protocols } = useSelector((state) => state.app)
+  const { protocolOpenedPositions } = usePosition()
+
+  useEffect(() => {
+    protocols.forEach((protocol) => {
+      dispatch(appAction.getProtocolPositions(protocol))
+    })
+  }, [dispatch, protocols])
+
+  if (!protocolOpenedPositions) {
     return null
   }
 
@@ -17,13 +27,6 @@ const Position = () => {
       {protocolOpenedPositions.map((protocolPosition, index) => (
         <div key={`position_${index}`}>
           <Positions protocolPosition={protocolPosition}></Positions>
-        </div>
-      ))}
-      {protocolClosedPositions.map((protocolPosition, index) => (
-        <div key={`closed_position_${index}`}>
-          <PositionsClosed
-            protocolPosition={protocolPosition}
-          ></PositionsClosed>
         </div>
       ))}
     </div>

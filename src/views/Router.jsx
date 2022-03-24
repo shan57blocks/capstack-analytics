@@ -5,8 +5,13 @@ import { Route } from 'react-router-dom'
 import Login from './Login'
 import Position from './position'
 import PositionHistory from './PositionHistory'
+import Vaults from './vault'
 
 export const routes = [
+  {
+    path: '/vaults',
+    comp: Vaults,
+  },
   {
     path: '/positions',
     comp: Position,
@@ -26,7 +31,7 @@ const Router = () => (
     })}
     <Redirect
       to={{
-        pathname: '/positions',
+        pathname: '/vaults',
       }}
     />
   </Switch>

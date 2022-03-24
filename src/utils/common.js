@@ -1,5 +1,6 @@
 import { message } from 'antd'
 import moment from 'moment'
+import { BigNumber as BN } from 'bignumber.js'
 
 /**
  * @param {*} value long值型的时间值
@@ -78,4 +79,8 @@ export const copyToClipboard = (clipboardContent) => {
 
 export const equal = (source, target) => {
   return source && target && source.toLowerCase() === target.toLowerCase()
+}
+
+export const scaleDown = (num, decimals) => {
+  return new BN(num).div(`1e${decimals}`).toString()
 }
