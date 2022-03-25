@@ -11,6 +11,7 @@ const Summary = ({ vault }) => {
       columns={getColumns(decimals)}
       dataSource={[vault]}
       pagination={false}
+      rowKey="id"
       bordered
     />
   )

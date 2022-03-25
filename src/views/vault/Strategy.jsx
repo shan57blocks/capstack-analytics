@@ -11,6 +11,7 @@ const Strategy = ({ strategies, vault }) => {
       columns={getColumns(decimals)}
       dataSource={strategies}
       pagination={false}
+      rowKey="id"
       bordered
     />
   )
