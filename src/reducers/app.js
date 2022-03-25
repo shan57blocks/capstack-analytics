@@ -73,7 +73,6 @@ const fillBorrows = (protocolPositions) => {
     })
     return protocolPosition
   })
-  console.log(result)
   return result
 }
 

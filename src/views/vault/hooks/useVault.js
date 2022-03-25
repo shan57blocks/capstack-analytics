@@ -8,8 +8,6 @@ export const useVault = () => {
     (state) => state.vault
   )
 
-  console.log(strategyPositions)
-
   useEffect(() => {
     dispatch(vaultAction.getVaults())
   }, [dispatch])
