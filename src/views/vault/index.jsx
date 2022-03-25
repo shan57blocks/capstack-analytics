@@ -1,18 +1,12 @@
 import './index.less'
 
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import * as appAction from 'src/actions/app'
+import React from 'react'
 
+import { useVault } from './hooks/useVault'
 import Vault from './Vault'
 
 const Vaults = () => {
-  const dispatch = useDispatch()
-  const { vaults } = useSelector((state) => state.app)
-
-  useEffect(() => {
-    dispatch(appAction.getVaults())
-  }, [dispatch])
+  const vaults = useVault()
 
   if (!vaults) {
     return null

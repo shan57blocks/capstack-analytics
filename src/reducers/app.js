@@ -5,7 +5,6 @@ import {
   APP_CLOSE_LOADING,
   GET_POSITION_HISTORY,
   GET_PROTOCOL_POSITIONS,
-  GET_VAULTS,
 } from 'src/actions/app'
 import { deepClone } from 'src/utils/common'
 
@@ -18,7 +17,6 @@ const initState = {
     'tokemak',
     'joe',
   ],
-  vaults: null,
   protocolPositions: null,
   histories: null,
 }
@@ -35,12 +33,6 @@ const app = handleActions(
       return {
         ...state,
         loading: false,
-      }
-    },
-    [GET_VAULTS]: (state, { payload }) => {
-      return {
-        ...state,
-        vaults: payload,
       }
     },
     [GET_PROTOCOL_POSITIONS]: (state, { payload }) => {
