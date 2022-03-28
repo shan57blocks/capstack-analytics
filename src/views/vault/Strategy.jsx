@@ -5,10 +5,9 @@ import React from 'react'
 import { formatTime, scaleDown } from 'src/utils/common'
 
 const Strategy = ({ strategies, vault }) => {
-  const { decimals } = vault.priceToken
   return (
     <Table
-      columns={getColumns(decimals)}
+      columns={columns}
       dataSource={strategies}
       pagination={false}
       rowKey="id"
@@ -19,7 +18,7 @@ const Strategy = ({ strategies, vault }) => {
 
 export default Strategy
 
-const getColumns = (decimals) => [
+const columns = [
   {
     title: 'Name',
     key: 'name',
@@ -41,35 +40,39 @@ const getColumns = (decimals) => [
   },
   {
     title: 'Principals',
-    render: (_, record) => (
-      <span>{scaleDown(record.principals, decimals)}</span>
-    ),
+    key: 'principalsCalculated',
+    dataIndex: 'principalsCalculated',
   },
   {
     title: 'Start Time',
-    render: (_, record) => {
-      const [position] = record.positions
-      return (
-        <span>
-          {position ? formatTime(position.openDate, 'MM/DD/YYYY HH:mm') : ''}
-        </span>
-      )
-    },
+    key: 'startTime',
+    dataIndex: 'startTime',
+    render: (startTime) => (
+      <span>{formatTime(startTime, 'MM/DD/YYYY HH:mm')}</span>
+    ),
   },
   {
     title: 'Current Estimated',
-    render: (_, record) => <span></span>,
+    key: 'currentBalance',
+    dataIndex: 'currentBalance',
   },
   {
     title: 'Current Time',
-    render: (_, record) => <span></span>,
+    key: 'currentTime',
+    dataIndex: 'currentTime',
+    render: (currentTime) => (
+      <span>{formatTime(currentTime, 'MM/DD/YYYY HH:mm')}</span>
+    ),
   },
   {
     title: 'Net Estimated',
-    render: (_, record) => <span></span>,
+    key: 'netBalance',
+    dataIndex: 'netBalance',
   },
   {
     title: 'Apy Estimated',
-    render: (_, record) => <span></span>,
+    key: 'netApy',
+    dataIndex: 'netApy',
+    render: (apy) => <span>{(apy * 100).toFixed(2)}%</span>,
   },
 ]

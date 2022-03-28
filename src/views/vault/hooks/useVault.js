@@ -4,7 +4,6 @@ import * as vaultAction from 'src/actions/vault'
 import { mapVault } from 'src/utils/apy'
 
 export const useVault = () => {
-  console.log(33)
   const dispatch = useDispatch()
   const [strategyFetched, setStrategyFetched] = useState(false)
   const {
@@ -51,6 +50,7 @@ export const useVault = () => {
     })
     return {
       vaults: enhancedVaults,
+      strategies,
       strategyPositions,
     }
   }

@@ -2,13 +2,11 @@ import './index.less'
 
 import { Table } from 'antd'
 import React from 'react'
-import { scaleDown } from 'src/utils/common'
 
 const Summary = ({ vault }) => {
-  const { decimals } = vault.priceToken
   return (
     <Table
-      columns={getColumns(decimals)}
+      columns={columns}
       dataSource={[vault]}
       pagination={false}
       rowKey="id"
@@ -19,7 +17,7 @@ const Summary = ({ vault }) => {
 
 export default Summary
 
-const getColumns = (decimals) => [
+const columns = [
   {
     title: 'Principals',
     key: 'principalsCalculated',
@@ -42,10 +40,13 @@ const getColumns = (decimals) => [
   },
   {
     title: 'Net Estimated',
-    render: (_, record) => <span></span>,
+    key: 'netBalance',
+    dataIndex: 'netBalance',
   },
   {
     title: 'Apy Estimated',
-    render: (_, record) => <span></span>,
+    key: 'apy',
+    dataIndex: 'apy',
+    render: (apy) => <span>{(apy * 100).toFixed(2)}%</span>,
   },
 ]
