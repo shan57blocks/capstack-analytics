@@ -72,29 +72,19 @@ export const calApy = (startPosition, currentPosition) => {
     rewardValue += reward.balance * reward.price
   }
 
-  const diffInTime = currentPosition.timestamp - Number(startPosition.openDate)
-  const diffInDays = diffInTime / (3600 * 24)
   const fee_interest = IL_fee_interest - IL
   const fee = fee_interest - interest
   const netWithoutIL = fee + rewardValue + interest
   const net = netWithoutIL + IL
 
-  const get_daily_yearly_apy = (value) => {
-    return {
-      yearToDate: value,
-      daily: value / diffInDays,
-      yearly: (value / diffInDays) * 365,
-      apy: ((value / diffInDays) * 365) / holdValue,
-    }
-  }
-
-  currentPosition.ilFeeInterests = result.map((item) => item.IL_fee_interest)
-  currentPosition.IL = get_daily_yearly_apy(IL)
-  currentPosition.interest = get_daily_yearly_apy(interest)
-  currentPosition.fee = get_daily_yearly_apy(fee)
-  currentPosition.rewardInfo = get_daily_yearly_apy(rewardValue)
-  currentPosition.netWithoutIL = get_daily_yearly_apy(netWithoutIL)
-  currentPosition.net = get_daily_yearly_apy(net)
+  currentPosition.holdValue = holdValue
+  currentPosition.IL_fee_interest = IL_fee_interest
+  currentPosition.IL = IL
+  currentPosition.interest = interest
+  currentPosition.fee = fee
+  currentPosition.rewardInfo = rewardValue
+  currentPosition.netWithoutIL = netWithoutIL
+  currentPosition.net = net
   return currentPosition
 }
 
@@ -119,37 +109,59 @@ export const mapPosition = (position) => {
 export const mapStrategy = (strategy, positions) => {
   let startTime = positions[0].openDate
   let currentTime = positions[0].currentHistory.timestamp
-  let netBalance = 0
-  let netValue = 0
-  let apy = 0
+
+  strategy.interestApy = 0
+  strategy.feeApy = 0
+  strategy.ilApy = 0
+  strategy.rewardsApy = 0
+  strategy.netWithoutIlApy = 0
+  strategy.netApy = 0
+  strategy.interest = 0
+  strategy.fee = 0
+  strategy.IL = 0
+  strategy.rewardInfo = 0
+  strategy.netWithoutIL = 0
+  strategy.netBalance = 0
+  strategy.netValue = 0
+  strategy.holdValue = 0
 
   positions.forEach((position) => {
     const { currentHistory, tokens } = position
-    const index = tokens.findIndex((token) => token.id === strategy.tokenId)
-    const tokenPrice = currentHistory.assets[index].price
-    const currentNetBalance = currentHistory.net.yearToDate / tokenPrice
-    netBalance += currentNetBalance
-    netValue += currentHistory.net.yearToDate
+
     if (position.openDate < startTime) {
       startTime = position.openDate
     }
     if (currentHistory.timestamp > currentTime) {
       currentTime = currentHistory.timestamp
     }
-    const diffInTime = currentHistory.timestamp - Number(position.openDate)
-    const diffInDays = diffInTime / (3600 * 24)
-    const principals = new BN(strategy.principals)
-      .div(`1e${tokens[index].decimals}`)
-      .toNumber()
-    apy +=
-      (((currentNetBalance / diffInDays) * 365) / principals) *
-      Number(strategy.percentage)
+
+    const index = tokens.findIndex((token) => token.id === strategy.tokenId)
+    const tokenPrice = currentHistory.assets[index].price
+    const currentNetBalance = currentHistory.net / tokenPrice
+
+    strategy.interest += currentHistory.interest
+    strategy.fee += currentHistory.fee
+    strategy.IL += currentHistory.IL
+    strategy.rewardInfo += currentHistory.rewardInfo
+    strategy.netWithoutIL += currentHistory.netWithoutIL
+    strategy.netBalance += currentNetBalance
+    strategy.netValue += currentHistory.net
+    strategy.holdValue += currentHistory.holdValue
   })
 
-  strategy.netValue = netValue
-  strategy.netBalance = netBalance
-  strategy.currentBalance = Number(strategy.principals) + Number(netBalance)
-  strategy.apy = apy
+  const diffInTime = Number(currentTime) - Number(startTime)
+  const diffInDays = diffInTime / (3600 * 24)
+  const getApy = (value) => ((value / diffInDays) * 365) / strategy.holdValue
+  strategy.interestApy += getApy(strategy.interest)
+  strategy.ilApy += getApy(strategy.IL)
+  strategy.feeApy += getApy(strategy.fee)
+  strategy.rewardsApy += getApy(strategy.rewardInfo)
+  strategy.netWithoutIlApy += getApy(strategy.netWithoutIL)
+  strategy.netApy += getApy(strategy.netValue)
+
+  strategy.currentBalance =
+    Number(strategy.principals) + Number(strategy.netBalance)
+  console.log(strategy)
   return strategy
 }
 
