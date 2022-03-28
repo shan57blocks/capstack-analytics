@@ -1,6 +1,6 @@
 export const calApy = (startPosition, currentPosition) => {
   const startPrincipals = startPosition.principals
-  const startBorrows = startPosition.borrows
+  const startBorrows = startPosition.startBorrows
   const startAssets = startPosition.startAssets
 
   const calculatedValues = {
@@ -85,6 +85,7 @@ export const calApy = (startPosition, currentPosition) => {
     }
   }
 
+  currentPosition.ilFeeInterests = result.map((item) => item.IL_fee_interest)
   currentPosition.IL = get_daily_yearly_apy(IL)
   currentPosition.interest = get_daily_yearly_apy(interest)
   currentPosition.fee = get_daily_yearly_apy(fee)
@@ -94,56 +95,38 @@ export const calApy = (startPosition, currentPosition) => {
   return currentPosition
 }
 
-export const calCloseApy = (position) => {
-  const { principals, closeAssets, openDate, closeDate } = position
-  const rewards = closeAssets.filter((token) => token.type === 'rewards')
-  const closeTokens = closeAssets.filter((token) => !token.type)
-
-  let holdValue = 0
-  for (let i = 0; i < principals.length; i++) {
-    holdValue += principals[i].balance * closeTokens[i].price
-  }
-  let closeValue = 0
-  for (let i = 0; i < closeTokens.length; i++) {
-    closeValue += closeTokens[i].balance * closeTokens[i].price
-  }
-  let rewardValue = 0
-  for (let i = 0; i < rewards.length; i++) {
-    rewardValue += rewards[i].balance * rewards[i].price
-  }
-
-  const diffInTime = Number(closeDate) - Number(openDate)
-  const diffInDays = diffInTime / (3600 * 24)
-  const net = closeValue + rewardValue - holdValue
-
-  const get_daily_yearly_apy = (value) => {
-    return {
-      yearToDate: value,
-      daily: value / diffInDays,
-      yearly: (value / diffInDays) * 365,
-      apy: ((value / diffInDays) * 365) / holdValue,
-    }
-  }
-
-  position.closeTokens = closeTokens
-  position.closeReward = get_daily_yearly_apy(rewardValue)
-  position.closeNet = get_daily_yearly_apy(net)
-  return position
-}
-
 export const mapPosition = (position) => {
   position.symbol = position.tokens.map((token) => token.symbol).join('/')
-  if (position.closed) {
-    position = calCloseApy(position)
-  }
   position.histories = position.histories
     .map((history) => {
+      if (!history.borrows) {
+        history.borrows = genBorrows(history.assets.length)
+      }
+      if (!history.rewards) {
+        history.rewards = []
+      }
       history.tokens = position.tokens
       return calApy(position, history)
     })
     .sort(sortTimestamp)
   position.currentHistory = position.histories[0]
   return position
+}
+
+export const mapStrategy = (strategy, positions) => {
+  let netGain = 0
+  let net = 0
+
+  positions.forEach((position) => {
+    const { currentHistory, tokens } = position
+    const index = tokens.findIndex((token) => token.id === strategy.tokenId)
+    const tokenPrice = currentHistory.assets[index].price
+    netGain += currentHistory.net.yearToDate / tokenPrice
+    net += currentHistory.net.yearToDate
+  })
+  strategy.netGain = netGain
+  strategy.net = net
+  return strategy
 }
 
 const sortTimestamp = (a, b) => {
@@ -154,4 +137,12 @@ const sortTimestamp = (a, b) => {
     return -1
   }
   return 0
+}
+
+const genBorrows = (length) => {
+  const result = []
+  for (let i = 0; i < length; i++) {
+    result.push({ balance: 0 })
+  }
+  return result
 }

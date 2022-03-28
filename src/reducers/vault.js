@@ -4,20 +4,24 @@ import {
   GET_STRATEGY_POSITIONS,
   GET_VAULTS,
 } from 'src/actions/vault'
+import { mapPosition, mapStrategy } from 'src/utils/apy'
 import { deepClone } from 'src/utils/common'
 
 const initState = {
   vaults: null,
   positionStrategies: {},
   strategyPositions: {},
+  strategies: {},
 }
 
 const app = handleActions(
   {
     [GET_VAULTS]: (state, { payload }) => {
       const positionStrategies = {}
+      const strategies = {}
       payload.forEach((vault) => {
         vault.strategies.forEach((strategy) => {
+          strategies[strategy.id] = strategy
           strategy.positions.forEach((position) => {
             if (!positionStrategies[position.id]) {
               positionStrategies[position.id] = []
@@ -38,20 +42,29 @@ const app = handleActions(
         ...state,
         vaults: payload,
         positionStrategies,
+        strategies,
       }
     },
     [GET_STRATEGY_POSITIONS]: (state, { payload, meta }) => {
+      const { strategyId } = meta
+      const strategies = deepClone(state.strategies)
       const strategyPositions = deepClone(state.strategyPositions)
-      strategyPositions[meta.strategyId] = payload
+      const strategy = strategies[strategyId]
+
+      const positions = payload.map((position) => mapPosition(position))
+      strategyPositions[strategyId] = positions
+      strategies[strategyId] = mapStrategy(strategy, positions)
+      console.log(strategies)
       return {
         ...state,
         strategyPositions,
+        strategies,
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload, meta }) => {
       const strategyPositions = deepClone(state.strategyPositions)
       meta.strategyIds.forEach((id) => {
-        strategyPositions[id] = [payload]
+        strategyPositions[id] = [mapPosition(payload)]
       })
       return {
         ...state,

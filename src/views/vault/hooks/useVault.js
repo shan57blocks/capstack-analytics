@@ -8,19 +8,19 @@ export const useVault = () => {
     (state) => state.vault
   )
 
-  console.log(strategyPositions)
-
   useEffect(() => {
     dispatch(vaultAction.getVaults())
   }, [dispatch])
 
   useEffect(() => {
     if (vaults) {
-      vaults.forEach((vault) => {
+      vaults.forEach((vault, index2) => {
         vault.strategies
           .filter((strategy) => !strategy.sharedPosition)
-          .forEach((strategy) => {
+          .forEach((strategy, index) => {
+            // if (index2 === 0 && index === 1) {
             dispatch(vaultAction.getPositionsByStrategy(strategy.id))
+            // }
           })
       })
 
