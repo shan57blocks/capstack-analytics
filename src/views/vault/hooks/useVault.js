@@ -1,26 +1,31 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as vaultAction from 'src/actions/vault'
+import { mapVault } from 'src/utils/apy'
 
 export const useVault = () => {
+  console.log(33)
   const dispatch = useDispatch()
-  const { vaults, positionStrategies, strategyPositions } = useSelector(
-    (state) => state.vault
-  )
+  const [strategyFetched, setStrategyFetched] = useState(false)
+  const {
+    vaults,
+    positionStrategies,
+    strategyPositions,
+    strategies,
+  } = useSelector((state) => state.vault)
 
   useEffect(() => {
     dispatch(vaultAction.getVaults())
   }, [dispatch])
 
   useEffect(() => {
-    if (vaults) {
-      vaults.forEach((vault, index2) => {
+    if (vaults && !strategyFetched) {
+      setStrategyFetched(true)
+      vaults.forEach((vault) => {
         vault.strategies
           .filter((strategy) => !strategy.sharedPosition)
-          .forEach((strategy, index) => {
-            // if (index2 === 0 && index === 1) {
+          .forEach((strategy) => {
             dispatch(vaultAction.getPositionsByStrategy(strategy.id))
-            // }
           })
       })
 
@@ -32,10 +37,23 @@ export const useVault = () => {
         }
       })
     }
-  }, [dispatch, positionStrategies, vaults])
+  }, [dispatch, strategyFetched, positionStrategies, vaults])
 
   if (vaults) {
+    const enhancedVaults = vaults.map((vault) => {
+      const vaultStrategies = []
+      vault.strategies.forEach((strategy) => {
+        if (strategies[strategy.id]) {
+          vaultStrategies.push(strategies[strategy.id])
+        }
+      })
+      return mapVault(vault, vaultStrategies)
+    })
+    return {
+      vaults: enhancedVaults,
+      strategyPositions,
+    }
   }
 
-  return vaults
+  return { vaults, strategyPositions }
 }

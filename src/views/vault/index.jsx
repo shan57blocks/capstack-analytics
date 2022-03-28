@@ -6,7 +6,7 @@ import { useVault } from './hooks/useVault'
 import Vault from './Vault'
 
 const Vaults = () => {
-  const vaults = useVault()
+  const { vaults } = useVault()
 
   if (!vaults) {
     return null

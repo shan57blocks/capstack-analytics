@@ -54,7 +54,6 @@ const app = handleActions(
       const positions = payload.map((position) => mapPosition(position))
       strategyPositions[strategyId] = positions
       strategies[strategyId] = mapStrategy(strategy, positions)
-      console.log(strategies)
       return {
         ...state,
         strategyPositions,
@@ -62,13 +61,18 @@ const app = handleActions(
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload, meta }) => {
+      const strategies = deepClone(state.strategies)
       const strategyPositions = deepClone(state.strategyPositions)
       meta.strategyIds.forEach((id) => {
-        strategyPositions[id] = [mapPosition(payload)]
+        const strategy = strategies[id]
+        const positions = [mapPosition(payload)]
+        strategyPositions[id] = positions
+        strategies[id] = mapStrategy(strategy, positions)
       })
       return {
         ...state,
         strategyPositions,
+        strategies,
       }
     },
   },

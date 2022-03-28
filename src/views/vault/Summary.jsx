@@ -22,24 +22,23 @@ export default Summary
 const getColumns = (decimals) => [
   {
     title: 'Principals',
-    key: 'principals',
-    render: (_, record) => (
-      <span>{scaleDown(record.principals, decimals)}</span>
-    ),
+    key: 'principalsCalculated',
+    dataIndex: 'principalsCalculated',
   },
   {
     title: 'Shares',
-    key: 'shares',
-    render: (_, record) => <span>{scaleDown(record.shares, decimals)}</span>,
+    key: 'sharesCalculated',
+    dataIndex: 'sharesCalculated',
   },
   {
     title: 'Share Price',
-    key: 'shares',
-    render: (_, record) => <span>{record.principals / record.shares}</span>,
+    key: 'sharePriceCalculated',
+    dataIndex: 'sharePriceCalculated',
   },
   {
     title: 'Current Estimated',
-    render: (_, record) => <span></span>,
+    key: 'currentBalance',
+    dataIndex: 'currentBalance',
   },
   {
     title: 'Net Estimated',

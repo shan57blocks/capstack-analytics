@@ -1,3 +1,6 @@
+import { BigNumber as BN } from 'bignumber.js'
+import _ from 'lodash'
+
 export const calApy = (startPosition, currentPosition) => {
   const startPrincipals = startPosition.principals
   const startBorrows = startPosition.startBorrows
@@ -114,19 +117,57 @@ export const mapPosition = (position) => {
 }
 
 export const mapStrategy = (strategy, positions) => {
-  let netGain = 0
-  let net = 0
+  let startTime = positions[0].openDate
+  let currentTime = positions[0].currentHistory.timestamp
+  let netBalance = 0
+  let netValue = 0
+  let apy = 0
 
   positions.forEach((position) => {
     const { currentHistory, tokens } = position
     const index = tokens.findIndex((token) => token.id === strategy.tokenId)
     const tokenPrice = currentHistory.assets[index].price
-    netGain += currentHistory.net.yearToDate / tokenPrice
-    net += currentHistory.net.yearToDate
+    const currentNetBalance = currentHistory.net.yearToDate / tokenPrice
+    netBalance += currentNetBalance
+    netValue += currentHistory.net.yearToDate
+    if (position.openDate < startTime) {
+      startTime = position.openDate
+    }
+    if (currentHistory.timestamp > currentTime) {
+      currentTime = currentHistory.timestamp
+    }
+    const diffInTime = currentHistory.timestamp - Number(position.openDate)
+    const diffInDays = diffInTime / (3600 * 24)
+    const principals = new BN(strategy.principals)
+      .div(`1e${tokens[index].decimals}`)
+      .toNumber()
+    apy +=
+      (((currentNetBalance / diffInDays) * 365) / principals) *
+      Number(strategy.percentage)
   })
-  strategy.netGain = netGain
-  strategy.net = net
+
+  strategy.netValue = netValue
+  strategy.netBalance = netBalance
+  strategy.currentBalance = Number(strategy.principals) + Number(netBalance)
+  strategy.apy = apy
   return strategy
+}
+
+export const mapVault = (vault, strategies) => {
+  const { principals, shares, priceToken } = vault
+  const principalsBN = new BN(principals)
+  const sharesBN = new BN(shares)
+  const decimals = `1e${priceToken.decimals}`
+  vault.principalsCalculated = principalsBN.div(decimals).toNumber()
+  vault.sharesCalculated = sharesBN.div(decimals).toNumber()
+  vault.sharePriceCalculated = principals / shares
+  vault.netBalance = _.sum(strategies.map((item) => item.netBalance))
+  vault.currentBalance = principalsBN
+    .plus(new BN(vault.netBalance))
+    .div(decimals)
+    .toNumber()
+  vault.apy = _.sum(strategies.map((item) => item.apy))
+  return vault
 }
 
 const sortTimestamp = (a, b) => {
