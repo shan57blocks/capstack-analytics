@@ -12,6 +12,7 @@ const Strategy = ({ strategies }) => {
       dataSource={strategies}
       pagination={false}
       rowKey="id"
+      bordered
       expandable={expandable}
     />
   )
@@ -204,15 +205,17 @@ const columns = [
 
 const expandable = {
   expandedRowRender: (record) => (
-    <div>
+    <div className="vault-strategies-positions">
+      <div className="vault-strategies-positions-title">Positions</div>
       <Table
         columns={positionColumns}
         dataSource={record.positions}
         size="small"
+        bordered
+        pagination={false}
       />
     </div>
   ),
-  rowExpandable: (record) => record.positions.length > 1,
 }
 
 const positionColumns = [
