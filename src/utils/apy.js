@@ -94,6 +94,17 @@ export const calApy = (startPosition, currentPosition) => {
   currentPosition.tokenDetails = result
   currentPosition.netRatio = net / holdValue
 
+  const diffInTime = currentPosition.timestamp - Number(startPosition.openDate)
+  const diffInDays = diffInTime / (3600 * 24)
+  const getApy = (value) => ((value / diffInDays) * 365) / holdValue
+
+  currentPosition.ilApy = getApy(currentPosition.IL)
+  currentPosition.interestApy = getApy(currentPosition.interest)
+  currentPosition.feeApy = getApy(currentPosition.fee)
+  currentPosition.rewardsApy = getApy(currentPosition.rewardInfo)
+  currentPosition.netWithoutIlApy = getApy(currentPosition.netWithoutIL)
+  currentPosition.netApy = getApy(currentPosition.net)
+
   currentPosition.tokenDetails = result.map((item, index) => {
     item.currentNet =
       item.startAsset.balance *
@@ -203,6 +214,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
     .plus(new BN(strategy.netBalance) * new BN(decimals))
     .div(decimals)
     .toNumber()
+  strategy.positions = positions
   return strategy
 }
 
