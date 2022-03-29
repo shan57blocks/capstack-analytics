@@ -6,7 +6,6 @@ import React from 'react'
 import Strategy from './Strategy'
 
 const Vault = ({ vault, strategies }) => {
-  console.log(strategies)
   return (
     <div className="vault">
       <div className="vault-name">{vault.name} Vault</div>

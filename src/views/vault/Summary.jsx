@@ -37,13 +37,13 @@ const columns = [
     title: 'Current Estimated',
     key: 'currentBalance',
     dataIndex: 'currentBalance',
-    render: (balance) => <span>{balance ?? ''}</span>,
+    render: (balance) => <span>{!Number.isNaN(balance) ? balance : ''}</span>,
   },
   {
     title: 'Net Estimated',
     key: 'netBalance',
     dataIndex: 'netBalance',
-    render: (balance) => <span>{balance ?? ''}</span>,
+    render: (balance) => <span>{!Number.isNaN(balance) ? balance : ''}</span>,
   },
   {
     title: 'Apy Estimated',

@@ -130,8 +130,8 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   const token = positions[0].tokens.find(
     (token) => token.id === strategy.tokenId
   )
-  const principalsBN = new BN(strategy.principals)
   const decimals = `1e${token.decimals}`
+  const principalsBN = new BN(strategy.principals)
   let startTime = positions[0].openDate
   let currentTime = positions[0].currentHistory.timestamp
 
@@ -200,7 +200,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   strategy.currentTime = currentTime
   strategy.principalsCalculated = principalsBN.div(decimals).toNumber()
   strategy.currentBalance = principalsBN
-    .plus(new BN(strategy.netBalance))
+    .plus(new BN(strategy.netBalance) * new BN(decimals))
     .div(decimals)
     .toNumber()
   return strategy
@@ -216,7 +216,7 @@ export const mapVault = (vault, strategies) => {
   vault.sharePriceCalculated = principals / shares
   vault.netBalance = _.sum(strategies.map((item) => item.netBalance))
   vault.currentBalance = principalsBN
-    .plus(new BN(vault.netBalance))
+    .plus(new BN(vault.netBalance) * new BN(decimals))
     .div(decimals)
     .toNumber()
   vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))

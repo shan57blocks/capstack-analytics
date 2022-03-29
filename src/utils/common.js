@@ -7,6 +7,9 @@ import { BigNumber as BN } from 'bignumber.js'
  * @format {*} format 时间格式
  */
 export const formatTime = (value, format = 'MM/DD/YYYY') => {
+  if (!value) {
+    return ''
+  }
   return moment.unix(Number(value)).format(format)
 }
 
