@@ -53,7 +53,11 @@ const app = handleActions(
 
       const positions = payload.map((position) => mapPosition(position))
       strategyPositions[strategyId] = positions
-      strategies[strategyId] = mapStrategy(strategy, positions)
+      strategies[strategyId] = mapStrategy(
+        strategy,
+        positions,
+        state.positionStrategies
+      )
       return {
         ...state,
         strategyPositions,
@@ -67,7 +71,11 @@ const app = handleActions(
         const strategy = strategies[id]
         const positions = [mapPosition(payload)]
         strategyPositions[id] = positions
-        strategies[id] = mapStrategy(strategy, positions)
+        strategies[id] = mapStrategy(
+          strategy,
+          positions,
+          state.positionStrategies
+        )
       })
       return {
         ...state,

@@ -55,6 +55,7 @@ const columns = [
     title: 'Current Estimated',
     key: 'currentBalance',
     dataIndex: 'currentBalance',
+    render: (balance) => <span>{balance ?? ''}</span>,
   },
   {
     title: 'Current Time',
@@ -68,11 +69,17 @@ const columns = [
     title: 'Net Estimated',
     key: 'netBalance',
     dataIndex: 'netBalance',
+    render: (balance) => <span>{balance ?? ''}</span>,
   },
   {
     title: 'Apy Estimated',
     key: 'netApy',
     dataIndex: 'netApy',
-    render: (apy) => <span>{(apy * 100).toFixed(2)}%</span>,
+    render: (apy) => {
+      if (!apy) {
+        return null
+      }
+      return <span>{(apy * 100).toFixed(2)}%</span>
+    },
   },
 ]

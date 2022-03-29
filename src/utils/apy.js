@@ -46,12 +46,18 @@ export const calApy = (startPosition, currentPosition) => {
     const current_IL_fee_interest = currentNetInvestment - currentHoldValue
     const currentInterestBalance = currentBorrow.balance - startBorrow.balance
     const currentInterest = currentInterestBalance * currentPrice
+    const currentFeeInterest = current_IL_fee_interest - currentIL
+    const currentFee = currentFeeInterest - currentInterest
 
     return {
+      startAsset,
       currentIL,
       current_IL_fee_interest,
       currentInterest,
       currentHoldValue,
+      currentFeeInterest,
+      currentFee,
+      tokenId: currentPosition.tokens[index].id,
     }
   })
 
@@ -85,6 +91,20 @@ export const calApy = (startPosition, currentPosition) => {
   currentPosition.rewardInfo = rewardValue
   currentPosition.netWithoutIL = netWithoutIL
   currentPosition.net = net
+  currentPosition.tokenDetails = result
+  currentPosition.netRatio = net / holdValue
+
+  currentPosition.tokenDetails = result.map((item, index) => {
+    item.currentNet =
+      item.startAsset.balance *
+      currentPosition.netRatio *
+      currentPosition.assets[index].price
+    item.currentNetWithoutIL = item.currentNet - item.currentIL
+    item.currentRewardInfo =
+      currentPosition.rewardInfo * currentPosition.netRatio
+    return item
+  })
+
   return currentPosition
 }
 
@@ -106,7 +126,7 @@ export const mapPosition = (position) => {
   return position
 }
 
-export const mapStrategy = (strategy, positions) => {
+export const mapStrategy = (strategy, positions, positionStrategies) => {
   const token = positions[0].tokens.find(
     (token) => token.id === strategy.tokenId
   )
@@ -142,16 +162,29 @@ export const mapStrategy = (strategy, positions) => {
 
     const index = tokens.findIndex((token) => token.id === strategy.tokenId)
     const tokenPrice = currentHistory.assets[index].price
-    const currentNetBalance = currentHistory.net / tokenPrice
 
-    strategy.interest += currentHistory.interest
-    strategy.fee += currentHistory.fee
-    strategy.IL += currentHistory.IL
-    strategy.rewardInfo += currentHistory.rewardInfo
-    strategy.netWithoutIL += currentHistory.netWithoutIL
-    strategy.netBalance += currentNetBalance
-    strategy.netValue += currentHistory.net
-    strategy.holdValue += currentHistory.holdValue
+    if (positionStrategies[position.id].length > 1) {
+      const tokenDetail = currentHistory.tokenDetails.find(
+        (item) => item.tokenId === tokens[index].id
+      )
+      strategy.interest += tokenDetail.currentInterest
+      strategy.fee += tokenDetail.currentFee
+      strategy.IL += tokenDetail.currentIL
+      strategy.rewardInfo += tokenDetail.currentRewardInfo
+      strategy.netWithoutIL += tokenDetail.currentNetWithoutIL
+      strategy.netBalance += tokenDetail.currentNet / tokenPrice
+      strategy.netValue += tokenDetail.currentNet
+      strategy.holdValue += tokenDetail.currentHoldValue
+    } else {
+      strategy.interest += currentHistory.interest
+      strategy.fee += currentHistory.fee
+      strategy.IL += currentHistory.IL
+      strategy.rewardInfo += currentHistory.rewardInfo
+      strategy.netWithoutIL += currentHistory.netWithoutIL
+      strategy.netBalance += currentHistory.net / tokenPrice
+      strategy.netValue += currentHistory.net
+      strategy.holdValue += currentHistory.holdValue
+    }
   })
 
   const diffInTime = Number(currentTime) - Number(startTime)
