@@ -110,9 +110,9 @@ export const calApy = (startPosition, currentPosition) => {
       item.startAsset.balance *
       currentPosition.netRatio *
       currentPosition.assets[index].price
-    item.currentNetWithoutIL = item.currentNet - item.currentIL
-    item.currentRewardInfo =
-      currentPosition.rewardInfo * currentPosition.netRatio
+    item.currentRewardInfo = currentPosition.rewardInfo / result.length
+    item.currentIL = currentPosition.IL / result.length
+    item.currentNetWithoutIL = currentPosition.netWithoutIL / result.length
     return item
   })
 
