@@ -1,18 +1,18 @@
 import './index.less'
 
-import Summary from './Summary'
-
 import React from 'react'
-import Strategy from './Strategy'
 
-const Vault = ({ vault, strategies }) => {
+import Strategy from './Strategy'
+import VaultSummary from './VaultSummary'
+
+const Vault = ({ vault }) => {
   return (
     <div className="vault">
       <div className="vault-name">{vault.name} Vault</div>
       <div className="vault-summary">Summary</div>
-      <Summary vault={vault}></Summary>
+      <VaultSummary vaults={[vault]}></VaultSummary>
       <div className="vault-strategies">Strategies</div>
-      <Strategy strategies={strategies} vault={vault}></Strategy>
+      <Strategy strategies={vault.strategies}></Strategy>
     </div>
   )
 }

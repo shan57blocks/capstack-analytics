@@ -12,6 +12,7 @@ const initState = {
   positionStrategies: {},
   strategyPositions: {},
   strategies: {},
+  vaultNames: ['ETH', 'USD', 'BTC'],
 }
 
 const app = handleActions(

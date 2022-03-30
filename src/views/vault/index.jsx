@@ -3,10 +3,11 @@ import './index.less'
 import React from 'react'
 
 import { useVault } from './hooks/useVault'
+import PCV from './PCV'
 import Vault from './Vault'
 
 const Vaults = () => {
-  const { vaults, strategies } = useVault()
+  const { vaults, pcvs } = useVault()
 
   if (!vaults) {
     return null
@@ -15,20 +16,9 @@ const Vaults = () => {
   return (
     <div className="page">
       {vaults.map((vault) => {
-        const vaultStrategies = []
-        vault.strategies.forEach((strategy) => {
-          if (strategies[strategy.id]) {
-            vaultStrategies.push(strategies[strategy.id])
-          }
-        })
-        return (
-          <Vault
-            key={vault.id}
-            vault={vault}
-            strategies={vaultStrategies}
-          ></Vault>
-        )
+        return <Vault key={vault.id} vault={vault}></Vault>
       })}
+      <PCV vaults={pcvs}></PCV>
     </div>
   )
 }

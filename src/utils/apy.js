@@ -241,6 +241,7 @@ export const mapVault = (vault, strategies) => {
     .div(decimals)
     .toNumber()
   vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))
+  vault.strategies = strategies
   return vault
 }
 

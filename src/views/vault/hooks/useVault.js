@@ -11,6 +11,7 @@ export const useVault = () => {
     positionStrategies,
     strategyPositions,
     strategies,
+    vaultNames,
   } = useSelector((state) => state.vault)
 
   useEffect(() => {
@@ -48,12 +49,14 @@ export const useVault = () => {
       })
       return mapVault(vault, vaultStrategies)
     })
+
     return {
-      vaults: enhancedVaults,
+      vaults: enhancedVaults.filter((vault) => vaultNames.includes(vault.name)),
+      pcvs: enhancedVaults.filter((vault) => !vaultNames.includes(vault.name)),
       strategies,
       strategyPositions,
     }
   }
 
-  return { vaults, strategyPositions }
+  return {}
 }

@@ -3,11 +3,11 @@ import './index.less'
 import { Table } from 'antd'
 import React from 'react'
 
-const Summary = ({ vault }) => {
+const PCVSummary = ({ vaults }) => {
   return (
     <Table
       columns={columns}
-      dataSource={[vault]}
+      dataSource={vaults}
       pagination={false}
       rowKey="id"
       bordered
@@ -15,23 +15,18 @@ const Summary = ({ vault }) => {
   )
 }
 
-export default Summary
+export default PCVSummary
 
 const columns = [
+  {
+    title: 'Token',
+    key: 'name',
+    dataIndex: 'name',
+  },
   {
     title: 'Principals',
     key: 'principalsCalculated',
     dataIndex: 'principalsCalculated',
-  },
-  {
-    title: 'Shares',
-    key: 'sharesCalculated',
-    dataIndex: 'sharesCalculated',
-  },
-  {
-    title: 'Share Price',
-    key: 'sharePriceCalculated',
-    dataIndex: 'sharePriceCalculated',
   },
   {
     title: 'Current Estimated',
