@@ -48,6 +48,7 @@ export const calApy = (startPosition, currentPosition) => {
     const currentInterest = currentInterestBalance * currentPrice
     const currentFeeInterest = current_IL_fee_interest - currentIL
     const currentFee = currentFeeInterest - currentInterest
+    const currentValue = currentAsset.balance * currentPrice
 
     return {
       startAsset,
@@ -57,6 +58,7 @@ export const calApy = (startPosition, currentPosition) => {
       currentHoldValue,
       currentFeeInterest,
       currentFee,
+      currentValue,
       tokenId: currentPosition.tokens[index].id,
     }
   })
@@ -65,11 +67,13 @@ export const calApy = (startPosition, currentPosition) => {
   let IL_fee_interest = 0
   let holdValue = 0
   let interest = 0
+  let currentValue = 0
   for (let i = 0; i < result.length; i++) {
     IL += result[i].currentIL
     IL_fee_interest += result[i].current_IL_fee_interest
     holdValue += result[i].currentHoldValue
     interest -= result[i].currentInterest
+    currentValue += result[i].currentValue
   }
 
   let rewardValue = 0
@@ -87,6 +91,7 @@ export const calApy = (startPosition, currentPosition) => {
   currentPosition.IL_fee_interest = IL_fee_interest
   currentPosition.IL = IL
   currentPosition.interest = interest
+  currentPosition.ILLoss = IL / currentValue
   currentPosition.fee = fee
   currentPosition.rewardInfo = rewardValue
   currentPosition.netWithoutIL = netWithoutIL
@@ -112,6 +117,7 @@ export const calApy = (startPosition, currentPosition) => {
       currentPosition.assets[index].price
     item.currentRewardInfo = currentPosition.rewardInfo / result.length
     item.currentIL = currentPosition.IL / result.length
+    item.currentILLoss = currentPosition.ILLoss / result.length
     item.currentNetWithoutIL = currentPosition.netWithoutIL / result.length
     return item
   })
@@ -155,6 +161,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   strategy.interest = 0
   strategy.fee = 0
   strategy.IL = 0
+  strategy.ILLoss = 0
   strategy.rewardInfo = 0
   strategy.netWithoutIL = 0
   strategy.netBalance = 0
@@ -181,6 +188,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
       strategy.interest += tokenDetail.currentInterest
       strategy.fee += tokenDetail.currentFee
       strategy.IL += tokenDetail.currentIL
+      strategy.ILLoss += tokenDetail.currentILLoss
       strategy.rewardInfo += tokenDetail.currentRewardInfo
       strategy.netWithoutIL += tokenDetail.currentNetWithoutIL
       strategy.netBalance += tokenDetail.currentNet / tokenPrice
@@ -190,6 +198,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
       strategy.interest += currentHistory.interest
       strategy.fee += currentHistory.fee
       strategy.IL += currentHistory.IL
+      strategy.ILLoss += currentHistory.ILLoss
       strategy.rewardInfo += currentHistory.rewardInfo
       strategy.netWithoutIL += currentHistory.netWithoutIL
       strategy.netBalance += currentHistory.net / tokenPrice

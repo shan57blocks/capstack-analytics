@@ -142,7 +142,7 @@ const columns = [
           <CapTooltip title={record.IL}>
             <div>${record.IL.toFixed(3)}</div>
           </CapTooltip>
-          <div>APY: {(record.ilApy * 100).toFixed(2)}%</div>
+          <div>Loss: {(record.ILLoss * 100).toFixed(2)}%</div>
         </div>
       )
     },
@@ -340,13 +340,13 @@ const positionColumns = [
   {
     title: 'IL',
     render: (position) => {
-      const { IL, ilApy } = position.currentHistory
+      const { IL, ILLoss } = position.currentHistory
       return (
         <div>
           <div>
             <CapTooltip title={IL}>${IL.toFixed(3)}</CapTooltip>
           </div>
-          <div>APY: {(ilApy * 100).toFixed(2)}%</div>
+          <div>Loss: {(ILLoss * 100).toFixed(2)}%</div>
         </div>
       )
     },
