@@ -1,24 +1,26 @@
 import './index.less'
 
 import React from 'react'
+import VaultSummary from './VaultSummary'
+import { Tabs } from 'antd'
 
-import { useVault } from './hooks/useVault'
-import PCV from './PCV'
-import Vault from './Vault'
+const { TabPane } = Tabs
 
 const Vaults = () => {
-  const { vaults, pcvs } = useVault()
-
-  if (!vaults) {
-    return null
-  }
-
   return (
     <div className="page">
-      {vaults.map((vault) => {
-        return <Vault key={vault.id} vault={vault}></Vault>
-      })}
-      <PCV vaults={pcvs}></PCV>
+      <VaultSummary></VaultSummary>
+      <Tabs className="vault-detail" defaultActiveKey="1" type="card">
+        <TabPane tab="Strategies" key="1">
+          Content of card tab 1
+        </TabPane>
+        <TabPane tab="Card Tab 2" key="2">
+          Content of card tab 2
+        </TabPane>
+        <TabPane tab="Card Tab 3" key="3">
+          Content of card tab 3
+        </TabPane>
+      </Tabs>
     </div>
   )
 }

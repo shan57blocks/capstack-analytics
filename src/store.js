@@ -5,7 +5,6 @@ import promiseMiddleware from './middlewares/promise'
 import errorMiddleware from './middlewares/error'
 import loadingMiddleware from './middlewares/loading'
 import app from 'src/reducers/app'
-import vault from 'src/reducers/vault'
 
 import { createStore } from 'src/utils/injectReducer'
 
@@ -14,7 +13,6 @@ export default (history) => {
     {
       router: connectRouter(history),
       app,
-      vault,
     },
     applyMiddleware(
       routerMiddleware(history),

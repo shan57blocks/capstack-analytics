@@ -1,49 +1,15 @@
 .vault {
-  margin-bottom: 30px;
-
-  &-name {
-    font-size: 25px;
-    margin-bottom: 20px;
-  }
-
   &-summary {
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
+    display: flex;
+    margin-bottom: 50px;
 
-  &-strategies {
-    margin-top: 30px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: bold;
+    .ant-card {
+      margin-right: 100px;
 
-    &-positions {
-      &-title {
-        font-size: 16px;
-        font-weight: bold;
-        margin-left: 45px;
+      &-body {
+        display: flex;
+        justify-content: space-between;
       }
     }
-  }
-}
-
-.ant-table-expanded-row {
-  .ant-table-cell {
-    background-color: unset;
-  }
-
-  .ant-table-thead {
-    .ant-table-cell {
-      border-top: 1px solid #f0f0f0;
-    }
-  }
-
-  .ant-table {
-    margin-left: 45px !important;
-  }
-
-  .ant-table-wrapper {
-    margin-top: 10px;
   }
 }
