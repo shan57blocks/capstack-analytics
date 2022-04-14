@@ -78,8 +78,8 @@ const data = [
   },
   {
     key: '2',
-    name: 'ETH/USDT',
-    protocol: 'Alpaca (Avalanche)',
+    name: 'ETH/USDT (First)',
+    protocol: 'Alpaca (BSC)',
     principals: '3.524',
     current: '3.569',
     target: '20%',
@@ -89,12 +89,14 @@ const data = [
   },
   {
     key: '3',
-    name: 'Unallocated',
-    protocol: '',
-    principals: '10',
-    current: '10',
-    target: '0%',
-    targetChange: '-10',
+    name: 'ETH/USDT (Second)',
+    protocol: 'Alpaca (BSC)',
+    principals: '3.524',
+    current: '3.569',
+    target: '20%',
+    targetChange: '13',
+    action:
+      '-4 ETH/-2 AVAX (pay back 1 AVAX/2ETH in debt), swap 1 AVAX for ETH',
   },
 ]
 
