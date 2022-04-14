@@ -4,7 +4,7 @@ import { formatTime, isEmpty } from 'src/utils/common'
 import CapTooltip from 'src/components/CapTooltip'
 import CapSkeleton from 'src/components/CapSkeleton'
 
-export const columns = [
+export const getColumns = (showModal) => [
   {
     title: 'Name',
     key: 'name',
@@ -242,8 +242,9 @@ export const columns = [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <a>Adjust</a>
-        <a>Close</a>
+        <a onClick={showModal}>Open</a>
+        <a onClick={showModal}>Adjust</a>
+        <a onClick={showModal}>Close</a>
       </Space>
     ),
   },
