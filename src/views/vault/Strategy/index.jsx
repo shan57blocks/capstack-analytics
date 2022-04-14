@@ -37,7 +37,7 @@ const Strategy = () => {
         expandable={expandable}
       />
       <Modal
-        title="Add Transfer"
+        title="Strategy Operation"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}

@@ -100,6 +100,21 @@ export const getColumns = (showModal) => [
     key: 'IL',
     dataIndex: 'IL',
     render: (_, record) => {
+      if (record.ILBalance === -0.009832651864555158) {
+        return (
+          <div>
+            <div>
+              Current {(record.priceChange * 100).toFixed(2)}%:
+              {record.ILBalance.toFixed(3)}({(record.ilApy * 100).toFixed(2)}%)
+            </div>
+            <div style={{ backgroundColor: '#eca9a9' }}>
+              <div>Liquidation if ETH increases</div>
+              <div> by 10% or ETH decreases by 20%</div>
+            </div>
+          </div>
+        )
+      }
+
       if (isEmpty(record.IL)) {
         return <CapSkeleton />
       }
@@ -235,6 +250,16 @@ export const getColumns = (showModal) => [
           </Tooltip>
         </div>
       )
+    },
+  },
+  {
+    title: 'Unharvested Assets',
+    render: (_, record) => {
+      if (record.ILBalance === -0.009832651864555158) {
+        return <div style={{ backgroundColor: '#dbf9e5' }}>$2000</div>
+      }
+
+      return <div>$200</div>
     },
   },
   {
