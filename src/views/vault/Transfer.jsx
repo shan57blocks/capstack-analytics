@@ -106,6 +106,7 @@ const data = [
     date: '01/01/2022 10:10',
     investor: 'John Brown',
     requested: '10 ETH',
+    shares: 100,
     status: 'Invest requested',
   },
   {
@@ -113,6 +114,7 @@ const data = [
     date: '01/03/2022 10:20',
     investor: 'John Brown',
     requested: '10 ETH',
+    shares: 100,
     status: 'Invested',
   },
   {
@@ -120,6 +122,7 @@ const data = [
     date: '01/04/2022 12:00',
     investor: 'John Brown',
     requested: '-10 ETH',
+    shares: 100,
     status: 'Withdrawl requested',
   },
   {
@@ -148,6 +151,11 @@ const getColumns = (confirm) => [
     key: 'requested',
   },
   {
+    title: 'Shares',
+    dataIndex: 'shares',
+    key: 'shares',
+  },
+  {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
@@ -157,7 +165,7 @@ const getColumns = (confirm) => [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        {record.status.endsWith('requested') && <a onClick={confirm}>Settle</a>}
+        {record.key === '3' && <a onClick={confirm}>Settle</a>}
       </Space>
     ),
   },

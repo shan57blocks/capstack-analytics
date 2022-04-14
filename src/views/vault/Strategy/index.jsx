@@ -1,6 +1,6 @@
 import '../index.less'
 
-import { Table, Modal, Form, Input } from 'antd'
+import { Table, Modal, Form, Input, Select } from 'antd'
 import React, { useState } from 'react'
 
 import { getColumns } from './Column'
@@ -50,6 +50,9 @@ const Strategy = () => {
           onFinish={onFinish}
           autoComplete="off"
         >
+          <Form.Item label="Select Position" name="type">
+            <Select />
+          </Form.Item>
           <Form.Item label="TX Hash 1" name="type">
             <Input />
           </Form.Item>

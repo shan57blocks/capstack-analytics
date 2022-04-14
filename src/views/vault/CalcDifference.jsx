@@ -1,9 +1,27 @@
 import './index.less'
 
-import { Button, Input, Space, Table } from 'antd'
+import { Button, Form, Input, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
 
 const CalcDifference = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const showModal = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
+
+  const onFinish = (values) => {
+    console.log('Success:', values)
+  }
+
   return (
     <div className="vault-calc">
       <div className="vault-calc-change">
@@ -11,7 +29,35 @@ const CalcDifference = () => {
         <Input width={200} />
         <Button>Calculate</Button>
       </div>
-      <Table columns={getColumns()} dataSource={data} bordered />
+      <Table columns={getColumns(showModal)} dataSource={data} bordered />
+      <Modal
+        title="Open Position"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item label="TX Hash 1" name="type">
+            <Input />
+          </Form.Item>
+          <Form.Item label="TX Hash 2" name="type">
+            <Input />
+          </Form.Item>
+          <Form.Item label="TX Hash 3" name="type">
+            <Input />
+          </Form.Item>
+          <Form.Item label="TX Hash 4" name="type">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   )
 }
@@ -52,7 +98,7 @@ const data = [
   },
 ]
 
-const getColumns = (confirm) => [
+const getColumns = (showModal) => [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -84,8 +130,17 @@ const getColumns = (confirm) => [
     key: 'targetChange',
   },
   {
-    title: 'Action',
+    title: 'Suggestion',
     dataIndex: 'action',
     key: 'action',
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <a onClick={showModal}>Open Position</a>
+      </Space>
+    ),
   },
 ]

@@ -8,6 +8,7 @@ import Investor from './Investor'
 import Transfer from './Transfer'
 import Config from './Config'
 import CalcDifference from './CalcDifference'
+import Profit from './Profit'
 
 const { TabPane } = Tabs
 
@@ -19,16 +20,19 @@ const Vaults = () => {
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
-        <TabPane tab="Calc Difference" key="2">
+        <TabPane tab="Profit Distribution" key="2">
+          <Profit />
+        </TabPane>
+        <TabPane tab="Calc Difference" key="3">
           <CalcDifference />
         </TabPane>
-        <TabPane tab="Investors" key="3">
+        <TabPane tab="Investors" key="4">
           <Investor />
         </TabPane>
-        <TabPane tab="Transfers In/Out" key="4">
+        <TabPane tab="Transfers In/Out" key="5">
           <Transfer />
         </TabPane>
-        <TabPane tab="Configuration" key="5">
+        <TabPane tab="Configuration" key="6">
           <Config />
         </TabPane>
       </Tabs>

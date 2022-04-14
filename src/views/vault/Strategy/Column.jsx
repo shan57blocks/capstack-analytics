@@ -268,6 +268,7 @@ export const getColumns = (showModal) => [
     render: (_, record) => (
       <Space size="middle">
         <a onClick={showModal}>Open</a>
+        <a onClick={showModal}>Harvest</a>
         <a onClick={showModal}>Adjust</a>
         <a onClick={showModal}>Close</a>
       </Space>
