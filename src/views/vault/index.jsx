@@ -14,7 +14,7 @@ const Vaults = () => {
   return (
     <div className="page">
       <VaultSummary></VaultSummary>
-      <Tabs className="vault-detail" defaultActiveKey="4" type="card">
+      <Tabs className="vault-detail" defaultActiveKey="1" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
