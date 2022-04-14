@@ -64,13 +64,13 @@ const data = [
     key: '1',
     name: 'John Brown',
     address: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
-    type: 'EVM',
+    type: 'Ethereum',
   },
   {
     key: '2',
     name: 'Jim Green',
     address: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
-    type: 'EVM',
+    type: 'Avalanche',
   },
   {
     key: '3',
@@ -88,12 +88,12 @@ const columns = [
     render: (text) => text,
   },
   {
-    title: 'Address',
+    title: 'Wallet',
     dataIndex: 'address',
     key: 'address',
   },
   {
-    title: 'Address type',
+    title: 'Address Chain',
     dataIndex: 'type',
     key: 'type',
   },
