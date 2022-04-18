@@ -1,8 +1,13 @@
 import { handleActions } from 'redux-actions'
-import { APP_CLOSE_LOADING, APP_SHOW_LOADING } from 'src/actions/app'
+import {
+  APP_CLOSE_LOADING,
+  APP_SHOW_LOADING,
+  GET_INVESTORS,
+} from 'src/actions/app'
 
 const initState = {
   loading: false,
+  investors: [],
 }
 
 const app = handleActions(
@@ -17,6 +22,12 @@ const app = handleActions(
       return {
         ...state,
         loading: false,
+      }
+    },
+    [GET_INVESTORS]: (state, { payload }) => {
+      return {
+        ...state,
+        investors: payload,
       }
     },
   },

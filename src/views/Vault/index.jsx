@@ -1,7 +1,7 @@
 import './index.less'
 
 import React, { useState } from 'react'
-import Summary from './Summary/VaultSummary'
+import Summary from './Summary'
 import { Tabs } from 'antd'
 import Strategy from './Strategy'
 import Investor from './Investor'
@@ -19,7 +19,7 @@ const Vaults = () => {
   return (
     <div className="page">
       <Summary vault={selectedVault} selectVault={setSelectedVault}></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="6" type="card">
+      <Tabs className="vault-detail" defaultActiveKey="4" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>

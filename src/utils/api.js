@@ -62,7 +62,7 @@ class Api {
         else if ([0, 404].includes(data.status)) {
           reject(data)
           message.error(data.msg)
-        } else if (status === 200) {
+        } else if (status === 200 || status === 201) {
           resolve(data)
         } else {
           if (data.msg) {

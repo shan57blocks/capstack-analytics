@@ -3,9 +3,9 @@ import './index.less'
 import React from 'react'
 import { Card } from 'antd'
 import classnames from 'classnames'
-import { VAULT } from './const'
+import { VAULT } from '../const'
 
-const VaultSummary = ({ vault, selectVault }) => {
+const Summary = ({ vault, selectVault }) => {
   return (
     <div className="vault-summary">
       <Card
@@ -84,4 +84,4 @@ const VaultSummary = ({ vault, selectVault }) => {
   )
 }
 
-export default VaultSummary
+export default Summary

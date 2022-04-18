@@ -1,40 +1,94 @@
 import './index.less'
 
-import { Space, Table, Button, Modal, Form, Input } from 'antd'
+import { Button, Form, Input, message, Modal, Select, Space, Table } from 'antd'
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as appAction from 'src/actions/app'
+import api from 'src/utils/api'
+
+import { Chains } from '../const'
+
+const { Option } = Select
 
 const Investor = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const dispatch = useDispatch()
+  const { investors } = useSelector((state) => state.app)
+  const [investor, setInvestor] = useState()
+  const [form] = Form.useForm()
 
-  const showModal = () => {
-    setIsModalVisible(true)
+  const showAddInvestor = () => {
+    setInvestor({})
+    form.setFieldsValue({})
+  }
+
+  const showEditInvestor = (investor) => {
+    setInvestor(investor)
+    form.setFieldsValue(investor)
   }
 
   const handleOk = () => {
-    setIsModalVisible(false)
+    form.submit()
   }
 
   const handleCancel = () => {
-    setIsModalVisible(false)
+    setInvestor()
+    form.resetFields()
   }
 
-  const onFinish = (values) => {
-    console.log('Success:', values)
+  const onFinish = async (values) => {
+    const method = values.id ? 'put' : 'post'
+    await api[method](`/investors`, values)
+    dispatch(appAction.getInvestors())
+    handleCancel()
+    message.success(`Investor has been created successfully.`)
   }
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => text,
+    },
+    {
+      title: 'Wallet',
+      dataIndex: 'wallet',
+      key: 'wallet',
+    },
+    {
+      title: 'Chain',
+      dataIndex: 'chain',
+      key: 'chain',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a onClick={() => showEditInvestor(record)}>Edit</a>
+        </Space>
+      ),
+    },
+  ]
 
   return (
     <div className="vault-investor">
-      <Button className="vault-investor-add" onClick={showModal}>
+      <Button
+        className="vault-investor-add"
+        type="primary"
+        onClick={showAddInvestor}
+      >
         Add
       </Button>
-      <Table columns={columns} dataSource={data} bordered />
+      <Table rowKey="id" columns={columns} dataSource={investors} bordered />
       <Modal
         title="Add Investor"
-        visible={isModalVisible}
+        visible={investor}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -42,14 +96,33 @@ const Investor = () => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="Investor Name" name="username">
+          <Form.Item name="id" className="investor-id">
             <Input />
           </Form.Item>
-          <Form.Item label="Wallet Address" name="password">
+          <Form.Item
+            label="Investor Name"
+            name="name"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="Wallet Type" name="type">
+          <Form.Item
+            label="Wallet Address"
+            name="wallet"
+            rules={[{ required: true }]}
+          >
             <Input />
+          </Form.Item>
+          <Form.Item name="chain" label="Chain" rules={[{ required: true }]}>
+            <Select placeholder="Select chain" allowClear>
+              {Object.values(Chains).map((chain) => {
+                return (
+                  <Option key={chain.id} value={chain.name}>
+                    {chain.name}
+                  </Option>
+                )
+              })}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
@@ -58,52 +131,3 @@ const Investor = () => {
 }
 
 export default Investor
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    address: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
-    type: 'Ethereum',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    address: '0xc0aad83d27b5b091729efe16a7b068f6bdab1f1c',
-    type: 'Avalanche',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    address: '8qPKSiDVxXYmvopt4AHQWCd15xjtLv9uESU7jwY1EtAr',
-    type: 'Solana',
-  },
-]
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    render: (text) => text,
-  },
-  {
-    title: 'Wallet',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Address Chain',
-    dataIndex: 'type',
-    key: 'type',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <Space size="middle">
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-]
