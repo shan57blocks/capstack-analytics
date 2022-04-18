@@ -1,0 +1,35 @@
+.vault-config {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  & > div:first-child {
+    margin-bottom: 20px;
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+
+    &-title {
+      width: 160px;
+    }
+
+    .ant-input-group {
+      display: flex;
+
+      &-addon {
+        width: 35px;
+      }
+    }
+
+    button {
+      margin-left: 10px;
+    }
+  }
+
+  .ant-form {
+    width: 400px;
+  }
+}

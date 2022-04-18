@@ -1,6 +1,6 @@
 import './index.less'
 
-import React from 'react'
+import React, { useState } from 'react'
 import VaultSummary from './VaultSummary'
 import { Tabs } from 'antd'
 import Strategy from './Strategy'
@@ -9,14 +9,20 @@ import Transfer from './Transfer'
 import Config from './Config'
 import CalcDifference from './CalcDifference'
 import Profit from './Profit'
+import { VAULT } from './const'
 
 const { TabPane } = Tabs
 
 const Vaults = () => {
+  const [selectedVault, setSelectedVault] = useState(VAULT.ETH)
+
   return (
     <div className="page">
-      <VaultSummary></VaultSummary>
-      <Tabs className="vault-detail" defaultActiveKey="1" type="card">
+      <VaultSummary
+        vault={selectedVault}
+        selectVault={setSelectedVault}
+      ></VaultSummary>
+      <Tabs className="vault-detail" defaultActiveKey="6" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
@@ -33,7 +39,7 @@ const Vaults = () => {
           <Transfer />
         </TabPane>
         <TabPane tab="Configuration" key="6">
-          <Config />
+          <Config vault={selectedVault} />
         </TabPane>
       </Tabs>
     </div>

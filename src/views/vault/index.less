@@ -2,6 +2,11 @@
   &-summary {
     display: flex;
     margin-bottom: 50px;
+    cursor: pointer;
+
+    &-selected {
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
 
     .ant-card {
       margin-right: 100px;
@@ -46,7 +51,21 @@
 
   &-config {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+
+    & > div:first-child {
+      margin-bottom: 20px;
+    }
+
+    &-item {
+      display: flex;
+
+      .ant-input-group {
+        display: flex;
+      }
+    }
 
     .ant-form {
       width: 400px;
