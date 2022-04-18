@@ -2,7 +2,7 @@ import React from 'react'
 import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
 
-import Vaults from './vault'
+import Vaults from './Vaults'
 
 export const routes = [
   {

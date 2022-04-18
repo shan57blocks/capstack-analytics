@@ -1,13 +1,13 @@
 import './index.less'
 
 import React, { useState } from 'react'
-import VaultSummary from './VaultSummary'
+import Summary from './Summary/VaultSummary'
 import { Tabs } from 'antd'
 import Strategy from './Strategy'
 import Investor from './Investor'
 import Transfer from './Transfer'
 import Config from './Config'
-import CalcDifference from './CalcDifference'
+import Suggest from './Suggest'
 import Profit from './Profit'
 import { VAULT } from './const'
 
@@ -18,10 +18,7 @@ const Vaults = () => {
 
   return (
     <div className="page">
-      <VaultSummary
-        vault={selectedVault}
-        selectVault={setSelectedVault}
-      ></VaultSummary>
+      <Summary vault={selectedVault} selectVault={setSelectedVault}></Summary>
       <Tabs className="vault-detail" defaultActiveKey="6" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
@@ -30,7 +27,7 @@ const Vaults = () => {
           <Profit />
         </TabPane>
         <TabPane tab="Calc Difference" key="3">
-          <CalcDifference />
+          <Suggest />
         </TabPane>
         <TabPane tab="Investors" key="4">
           <Investor />

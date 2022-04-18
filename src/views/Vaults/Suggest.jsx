@@ -3,7 +3,7 @@ import './index.less'
 import { Button, Form, Input, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
 
-const CalcDifference = () => {
+const Suggest = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -62,7 +62,7 @@ const CalcDifference = () => {
   )
 }
 
-export default CalcDifference
+export default Suggest
 
 const data = [
   {
