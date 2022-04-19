@@ -3,11 +3,13 @@ import {
   APP_CLOSE_LOADING,
   APP_SHOW_LOADING,
   GET_INVESTORS,
+  GET_VAULTS,
 } from 'src/actions/app'
 
 const initState = {
   loading: false,
   investors: [],
+  vaults: null,
 }
 
 const app = handleActions(
@@ -22,6 +24,12 @@ const app = handleActions(
       return {
         ...state,
         loading: false,
+      }
+    },
+    [GET_VAULTS]: (state, { payload }) => {
+      return {
+        ...state,
+        vaults: payload,
       }
     },
     [GET_INVESTORS]: (state, { payload }) => {

@@ -15,6 +15,7 @@ const App = () => {
   const { loading } = useSelector((state) => state.app)
 
   useEffect(() => {
+    dispatch(appAction.getVaults())
     dispatch(appAction.getInvestors())
   }, [dispatch])
 

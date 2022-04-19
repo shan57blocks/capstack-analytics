@@ -1,9 +1,11 @@
 import './index.less'
 
-import { Button, Form, Input, Modal, Space, Table } from 'antd'
+import { Form, Input, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
+import CapSkeleton from 'src/components/CapSkeleton'
+import { toPercentage } from 'src/utils/common'
 
-const Suggest = () => {
+const Suggest = ({ vault }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -22,14 +24,22 @@ const Suggest = () => {
     console.log('Success:', values)
   }
 
+  if (!vault) {
+    return <CapSkeleton />
+  }
+
   return (
-    <div className="vault-calc">
-      <div className="vault-calc-change">
-        <div>Net Change to Vault:</div>
-        <Input width={200} />
-        <Button>Calculate</Button>
+    <div className="vault-suggest">
+      <div className="vault-suggest-change">
+        <div>Uninvested:</div>
+        <div>{vault.unallocated}</div>
       </div>
-      <Table columns={getColumns(showModal)} dataSource={data} bordered />
+      <Table
+        rowKey="id"
+        columns={getColumns(vault, showModal)}
+        dataSource={vault.strategies}
+        bordered
+      />
       <Modal
         title="Open Position"
         visible={isModalVisible}
@@ -64,43 +74,7 @@ const Suggest = () => {
 
 export default Suggest
 
-const data = [
-  {
-    key: '1',
-    name: 'ETH/AVAX',
-    protocol: 'Alpha Homora V2 (Avalanche)',
-    principals: '3.524',
-    current: '3.569',
-    target: '25%',
-    targetChange: '2',
-    action:
-      '-4 ETH/-2 AVAX (pay back 1 AVAX/2ETH in debt), swap 1 AVAX for ETH',
-  },
-  {
-    key: '2',
-    name: 'ETH/USDT (First)',
-    protocol: 'Alpaca (BSC)',
-    principals: '3.524',
-    current: '3.569',
-    target: '20%',
-    targetChange: '13',
-    action:
-      '-4 ETH/-2 AVAX (pay back 1 AVAX/2ETH in debt), swap 1 AVAX for ETH',
-  },
-  {
-    key: '3',
-    name: 'ETH/USDT (Second)',
-    protocol: 'Alpaca (BSC)',
-    principals: '3.524',
-    current: '3.569',
-    target: '20%',
-    targetChange: '13',
-    action:
-      '-4 ETH/-2 AVAX (pay back 1 AVAX/2ETH in debt), swap 1 AVAX for ETH',
-  },
-]
-
-const getColumns = (showModal) => [
+const getColumns = (vault, showModal) => [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -108,28 +82,31 @@ const getColumns = (showModal) => [
   },
   {
     title: 'Protocol',
-    dataIndex: 'protocol',
-    key: 'protocol',
-  },
-  {
-    title: 'Principals',
-    dataIndex: 'principals',
-    key: 'principals',
-  },
-  {
-    title: 'Current Estimated',
-    dataIndex: 'current',
-    key: 'current',
+    dataIndex: 'positions',
+    render: (positions) => {
+      const [{ protocol }] = positions
+      return (
+        <div>
+          {protocol.name} ({protocol.chain})
+        </div>
+      )
+    },
   },
   {
     title: 'Target',
-    dataIndex: 'target',
-    key: 'target',
+    dataIndex: 'percentage',
+    key: 'percentage',
+    render: (percentage) => {
+      return <div>{toPercentage(percentage)}</div>
+    },
   },
   {
     title: 'Target Change',
-    dataIndex: 'targetChange',
-    key: 'targetChange',
+    dataIndex: 'percentage',
+    key: 'percentage',
+    render: (percentage) => {
+      return <div>{Number(vault.unallocated) * Number(percentage)}</div>
+    },
   },
   {
     title: 'Suggestion',

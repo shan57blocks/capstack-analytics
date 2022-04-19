@@ -8,13 +8,13 @@ import { deepClone } from 'src/utils/common'
 const LIQUIDATION = 'Liquidation'
 const HARVEST = 'Harvest'
 
-const Config = ({ vault }) => {
+const Config = ({ vaultName }) => {
   const [originConfigs, setOriginConfigs] = useState({})
   const [configs, setConfigs] = useState({})
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await api.get(`/configs/${vault}`)
+      const result = await api.get(`/configs/${vaultName}`)
       const configs = {}
       result.forEach((item) => {
         if (item.property.startsWith(LIQUIDATION)) {
@@ -28,7 +28,7 @@ const Config = ({ vault }) => {
       setOriginConfigs(configs)
     }
     fetch()
-  }, [vault])
+  }, [vaultName])
 
   const handleChange = (e, type) => {
     const newConfigs = deepClone(configs)

@@ -5,16 +5,16 @@ import { Card } from 'antd'
 import classnames from 'classnames'
 import { VAULT } from '../const'
 
-const Summary = ({ vault, selectVault }) => {
+const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
   return (
     <div className="vault-summary">
       <Card
         size="small"
         title="ETH Vault"
         style={{ width: 300 }}
-        onClick={() => selectVault(VAULT.ETH)}
+        onClick={() => selectVaultName(VAULT.ETH)}
         className={classnames({
-          'vault-summary-selected': vault === VAULT.ETH,
+          'vault-summary-selected': selectedVaultName === VAULT.ETH,
         })}
       >
         <div>
@@ -36,9 +36,9 @@ const Summary = ({ vault, selectVault }) => {
         size="small"
         title="USD Vault"
         style={{ width: 300 }}
-        onClick={() => selectVault(VAULT.USD)}
+        onClick={() => selectVaultName(VAULT.USD)}
         className={classnames({
-          'vault-summary-selected': vault === VAULT.USD,
+          'vault-summary-selected': selectedVaultName === VAULT.USD,
         })}
       >
         <div>
@@ -60,9 +60,9 @@ const Summary = ({ vault, selectVault }) => {
         size="small"
         title="BTC Vault"
         style={{ width: 300 }}
-        onClick={() => selectVault(VAULT.BTC)}
+        onClick={() => selectVaultName(VAULT.BTC)}
         className={classnames({
-          'vault-summary-selected': vault === VAULT.BTC,
+          'vault-summary-selected': selectedVaultName === VAULT.BTC,
         })}
       >
         <div>

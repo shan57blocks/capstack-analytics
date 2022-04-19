@@ -10,24 +10,30 @@ import Config from './Config'
 import Suggest from './Suggest'
 import Profit from './Profit'
 import { VAULT } from './const'
+import { useSelector } from 'react-redux'
 
 const { TabPane } = Tabs
 
 const Vaults = () => {
-  const [selectedVault, setSelectedVault] = useState(VAULT.ETH)
+  const { vaults } = useSelector((state) => state.app)
+  const [selectedVaultName, setSelectedVaultName] = useState(VAULT.ETH)
+  const vault = vaults?.find((vault) => vault.name === selectedVaultName)
 
   return (
     <div className="page">
-      <Summary vault={selectedVault} selectVault={setSelectedVault}></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="4" type="card">
+      <Summary
+        vault={selectedVaultName}
+        selectVault={setSelectedVaultName}
+      ></Summary>
+      <Tabs className="vault-detail" defaultActiveKey="3" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
         <TabPane tab="Profit Distribution" key="2">
           <Profit />
         </TabPane>
-        <TabPane tab="Calc Difference" key="3">
-          <Suggest />
+        <TabPane tab="Investment Suggestion" key="3">
+          <Suggest vault={vault} />
         </TabPane>
         <TabPane tab="Investors" key="4">
           <Investor />
@@ -36,7 +42,7 @@ const Vaults = () => {
           <Transfer />
         </TabPane>
         <TabPane tab="Configuration" key="6">
-          <Config vault={selectedVault} />
+          <Config vault={selectedVaultName} />
         </TabPane>
       </Tabs>
     </div>

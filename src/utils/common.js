@@ -23,3 +23,7 @@ export const isEmpty = (value) => {
 export const scaleDown = (num, decimals) => {
   return new BN(num).div(`1e${decimals}`).toString()
 }
+
+export const toPercentage = (num) => {
+  return `${(num * 100).toFixed(2)}%`
+}
