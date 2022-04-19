@@ -22,10 +22,10 @@ const Vaults = () => {
   return (
     <div className="page">
       <Summary
-        vault={selectedVaultName}
-        selectVault={setSelectedVaultName}
+        selectedVaultName={selectedVaultName}
+        selectVaultName={setSelectedVaultName}
       ></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="3" type="card">
+      <Tabs className="vault-detail" defaultActiveKey="2" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
@@ -42,7 +42,7 @@ const Vaults = () => {
           <Transfer />
         </TabPane>
         <TabPane tab="Configuration" key="6">
-          <Config vault={selectedVaultName} />
+          <Config vaultName={selectedVaultName} />
         </TabPane>
       </Tabs>
     </div>

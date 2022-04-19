@@ -240,34 +240,33 @@ const renforceStrategies = (vault, strategies) => {
     strategy.principal = Number(vault.unallocated) * strategy.percentage
     strategy.suggestions = []
     strategy.leverage = strategy.leverage ?? 3
+    const { principal, leverage } = strategy
 
     if (!protocol.isLeverage) {
       strategy.leverage = 1
-      strategy.suggestions.push(
-        `Invest ${strategy.principal} ${vault.name} to position`
-      )
+      strategy.suggestions.push(`${strategy.principal} ${vault.name}`)
       return strategy
     }
 
     if (strategy.positions.length > 1) {
-      const principal0 =
-        (strategy.principal * strategy.leverage) / (2 * strategy.leverage - 2)
-      const principal1 =
-        (strategy.principal * (strategy.leverage - 2)) /
-        (2 * strategy.leverage - 2)
+      const principal0 = (principal * leverage) / (2 * leverage - 2)
+      const borrow0 = principal0 * (leverage - 1)
+
+      const principal1 = (principal * (leverage - 2)) / (2 * leverage - 2)
+      const borrow1 = principal1 * (leverage - 1)
       strategy.suggestions.push(
-        `Invest ${principal0} ${vault.name} in first position`
+        `${principal0} ${vault.name}, borrow ${borrow0} ${tokens[1].symbol}`
       )
       strategy.suggestions.push(
-        `Invest ${principal1} ${vault.name} in second position`
+        `${principal1} ${vault.name}, borrow ${borrow1} ${tokens[0].symbol}`
       )
       return strategy
     }
 
-    const borrowRate0 = (strategy.leverage / 2 - 1).toFixed(2)
-    const borrowRate1 = (strategy.leverage / 2).toFixed(2)
-    strategy.suggestions.push(`Borrow ${borrowRate0}X for ${tokens[0].symbol}`)
-    strategy.suggestions.push(`Borrow ${borrowRate1}X for ${tokens[1].symbol}`)
+    const borrowRate0 = (leverage / 2 - 1).toFixed(2)
+    const borrowRate1 = (leverage / 2).toFixed(2)
+    strategy.suggestions.push(`Borrow ${borrowRate0}X ${tokens[0].symbol}`)
+    strategy.suggestions.push(`Borrow ${borrowRate1}X ${tokens[1].symbol}`)
     return strategy
   })
 }
