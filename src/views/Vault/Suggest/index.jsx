@@ -1,9 +1,18 @@
 import './index.less'
 
-import { Form, Input, InputNumber, Modal, Space, Table } from 'antd'
+import {
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Space,
+  Table,
+  Button,
+  message,
+} from 'antd'
 import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
-import { toPercentage } from 'src/utils/common'
+import api from 'src/utils/api'
 
 const Suggest = ({ vault }) => {
   const [strategies, setStrategies] = useState()
@@ -22,6 +31,28 @@ const Suggest = ({ vault }) => {
       return item
     })
     setStrategies(renforceStrategies(vault, newStrategies))
+  }
+
+  const changePercentage = (percentage, strategyId) => {
+    const newStrategies = strategies.map((item) => {
+      if (item.id === strategyId) {
+        item.percentage = percentage
+      }
+      return item
+    })
+    setStrategies(renforceStrategies(vault, newStrategies))
+  }
+
+  const savePercentage = async (percentage, strategyId) => {
+    const totalPercentage = strategies
+      .map((item) => Number(item.percentage))
+      .reduce((a, b) => a + b, 0)
+    if (totalPercentage > 1) {
+      message.error('The total target is more than 100%.')
+      return
+    }
+    await api.put(`/vaults/strategies/${strategyId}?percentage=${percentage}`)
+    message.success('The target has been updated successfully.')
   }
 
   const showModal = () => {
@@ -52,7 +83,13 @@ const Suggest = ({ vault }) => {
       </div>
       <Table
         rowKey="id"
-        columns={getColumns(vault, changeLeverage, showModal)}
+        columns={getColumns(
+          vault,
+          changePercentage,
+          savePercentage,
+          changeLeverage,
+          showModal
+        )}
         dataSource={strategies}
         bordered
       />
@@ -90,7 +127,13 @@ const Suggest = ({ vault }) => {
 
 export default Suggest
 
-const getColumns = (vault, changeLeverage, showModal) => [
+const getColumns = (
+  vault,
+  changePercentage,
+  savePercentage,
+  changeLeverage,
+  showModal
+) => [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -112,8 +155,28 @@ const getColumns = (vault, changeLeverage, showModal) => [
     title: 'Target',
     dataIndex: 'percentage',
     key: 'percentage',
-    render: (percentage) => {
-      return <div>{toPercentage(percentage)}</div>
+    render: (percentage, strategy) => {
+      return (
+        <div className="vault-suggest-percentage">
+          <InputNumber
+            value={percentage}
+            min={0}
+            max={100}
+            step={0.01}
+            formatter={(value) => `${(Number(value) * 100).toFixed(2)}%`}
+            parser={(value) => value.replace('%', '') / 100}
+            onChange={(value) => changePercentage(value, strategy.id)}
+          ></InputNumber>
+          <Button
+            type="primary"
+            onClick={() => {
+              savePercentage(percentage, strategy.id)
+            }}
+          >
+            Save
+          </Button>
+        </div>
+      )
     },
   },
   {
@@ -130,8 +193,10 @@ const getColumns = (vault, changeLeverage, showModal) => [
     key: 'leverage',
     width: 160,
     render: (leverage, strategy) => {
+      const [{ protocol }] = strategy.positions
       return (
         <InputNumber
+          disabled={!protocol.isLeverage}
           min={1}
           width={80}
           step={0.1}
@@ -171,9 +236,19 @@ const renforceStrategies = (vault, strategies) => {
     return []
   }
   return strategies.map((strategy) => {
+    const [{ protocol, tokens }] = strategy.positions
     strategy.principal = Number(vault.unallocated) * strategy.percentage
     strategy.suggestions = []
     strategy.leverage = strategy.leverage ?? 3
+
+    if (!protocol.isLeverage) {
+      strategy.leverage = 1
+      strategy.suggestions.push(
+        `Invest ${strategy.principal} ${vault.name} to position`
+      )
+      return strategy
+    }
+
     if (strategy.positions.length > 1) {
       const principal0 =
         (strategy.principal * strategy.leverage) / (2 * strategy.leverage - 2)
@@ -186,17 +261,17 @@ const renforceStrategies = (vault, strategies) => {
       strategy.suggestions.push(
         `Invest ${principal1} ${vault.name} in second position`
       )
-    } else {
-      const [{ tokens }] = strategy.positions
-      const borrowRate0 = (strategy.leverage / 2 - 1).toFixed(2)
-      const borrowRate1 = (strategy.leverage / 2).toFixed(2)
-      strategy.suggestions.push(
-        `Borrow ${borrowRate0}X ${vault.name} for ${tokens[0].symbol}`
-      )
-      strategy.suggestions.push(
-        `Borrow ${borrowRate1}X ${vault.name} for ${tokens[1].symbol}`
-      )
+      return strategy
     }
+
+    const borrowRate0 = (strategy.leverage / 2 - 1).toFixed(2)
+    const borrowRate1 = (strategy.leverage / 2).toFixed(2)
+    strategy.suggestions.push(
+      `Borrow ${borrowRate0}X ${vault.name} for ${tokens[0].symbol}`
+    )
+    strategy.suggestions.push(
+      `Borrow ${borrowRate1}X ${vault.name} for ${tokens[1].symbol}`
+    )
     return strategy
   })
 }
