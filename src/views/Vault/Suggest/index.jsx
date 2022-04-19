@@ -266,12 +266,8 @@ const renforceStrategies = (vault, strategies) => {
 
     const borrowRate0 = (strategy.leverage / 2 - 1).toFixed(2)
     const borrowRate1 = (strategy.leverage / 2).toFixed(2)
-    strategy.suggestions.push(
-      `Borrow ${borrowRate0}X ${vault.name} for ${tokens[0].symbol}`
-    )
-    strategy.suggestions.push(
-      `Borrow ${borrowRate1}X ${vault.name} for ${tokens[1].symbol}`
-    )
+    strategy.suggestions.push(`Borrow ${borrowRate0}X for ${tokens[0].symbol}`)
+    strategy.suggestions.push(`Borrow ${borrowRate1}X for ${tokens[1].symbol}`)
     return strategy
   })
 }
