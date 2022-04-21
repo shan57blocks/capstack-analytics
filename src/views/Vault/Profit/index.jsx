@@ -1,8 +1,9 @@
 import './index.less'
 
-import { Form, Input, Modal, Space, Table } from 'antd'
+import { Form, Input, message, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
-import { BigNumber as BN } from 'bignumber.js'
+import { BN } from 'src/utils/common'
+import api from 'src/utils/api'
 
 const Profit = ({ vault }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -19,19 +20,38 @@ const Profit = ({ vault }) => {
     setIsModalVisible(false)
   }
 
-  const onFinish = (values) => {
-    console.log('Success:', values)
+  const onFinish = async (values) => {
+    await api.post(
+      `/vaults/${vault.id}/profit-distribution?feeTxHash=${values.feeTxHash}`
+    )
+    message.success(`Profit has been distributed successfully.`)
+  }
+
+  if (!vault) {
+    return null
   }
 
   return (
     <div className="vault-profit">
+      <div className="vault-profit-title">Summary</div>
       <Table
-        columns={getColumns(showModal)}
+        className="vault-profit-summary"
+        columns={getSummaryColumns(showModal)}
+        dataSource={[vault]}
+        bordered
+        rowKey="id"
+        pagination={false}
+      />
+
+      <div className="vault-profit-title">Detail</div>
+      <Table
+        columns={getStrategyColumns(showModal)}
         dataSource={vault?.strategies}
         bordered
+        rowKey="id"
       />
       <Modal
-        title="Management Fee"
+        title="Confirm Profit Distribution"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -44,7 +64,7 @@ const Profit = ({ vault }) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="TX Hash" name="username">
+          <Form.Item label="Fee TX Hash" name="feeTxHash">
             <Input />
           </Form.Item>
         </Form>
@@ -55,7 +75,73 @@ const Profit = ({ vault }) => {
 
 export default Profit
 
-const getColumns = (showModal) => [
+const getSummaryColumns = (showModal) => [
+  {
+    title: 'Principals',
+    dataIndex: 'principals',
+    key: 'principals',
+    render: (_, record) => {
+      let principals = BN(0)
+      record.strategies.forEach((strategy) => {
+        principals = principals.plus(BN(strategy.principals))
+      })
+      return <div>{principals.toString()}</div>
+    },
+  },
+  {
+    title: 'Total Profit',
+    render: (_, record) => {
+      let profit = BN(0)
+      record.strategies.forEach((strategy) => {
+        profit = profit.plus(BN(strategy.profit))
+      })
+      return <div>{profit.toString()}</div>
+    },
+  },
+  {
+    title: 'Total Management Fee',
+    render: (_, record) => {
+      let fee = BN(0)
+      record.strategies.forEach((strategy) => {
+        fee = fee.plus(BN(strategy.managementFee))
+      })
+      return <div>{fee.toString()}</div>
+    },
+  },
+  {
+    title: 'Total Performance Fee',
+    render: (_, record) => {
+      let fee = BN(0)
+      record.strategies.forEach((strategy) => {
+        fee = fee.plus(BN(strategy.performanceFee))
+      })
+      return <div>{fee.toString()}</div>
+    },
+  },
+  {
+    title: 'Total Fee',
+    render: (_, record) => {
+      let fee = BN(0)
+      record.strategies.forEach((strategy) => {
+        fee = fee
+          .plus(BN(strategy.performanceFee))
+          .plus(BN(strategy.managementFee))
+      })
+      return <div>{fee.toString()}</div>
+    },
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <a onClick={showModal}>Confirm</a>
+      </Space>
+    ),
+  },
+]
+
+const getStrategyColumns = () => [
   {
     title: 'Strategy',
     dataIndex: 'name',

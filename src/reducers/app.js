@@ -5,6 +5,7 @@ import {
   GET_INVESTORS,
   GET_VAULTS,
 } from 'src/actions/app'
+import { BN } from 'src/utils/common'
 
 const initState = {
   loading: false,
@@ -34,6 +35,24 @@ const app = handleActions(
       const strategies = {}
       payload.forEach((vault) => {
         vault.strategies.forEach((strategy) => {
+          const token = strategy.positions[0].tokens.find(
+            (token) => token.id === strategy.tokenId
+          )
+          const decimals = `1e${token.decimals}`
+          const decimalsBN = BN(decimals)
+          strategy.principals = BN(strategy.principals)
+            .div(decimalsBN)
+            .toString()
+          strategy.unallocated = BN(strategy.unallocated)
+            .div(decimalsBN)
+            .toString()
+          strategy.profit = BN(strategy.profit).div(decimalsBN).toString()
+          strategy.managementFee = BN(strategy.managementFee)
+            .div(decimalsBN)
+            .toString()
+          strategy.performanceFee = BN(strategy.performanceFee)
+            .div(decimalsBN)
+            .toString()
           strategies[strategy.id] = strategy
           strategy.positions.forEach((position) => {
             if (!positionStrategies[position.id]) {

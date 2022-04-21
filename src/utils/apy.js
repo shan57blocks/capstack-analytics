@@ -1,5 +1,5 @@
-import { BigNumber as BN } from 'bignumber.js'
 import _ from 'lodash'
+import { BN } from './common'
 
 export const calApy = (startPosition, currentPosition) => {
   const startPrincipals = startPosition.principals
@@ -148,7 +148,6 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
     (token) => token.id === strategy.tokenId
   )
   const decimals = `1e${token.decimals}`
-  const principalsBN = new BN(strategy.principals)
   let startTime = positions[0].openDate
   let currentTime = positions[0].currentHistory.timestamp
 
@@ -218,9 +217,8 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   strategy.netApy += getApy(strategy.netValue)
   strategy.startTime = startTime
   strategy.currentTime = currentTime
-  strategy.principalsCalculated = principalsBN.div(decimals).toNumber()
-  strategy.currentBalance = principalsBN
-    .plus(new BN(strategy.netBalance) * new BN(decimals))
+  strategy.currentBalance = BN(strategy.principals)
+    .plus(BN(strategy.netBalance) * BN(decimals))
     .div(decimals)
     .toNumber()
   strategy.positions = positions
@@ -229,15 +227,15 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
 
 export const mapVault = (vault, strategies) => {
   const { principals, shares, priceToken } = vault
-  const principalsBN = new BN(principals)
-  const sharesBN = new BN(shares)
+  const principalsBN = BN(principals)
+  const sharesBN = BN(shares)
   const decimals = `1e${priceToken.decimals}`
   vault.principalsCalculated = principalsBN.div(decimals).toNumber()
   vault.sharesCalculated = sharesBN.div(decimals).toNumber()
   vault.sharePriceCalculated = principals / shares
   vault.netBalance = _.sum(strategies.map((item) => item.netBalance))
   vault.currentBalance = principalsBN
-    .plus(new BN(vault.netBalance) * new BN(decimals))
+    .plus(BN(vault.netBalance) * BN(decimals))
     .div(decimals)
     .toNumber()
   vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))

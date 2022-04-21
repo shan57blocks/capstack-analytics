@@ -1,4 +1,4 @@
-import { BigNumber as BN } from 'bignumber.js'
+import { BigNumber } from 'bignumber.js'
 import moment from 'moment'
 
 /**
@@ -21,9 +21,13 @@ export const isEmpty = (value) => {
 }
 
 export const scaleDown = (num, decimals) => {
-  return new BN(num).div(`1e${decimals}`).toString()
+  return BN(num).div(`1e${decimals}`).toString()
 }
 
 export const toPercentage = (num) => {
   return `${(num * 100).toFixed(2)}%`
+}
+
+export const BN = (number) => {
+  return new BigNumber(number)
 }
