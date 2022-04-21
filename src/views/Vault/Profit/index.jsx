@@ -2,8 +2,9 @@ import './index.less'
 
 import { Form, Input, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
+import { BigNumber as BN } from 'bignumber.js'
 
-const Profit = () => {
+const Profit = ({ vault }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -24,7 +25,11 @@ const Profit = () => {
 
   return (
     <div className="vault-profit">
-      <Table columns={getColumns(showModal)} dataSource={data} bordered />
+      <Table
+        columns={getColumns(showModal)}
+        dataSource={vault?.strategies}
+        bordered
+      />
       <Modal
         title="Management Fee"
         visible={isModalVisible}
@@ -50,25 +55,26 @@ const Profit = () => {
 
 export default Profit
 
-const data = [
-  {
-    key: '1',
-    profit: '10ETH',
-    currentShares: 23423423,
-    managementFee: '1ETH',
-  },
-]
-
 const getColumns = (showModal) => [
+  {
+    title: 'Strategy',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Principals',
+    dataIndex: 'principals',
+    key: 'principals',
+  },
+  {
+    title: 'Current',
+    dataIndex: 'unallocated',
+    key: 'unallocated',
+  },
   {
     title: 'Profit',
     dataIndex: 'profit',
     key: 'profit',
-  },
-  {
-    title: 'Current Shares',
-    dataIndex: 'currentShares',
-    key: 'currentShares',
   },
   {
     title: 'Management Fee',
@@ -76,13 +82,8 @@ const getColumns = (showModal) => [
     key: 'managementFee',
   },
   {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <Space size="middle">
-        <a onClick={showModal}>Confirm Management Fee</a>
-        <a>Confirm Profit Distribution</a>
-      </Space>
-    ),
+    title: 'Performance Fee',
+    dataIndex: 'performanceFee',
+    key: 'performanceFee',
   },
 ]

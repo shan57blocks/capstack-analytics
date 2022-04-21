@@ -10,6 +10,9 @@ const initState = {
   loading: false,
   investors: [],
   vaults: null,
+  positionStrategies: {},
+  strategyPositions: {},
+  strategies: {},
 }
 
 const app = handleActions(
@@ -27,9 +30,32 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
+      const positionStrategies = {}
+      const strategies = {}
+      payload.forEach((vault) => {
+        vault.strategies.forEach((strategy) => {
+          strategies[strategy.id] = strategy
+          strategy.positions.forEach((position) => {
+            if (!positionStrategies[position.id]) {
+              positionStrategies[position.id] = []
+            }
+            positionStrategies[position.id].push(strategy)
+          })
+        })
+      })
+      Object.values(positionStrategies).forEach((strategies) => {
+        if (strategies.length > 1) {
+          strategies.forEach((strategy) => {
+            strategy.sharedPosition = true
+          })
+        }
+      })
+
       return {
         ...state,
         vaults: payload,
+        positionStrategies,
+        strategies,
       }
     },
     [GET_INVESTORS]: (state, { payload }) => {

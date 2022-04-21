@@ -30,7 +30,7 @@ const Vaults = () => {
           <Strategy />
         </TabPane>
         <TabPane tab="Profit Distribution" key="2">
-          <Profit />
+          <Profit vault={vault} />
         </TabPane>
         <TabPane tab="Investment Suggestion" key="3">
           <Suggest vault={vault} />
