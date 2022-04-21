@@ -6,6 +6,7 @@ import { BN } from 'src/utils/common'
 import api from 'src/utils/api'
 
 const Profit = ({ vault }) => {
+  const [form] = Form.useForm()
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -13,7 +14,7 @@ const Profit = ({ vault }) => {
   }
 
   const handleOk = () => {
-    setIsModalVisible(false)
+    form.submit()
   }
 
   const handleCancel = () => {
@@ -21,6 +22,7 @@ const Profit = ({ vault }) => {
   }
 
   const onFinish = async (values) => {
+    setIsModalVisible(false)
     await api.post(
       `/vaults/${vault.id}/profit-distribution?feeTxHash=${values.feeTxHash}`
     )
@@ -57,6 +59,7 @@ const Profit = ({ vault }) => {
         onCancel={handleCancel}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -64,7 +67,11 @@ const Profit = ({ vault }) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="Fee TX Hash" name="feeTxHash">
+          <Form.Item
+            label="Fee TX Hash"
+            name="feeTxHash"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
         </Form>
@@ -133,7 +140,7 @@ const getSummaryColumns = (showModal) => [
   {
     title: 'Action',
     key: 'action',
-    render: (_, record) => (
+    render: () => (
       <Space size="middle">
         <a onClick={showModal}>Confirm</a>
       </Space>
