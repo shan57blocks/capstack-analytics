@@ -1,5 +1,3 @@
-import './index.less'
-
 import React, { useState } from 'react'
 import Summary from './Summary'
 import { Tabs } from 'antd'

@@ -1,4 +1,4 @@
-import '../index.less'
+import './index.less'
 
 import { Table, Modal, Form, Input, Select } from 'antd'
 import React, { useState } from 'react'
