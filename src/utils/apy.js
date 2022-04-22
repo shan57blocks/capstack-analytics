@@ -217,7 +217,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   strategy.netApy = getApy(strategy.netValue, strategy.IL)
   strategy.netValueYearly = getYearly(strategy)
   strategy.netBalanceYearly = getYearly(strategy) / tokenPrice
-  strategy.principalsCalculated = principalsBN.div(decimals).toNumber()
+  strategy.principalsCalculated = principalsBN.toNumber()
   strategy.currentBalance = strategy.principalsCalculated + strategy.netBalance
   strategy.ILLoss = firstPosition.currentHistory.ILLoss
   strategy.priceChange = calcPriceChange(firstPosition)

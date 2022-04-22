@@ -5,6 +5,7 @@ export const APP_SHOW_LOADING = 'APP_SHOW_LOADING'
 export const APP_CLOSE_LOADING = 'APP_CLOSE_LOADING'
 
 export const GET_VAULTS = 'GET_VAULTS'
+export const GET_CONFIGS = 'GET_CONFIGS'
 export const GET_INVESTORS = 'GET_INVESTORS'
 export const GET_INVESTOR_TXS = 'GET_INVESTOR_TXS'
 export const GET_STRATEGY_POSITIONS = 'GET_STRATEGY_POSITIONS'
@@ -23,6 +24,8 @@ export const getInvestors = createAction(GET_INVESTORS, () =>
 export const getInvestorTxs = createAction(GET_INVESTOR_TXS, () =>
   api.get(`/investors/transactions`)
 )
+
+export const getConfigs = createAction(GET_CONFIGS, () => api.get(`/configs`))
 
 export const getPositionsByStrategy = createAction(
   GET_STRATEGY_POSITIONS,

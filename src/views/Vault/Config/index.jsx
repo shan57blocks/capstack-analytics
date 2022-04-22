@@ -4,40 +4,37 @@ import { Button, Input, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import api from 'src/utils/api'
 import { deepClone } from 'src/utils/common'
-
-const LIQUIDATION = 'Liquidation'
-const HARVEST = 'Harvest'
+import { useSelector } from 'react-redux'
 
 const Config = ({ vaultName }) => {
+  const LIQUIDATION = `Liquidation_${vaultName}`
+  const HARVEST = `Harvest_${vaultName}`
+  const { configs } = useSelector((state) => state.app)
   const [originConfigs, setOriginConfigs] = useState({})
-  const [configs, setConfigs] = useState({})
+  const [vaultConfigs, setVaultConfigs] = useState({})
 
   useEffect(() => {
-    const fetch = async () => {
-      const result = await api.get(`/configs/${vaultName}`)
-      const configs = {}
-      result.forEach((item) => {
-        if (item.property.startsWith(LIQUIDATION)) {
-          configs[LIQUIDATION] = item
-        }
-        if (item.property.startsWith(HARVEST)) {
-          configs[HARVEST] = item
-        }
-      })
-      setConfigs(configs)
-      setOriginConfigs(configs)
-    }
-    fetch()
-  }, [vaultName])
+    const vaultConfigs = {}
+    configs.forEach((item) => {
+      if (item.property === LIQUIDATION) {
+        vaultConfigs[LIQUIDATION] = item
+      }
+      if (item.property === HARVEST) {
+        vaultConfigs[HARVEST] = item
+      }
+    })
+    setVaultConfigs(vaultConfigs)
+    setOriginConfigs(vaultConfigs)
+  }, [HARVEST, LIQUIDATION, configs, vaultName])
 
   const handleChange = (e, type) => {
-    const newConfigs = deepClone(configs)
+    const newConfigs = deepClone(vaultConfigs)
     newConfigs[type].value = e.target.value
-    setConfigs(newConfigs)
+    setVaultConfigs(newConfigs)
   }
 
   const handleUpdate = async (type) => {
-    const config = configs[type]
+    const config = vaultConfigs[type]
     const originConfig = originConfigs[type]
     if (config.value !== originConfig.value) {
       await api.put(`/configs`, config)
@@ -54,7 +51,7 @@ const Config = ({ vaultName }) => {
         <Input.Group compact>
           <Input
             type="number"
-            value={configs[LIQUIDATION]?.value}
+            value={vaultConfigs[LIQUIDATION]?.value}
             onChange={(e) => handleChange(e, LIQUIDATION)}
             addonAfter="%"
           />
@@ -68,7 +65,7 @@ const Config = ({ vaultName }) => {
         <Input.Group compact>
           <Input
             type="number"
-            value={configs[HARVEST]?.value}
+            value={vaultConfigs[HARVEST]?.value}
             onChange={(e) => handleChange(e, HARVEST)}
             addonAfter="$"
           />

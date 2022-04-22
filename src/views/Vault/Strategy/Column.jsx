@@ -1,10 +1,11 @@
 import { Space, Tooltip } from 'antd'
+import classnames from 'classnames'
 import React from 'react'
-import { formatTime, isEmpty } from 'src/utils/common'
-import CapTooltip from 'src/components/CapTooltip'
 import CapSkeleton from 'src/components/CapSkeleton'
+import CapTooltip from 'src/components/CapTooltip'
+import { formatTime, isEmpty } from 'src/utils/common'
 
-export const getColumns = (showModal) => [
+export const getColumns = (showModal, harvestLimit) => [
   {
     title: 'Name',
     key: 'name',
@@ -165,9 +166,20 @@ export const getColumns = (showModal) => [
       const { rewardValue, rewardBalance, rewardsApy } = record
       return (
         <div>
-          <StrategyTooltip value={rewardValue} balance={rewardBalance}>
+          <CapTooltip title={rewardBalance}>
             <div>{rewardBalance.toFixed(3)}</div>
-          </StrategyTooltip>
+          </CapTooltip>
+          <div>
+            <CapTooltip title={rewardValue}>
+              <div
+                className={classnames({
+                  'reward-harvest-limit': harvestLimit <= rewardValue,
+                })}
+              >
+                ${rewardValue.toFixed(3)}
+              </div>
+            </CapTooltip>
+          </div>
           <div>APY: {(rewardsApy * 100).toFixed(2)}%</div>
         </div>
       )
@@ -250,16 +262,6 @@ export const getColumns = (showModal) => [
           </Tooltip>
         </div>
       )
-    },
-  },
-  {
-    title: 'Unharvested Assets',
-    render: (_, record) => {
-      if (record.ILBalance === -0.009832651864555158) {
-        return <div style={{ backgroundColor: '#dbf9e5' }}>$2000</div>
-      }
-
-      return <div>$200</div>
     },
   },
   {

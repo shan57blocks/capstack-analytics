@@ -12,7 +12,6 @@ export const useVault = () => {
     positionStrategies,
     strategyPositions,
     strategies,
-    vaultNames,
   } = useSelector((state) => state.app)
 
   useEffect(() => {

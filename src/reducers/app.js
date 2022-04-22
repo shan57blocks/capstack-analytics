@@ -2,6 +2,7 @@ import { handleActions } from 'redux-actions'
 import {
   APP_CLOSE_LOADING,
   APP_SHOW_LOADING,
+  GET_CONFIGS,
   GET_INVESTORS,
   GET_INVESTOR_TXS,
   GET_POSITION_BY_ID,
@@ -13,6 +14,7 @@ import { BN, deepClone } from 'src/utils/common'
 
 const initState = {
   loading: false,
+  configs: [],
   investors: [],
   investorTxs: [],
   vaults: null,
@@ -130,6 +132,12 @@ const app = handleActions(
       return {
         ...state,
         investorTxs: payload,
+      }
+    },
+    [GET_CONFIGS]: (state, { payload }) => {
+      return {
+        ...state,
+        configs: payload,
       }
     },
   },
