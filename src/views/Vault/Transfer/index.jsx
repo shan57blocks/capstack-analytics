@@ -11,43 +11,47 @@ const { Option } = Select
 
 const Transfer = ({ vault }) => {
   const dispatch = useDispatch()
-  const [form] = Form.useForm()
+  const [txForm] = Form.useForm()
+  const [settleForm] = Form.useForm()
   const { investorTxs, investors } = useSelector((state) => state.app)
-  const [settleVisible, setSettleVisible] = useState(false)
   const [addVisible, setAddVisible] = useState(false)
   const [status, setStatus] = useState()
-
-  const showSettleModal = () => {
-    setSettleVisible(true)
-  }
-
-  const handleSettleOk = () => {
-    setSettleVisible(false)
-  }
-
-  const handleSettleCancel = () => {
-    setSettleVisible(false)
-  }
+  const [selectedTx, setSelectedTx] = useState()
 
   const showAddModal = () => {
     setAddVisible(true)
   }
 
   const handleAddOk = () => {
-    form.submit()
+    txForm.submit()
   }
 
   const handleAddCancel = () => {
     setAddVisible(false)
   }
 
-  const onFinish = async (values) => {
+  const handleSettleOk = () => {
+    settleForm.submit()
+  }
+
+  const onTxFinish = async (values) => {
     setAddVisible(false)
     values.vaultId = vault.id
     await api.post(`/investors/transactions`, values)
-    form.resetFields()
+    txForm.resetFields()
     dispatch(appAction.getInvestorTxs())
-    message.success(`Transaction been added successfully.`)
+    message.success(`Transaction has been added successfully.`)
+  }
+
+  const onSettleFinish = async (values) => {
+    const tx = selectedTx
+    setSelectedTx()
+    await api.post(
+      `/investors/transactions/${tx.id}/settlements?txHash=${values.txHash}`
+    )
+    settleForm.resetFields()
+    dispatch(appAction.getInvestorTxs())
+    message.success(`Transaction has been settled successfully.`)
   }
 
   const onValuesChange = (values) => {
@@ -70,7 +74,7 @@ const Transfer = ({ vault }) => {
         Add
       </Button>
       <Table
-        columns={getColumns(investors, showSettleModal)}
+        columns={getColumns(investors, setSelectedTx)}
         dataSource={investorTxs}
         bordered
         rowKey="id"
@@ -82,12 +86,12 @@ const Transfer = ({ vault }) => {
         onCancel={handleAddCancel}
       >
         <Form
-          form={form}
+          form={txForm}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
-          onFinish={onFinish}
+          onFinish={onTxFinish}
           onValuesChange={onValuesChange}
           autoComplete="off"
         >
@@ -134,19 +138,20 @@ const Transfer = ({ vault }) => {
       </Modal>
       <Modal
         title="Settle Withdrawl"
-        visible={settleVisible}
+        visible={!!selectedTx}
         onOk={handleSettleOk}
-        onCancel={handleSettleCancel}
+        onCancel={setSelectedTx}
       >
         <Form
+          form={settleForm}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
-          onFinish={onFinish}
+          onFinish={onSettleFinish}
           autoComplete="off"
         >
-          <Form.Item label="TX Hash" name="username">
+          <Form.Item label="TX Hash" name="txHash" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
         </Form>
@@ -157,7 +162,7 @@ const Transfer = ({ vault }) => {
 
 export default Transfer
 
-const getColumns = (investors, confirm) => [
+const getColumns = (investors, selectTx) => [
   {
     title: 'Investor',
     dataIndex: 'investorId',
@@ -191,7 +196,7 @@ const getColumns = (investors, confirm) => [
     render: (_, record) => (
       <Space size="middle">
         {record.status === 'Withdrawl requested' && (
-          <a onClick={confirm}>Settle</a>
+          <a onClick={() => selectTx(record)}>Settle</a>
         )}
       </Space>
     ),
