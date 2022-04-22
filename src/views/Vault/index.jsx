@@ -23,7 +23,7 @@ const Vaults = () => {
         selectedVaultName={selectedVaultName}
         selectVaultName={setSelectedVaultName}
       ></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="2" type="card">
+      <Tabs className="vault-detail" defaultActiveKey="5" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>
@@ -37,7 +37,7 @@ const Vaults = () => {
           <Investor />
         </TabPane>
         <TabPane tab="Transfers In/Out" key="5">
-          <Transfer />
+          <Transfer vault={vault} />
         </TabPane>
         <TabPane tab="Configuration" key="6">
           <Config vaultName={selectedVaultName} />

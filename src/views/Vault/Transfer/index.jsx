@@ -1,13 +1,21 @@
 import './index.less'
 
-import { Space, Table, Button, Modal, Form, Input, Select } from 'antd'
+import { Button, Form, Input, message, Modal, Select, Space, Table } from 'antd'
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as appAction from 'src/actions/app'
+import api from 'src/utils/api'
+import { formatTime } from 'src/utils/common'
 
 const { Option } = Select
 
-const Transfer = () => {
+const Transfer = ({ vault }) => {
+  const dispatch = useDispatch()
+  const [form] = Form.useForm()
+  const { investorTxs, investors } = useSelector((state) => state.app)
   const [settleVisible, setSettleVisible] = useState(false)
   const [addVisible, setAddVisible] = useState(false)
+  const [status, setStatus] = useState()
 
   const showSettleModal = () => {
     setSettleVisible(true)
@@ -26,23 +34,47 @@ const Transfer = () => {
   }
 
   const handleAddOk = () => {
-    setAddVisible(false)
+    form.submit()
   }
 
   const handleAddCancel = () => {
     setAddVisible(false)
   }
 
-  const onFinish = (values) => {
-    console.log('Success:', values)
+  const onFinish = async (values) => {
+    setAddVisible(false)
+    values.vaultId = vault.id
+    await api.post(`/investors/transactions`, values)
+    form.resetFields()
+    dispatch(appAction.getInvestorTxs())
+    message.success(`Transaction been added successfully.`)
+  }
+
+  const onValuesChange = (values) => {
+    if (values.status) {
+      setStatus(values.status)
+    }
+  }
+
+  if (!investorTxs || !investors || !vault) {
+    return null
   }
 
   return (
     <div className="vault-transfer">
-      <Button className="vault-transfer-add" onClick={showAddModal}>
+      <Button
+        className="vault-transfer-add"
+        onClick={showAddModal}
+        type="primary"
+      >
         Add
       </Button>
-      <Table columns={getColumns(showSettleModal)} dataSource={data} bordered />
+      <Table
+        columns={getColumns(investors, showSettleModal)}
+        dataSource={investorTxs}
+        bordered
+        rowKey="id"
+      />
       <Modal
         title="Add Transfer"
         visible={addVisible}
@@ -50,29 +82,54 @@ const Transfer = () => {
         onCancel={handleAddCancel}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
+          onValuesChange={onValuesChange}
           autoComplete="off"
         >
-          <Form.Item label="Investor" name="username">
+          <Form.Item
+            label="Investor"
+            name="investorId"
+            rules={[{ required: true }]}
+          >
             <Select>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
-              <Option value="Yiminghe">yiminghe</Option>
+              {investors.map((investor) => {
+                return (
+                  <Option key={investor.id} value={investor.id}>
+                    {investor.name}
+                  </Option>
+                )
+              })}
             </Select>
           </Form.Item>
-          <Form.Item label="Status" name="password">
+          <Form.Item label="Status" name="status" rules={[{ required: true }]}>
             <Select>
-              <Option value="jack">Invest requested</Option>
-              <Option value="lucy">Withdrawl requested</Option>
+              <Option value="Invest requested">Invest requested</Option>
+              <Option value="Withdrawl requested">Withdrawl requested</Option>
             </Select>
           </Form.Item>
-          <Form.Item label="TX Hash" name="type">
-            <Input />
-          </Form.Item>
+          {status === 'Invest requested' && (
+            <Form.Item
+              label="TX Hash"
+              name="txHash"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          )}
+          {status === 'Withdrawl requested' && (
+            <Form.Item
+              label="Amount"
+              name="amount"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
       <Modal
@@ -100,60 +157,20 @@ const Transfer = () => {
 
 export default Transfer
 
-const data = [
-  {
-    key: '1',
-    date: '01/01/2022 10:10',
-    investor: 'John Brown',
-    requested: '10 ETH',
-    shares: 100,
-    status: 'Invest requested',
-  },
-  {
-    key: '2',
-    date: '01/03/2022 10:20',
-    investor: 'John Brown',
-    requested: '10 ETH',
-    shares: 100,
-    status: 'Invested',
-  },
-  {
-    key: '3',
-    date: '01/04/2022 12:00',
-    investor: 'John Brown',
-    requested: '-10 ETH',
-    shares: 100,
-    status: 'Withdrawl requested',
-  },
-  {
-    key: '4',
-    date: '01/05/2022 13:00',
-    investor: 'John Brown',
-    requested: '-10 ETH',
-    status: 'Withdrawl',
-  },
-]
-
-const getColumns = (confirm) => [
-  {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
-  },
+const getColumns = (investors, confirm) => [
   {
     title: 'Investor',
-    dataIndex: 'investor',
-    key: 'investor',
+    dataIndex: 'investorId',
+    key: 'investorId',
+    render: (investorId) => {
+      const investor = investors.find((investor) => investor.id === investorId)
+      return <div>{investor.name}</div>
+    },
   },
   {
-    title: 'Requested',
-    dataIndex: 'requested',
-    key: 'requested',
-  },
-  {
-    title: 'Shares',
-    dataIndex: 'shares',
-    key: 'shares',
+    title: 'Amount',
+    dataIndex: 'amount',
+    key: 'amount',
   },
   {
     title: 'Status',
@@ -161,11 +178,21 @@ const getColumns = (confirm) => [
     key: 'status',
   },
   {
+    title: 'Request Date',
+    dataIndex: 'requestTime',
+    key: 'requestTime',
+    render: (requestTime) => {
+      return <div>{formatTime(requestTime, 'MM/DD/YYYY HH:mm')}</div>
+    },
+  },
+  {
     title: 'Action',
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        {record.key === '3' && <a onClick={confirm}>Settle</a>}
+        {record.status === 'Withdrawl requested' && (
+          <a onClick={confirm}>Settle</a>
+        )}
       </Space>
     ),
   },

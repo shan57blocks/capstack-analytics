@@ -3,6 +3,7 @@ import {
   APP_CLOSE_LOADING,
   APP_SHOW_LOADING,
   GET_INVESTORS,
+  GET_INVESTOR_TXS,
   GET_VAULTS,
 } from 'src/actions/app'
 import { BN } from 'src/utils/common'
@@ -10,6 +11,7 @@ import { BN } from 'src/utils/common'
 const initState = {
   loading: false,
   investors: [],
+  investorTxs: [],
   vaults: null,
   positionStrategies: {},
   strategyPositions: {},
@@ -81,6 +83,12 @@ const app = handleActions(
       return {
         ...state,
         investors: payload,
+      }
+    },
+    [GET_INVESTOR_TXS]: (state, { payload }) => {
+      return {
+        ...state,
+        investorTxs: payload,
       }
     },
   },

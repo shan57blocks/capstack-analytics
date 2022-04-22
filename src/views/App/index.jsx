@@ -17,6 +17,7 @@ const App = () => {
   useEffect(() => {
     dispatch(appAction.getVaults())
     dispatch(appAction.getInvestors())
+    dispatch(appAction.getInvestorTxs())
   }, [dispatch])
 
   return (
