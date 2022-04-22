@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
-import Summary from './Summary'
+import './index.less'
+
 import { Tabs } from 'antd'
-import Strategy from './Strategy'
-import Investor from './Investor'
-import Transfer from './Transfer'
-import Config from './Config'
-import Suggest from './Suggest'
-import Profit from './Profit'
-import { VAULT } from './const'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+
+import Config from './Config'
+import { VAULT } from './const'
+import Investor from './Investor'
+import Profit from './Profit'
+import Strategy from './Strategy'
+import Suggest from './Suggest'
+import Summary from './Summary'
+import Transfer from './Transfer'
 
 const { TabPane } = Tabs
 
@@ -18,12 +21,12 @@ const Vaults = () => {
   const vault = vaults?.find((vault) => vault.name === selectedVaultName)
 
   return (
-    <div className="page">
+    <div className="page vault">
       <Summary
         selectedVaultName={selectedVaultName}
         selectVaultName={setSelectedVaultName}
       ></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="5" type="card">
+      <Tabs className="vault-detail" defaultActiveKey="1" type="card">
         <TabPane tab="Strategies" key="1">
           <Strategy />
         </TabPane>

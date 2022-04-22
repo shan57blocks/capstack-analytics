@@ -51,6 +51,7 @@ const Profit = ({ vault }) => {
         dataSource={vault?.strategies}
         bordered
         rowKey="id"
+        pagination={false}
       />
       <Modal
         title="Confirm Profit Distribution"
