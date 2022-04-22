@@ -3,9 +3,9 @@ import classnames from 'classnames'
 import React from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import CapTooltip from 'src/components/CapTooltip'
-import { formatTime, isEmpty } from 'src/utils/common'
+import { formatTime, isEmpty, toPercentage } from 'src/utils/common'
 
-export const getColumns = (showModal, harvestLimit) => [
+export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
   {
     title: 'Name',
     key: 'name',
@@ -101,56 +101,55 @@ export const getColumns = (showModal, harvestLimit) => [
     key: 'IL',
     dataIndex: 'IL',
     render: (_, record) => {
-      if (record.ILBalance === -0.009832651864555158) {
+      if (isEmpty(record.IL)) {
+        return <CapSkeleton />
+      }
+
+      const liquidationGap = Number(liquidationLimit) / 100
+      const getLiquidation = () => {
+        if (!record.positions[0].debtRatio) {
+          return null
+        }
+
+        let priceChanges = []
+        let isAlert = false
+        record.positions.forEach((position) => {
+          const { liquidationPricePercentages = [] } = position.debtRatio || {}
+          liquidationPricePercentages.forEach((priceChange) => {
+            const priceChangeNum = Math.abs(Number(priceChange))
+            if (priceChangeNum <= liquidationGap) {
+              isAlert = true
+            }
+            priceChanges.push(priceChange)
+          })
+        })
+        priceChanges = priceChanges.sort((a, b) => Number(a) > Number(b))
+
         return (
-          <div>
-            <div>
-              Current {(record.priceChange * 100).toFixed(2)}%:
-              {record.ILBalance.toFixed(3)}({(record.ilApy * 100).toFixed(2)}%)
-            </div>
-            <div style={{ backgroundColor: '#eca9a9' }}>
-              <div>Liquidation if ETH increases</div>
-              <div> by 10% or ETH decreases by 20%</div>
-            </div>
+          <div className={classnames({ 'liquidation-alert': isAlert })}>
+            Liquidation if{' '}
+            {priceChanges.map((change, index) => {
+              const direction = change > 0 ? 'increases' : 'decreases'
+              const or = index < priceChanges.length - 1 ? ' or ' : ''
+              return (
+                <span key={index}>
+                  ETH {direction} by {toPercentage(change)} {or}
+                </span>
+              )
+            })}
           </div>
         )
       }
 
-      if (isEmpty(record.IL)) {
-        return <CapSkeleton />
-      }
       return (
         <div>
           <Tooltip title={record.ILBalance}>
             <div>
-              Current {(record.priceChange * 100).toFixed(2)}%:
-              {record.ILBalance.toFixed(3)}({(record.ilApy * 100).toFixed(2)}%)
+              {(record.priceChange * 100).toFixed(2)}%:{' '}
+              {record.ILBalance.toFixed(3)} ({(record.ilApy * 100).toFixed(2)}%)
             </div>
           </Tooltip>
-          <Tooltip title={record.ILBalance50}>
-            <div>
-              +50%: {record.ILBalance50.toFixed(3)}(
-              {(record.ILLoss50 * 100).toFixed(2)}%)
-            </div>
-          </Tooltip>
-          <Tooltip title={record.ILBalance100}>
-            <div>
-              +100%: {record.ILBalance100.toFixed(3)}(
-              {(record.ILLoss100 * 100).toFixed(2)}%)
-            </div>
-          </Tooltip>
-          <Tooltip title={record.ILBalance50Neg}>
-            <div>
-              -50%: {record.ILBalance50Neg.toFixed(3)}(
-              {(record.ILLoss50Neg * 100).toFixed(2)}%)
-            </div>
-          </Tooltip>
-          <Tooltip title={record.ILBalance75Neg}>
-            <div>
-              -75%: {record.ILBalance75Neg.toFixed(3)}(
-              {(record.ILLoss75Neg * 100).toFixed(2)}%)
-            </div>
-          </Tooltip>
+          {getLiquidation()}
         </div>
       )
     },

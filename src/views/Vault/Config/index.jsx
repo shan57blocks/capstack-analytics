@@ -4,9 +4,11 @@ import { Button, Input, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import api from 'src/utils/api'
 import { deepClone } from 'src/utils/common'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import * as appAction from 'src/actions/app'
 
 const Config = ({ vaultName }) => {
+  const dispatch = useDispatch()
   const LIQUIDATION = `Liquidation_${vaultName}`
   const HARVEST = `Harvest_${vaultName}`
   const { configs } = useSelector((state) => state.app)
@@ -38,6 +40,7 @@ const Config = ({ vaultName }) => {
     const originConfig = originConfigs[type]
     if (config.value !== originConfig.value) {
       await api.put(`/configs`, config)
+      dispatch(appAction.getConfigs())
       message.success('Config has been updated successfully.')
     } else {
       message.warn('Config has not been changed.')

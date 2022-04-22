@@ -11,6 +11,10 @@ const Strategy = ({ vault }) => {
   const { configs } = useSelector((state) => state.app)
   const { value: harvestLimit } =
     configs.find((config) => config.property === `Harvest_${vault?.name}`) || {}
+  const { value: liquidationLimit } =
+    configs.find(
+      (config) => config.property === `Liquidation_${vault?.name}`
+    ) || {}
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { strategies } = vault || {}
 
@@ -37,7 +41,7 @@ const Strategy = ({ vault }) => {
   return (
     <div className="vault-strategies">
       <Table
-        columns={getColumns(showModal, harvestLimit)}
+        columns={getColumns(showModal, harvestLimit, liquidationLimit)}
         dataSource={strategies}
         pagination={false}
         rowKey="id"
