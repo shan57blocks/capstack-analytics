@@ -5,8 +5,12 @@ import React, { useState } from 'react'
 
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
+import { useSelector } from 'react-redux'
 
 const Strategy = ({ vault }) => {
+  const { configs } = useSelector((state) => state.app)
+  const { value: harvestLimit } =
+    configs.find((config) => config.property === `Harvest_${vault?.name}`) || {}
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { strategies } = vault || {}
 
@@ -31,9 +35,9 @@ const Strategy = ({ vault }) => {
   }
 
   return (
-    <>
+    <div className="vault-strategies">
       <Table
-        columns={getColumns(showModal)}
+        columns={getColumns(showModal, harvestLimit)}
         dataSource={strategies}
         pagination={false}
         rowKey="id"
@@ -71,7 +75,7 @@ const Strategy = ({ vault }) => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   )
 }
 

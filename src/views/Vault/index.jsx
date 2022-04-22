@@ -2,17 +2,16 @@ import './index.less'
 
 import { Tabs } from 'antd'
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
 
 import Config from './Config'
 import { VAULT } from './const'
+import { useVault } from './hooks/useVault'
 import Investor from './Investor'
 import Profit from './Profit'
 import Strategy from './Strategy'
 import Suggest from './Suggest'
 import Summary from './Summary'
 import Transfer from './Transfer'
-import { useVault } from './hooks/useVault'
 
 const { TabPane } = Tabs
 

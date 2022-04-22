@@ -1,4 +1,4 @@
-import { Space, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import classnames from 'classnames'
 import React from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
@@ -165,19 +165,17 @@ export const getColumns = (showModal, harvestLimit) => [
       }
       const { rewardValue, rewardBalance, rewardsApy } = record
       return (
-        <div>
+        <div
+          className={classnames({
+            'reward-harvest-limit': Number(harvestLimit) <= Number(rewardValue),
+          })}
+        >
           <CapTooltip title={rewardBalance}>
             <div>{rewardBalance.toFixed(3)}</div>
           </CapTooltip>
           <div>
             <CapTooltip title={rewardValue}>
-              <div
-                className={classnames({
-                  'reward-harvest-limit': harvestLimit <= rewardValue,
-                })}
-              >
-                ${rewardValue.toFixed(3)}
-              </div>
+              <div>${rewardValue.toFixed(3)}</div>
             </CapTooltip>
           </div>
           <div>APY: {(rewardsApy * 100).toFixed(2)}%</div>
@@ -268,11 +266,11 @@ export const getColumns = (showModal, harvestLimit) => [
     title: 'Action',
     key: 'action',
     render: (_, record) => (
-      <Space size="middle">
+      <div className="action">
         <a onClick={showModal}>Harvest</a>
         <a onClick={showModal}>Adjust</a>
         <a onClick={showModal}>Close</a>
-      </Space>
+      </div>
     ),
   },
 ]
