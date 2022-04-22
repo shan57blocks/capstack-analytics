@@ -4,9 +4,12 @@ import {
   APP_SHOW_LOADING,
   GET_INVESTORS,
   GET_INVESTOR_TXS,
+  GET_POSITION_BY_ID,
+  GET_STRATEGY_POSITIONS,
   GET_VAULTS,
 } from 'src/actions/app'
-import { BN } from 'src/utils/common'
+import { mapPosition, mapStrategy } from 'src/utils/apy'
+import { BN, deepClone } from 'src/utils/common'
 
 const initState = {
   loading: false,
@@ -76,6 +79,44 @@ const app = handleActions(
         ...state,
         vaults: payload,
         positionStrategies,
+        strategies,
+      }
+    },
+    [GET_STRATEGY_POSITIONS]: (state, { payload, meta }) => {
+      const { strategyId } = meta
+      const strategies = deepClone(state.strategies)
+      const strategyPositions = deepClone(state.strategyPositions)
+      const strategy = strategies[strategyId]
+
+      const positions = payload.map((position) => mapPosition(position))
+      strategyPositions[strategyId] = positions
+      strategies[strategyId] = mapStrategy(
+        strategy,
+        positions,
+        state.positionStrategies
+      )
+      return {
+        ...state,
+        strategyPositions,
+        strategies,
+      }
+    },
+    [GET_POSITION_BY_ID]: (state, { payload, meta }) => {
+      const strategies = deepClone(state.strategies)
+      const strategyPositions = deepClone(state.strategyPositions)
+      meta.strategyIds.forEach((id) => {
+        const strategy = strategies[id]
+        const positions = [mapPosition(payload)]
+        strategyPositions[id] = positions
+        strategies[id] = mapStrategy(
+          strategy,
+          positions,
+          state.positionStrategies
+        )
+      })
+      return {
+        ...state,
+        strategyPositions,
         strategies,
       }
     },

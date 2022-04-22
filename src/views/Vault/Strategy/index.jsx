@@ -5,10 +5,10 @@ import React, { useState } from 'react'
 
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
-import strategies from './strategies.json'
 
-const Strategy = () => {
+const Strategy = ({ vault }) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const { strategies } = vault || {}
 
   const showModal = () => {
     setIsModalVisible(true)
@@ -24,6 +24,10 @@ const Strategy = () => {
 
   const onFinish = (values) => {
     console.log('Success:', values)
+  }
+
+  if (!strategies) {
+    return null
   }
 
   return (
