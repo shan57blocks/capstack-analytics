@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
-import { formatTime } from 'src/utils/common'
+import { BN, formatTime } from 'src/utils/common'
 
 const { Option } = Select
 
@@ -64,6 +64,8 @@ const Transfer = ({ vault }) => {
     return null
   }
 
+  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
+
   return (
     <div className="vault-transfer">
       <Button
@@ -74,7 +76,7 @@ const Transfer = ({ vault }) => {
         Add
       </Button>
       <Table
-        columns={getColumns(investors, setSelectedTx)}
+        columns={getColumns(investors, setSelectedTx, decimalsBN)}
         dataSource={investorTxs}
         bordered
         rowKey="id"
@@ -162,7 +164,7 @@ const Transfer = ({ vault }) => {
 
 export default Transfer
 
-const getColumns = (investors, selectTx) => [
+const getColumns = (investors, selectTx, decimalsBN) => [
   {
     title: 'Investor',
     dataIndex: 'investorId',
@@ -176,6 +178,9 @@ const getColumns = (investors, selectTx) => [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
+    render: (amount) => {
+      return <span>{BN(amount).div(decimalsBN).toString()}</span>
+    },
   },
   {
     title: 'Status',

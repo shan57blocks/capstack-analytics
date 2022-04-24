@@ -240,7 +240,7 @@ export const mapVault = (vault, strategies) => {
   vault.principalsCalculated = principalsBN.div(decimals).toNumber()
   vault.sharesCalculated = sharesBN.div(decimals).toNumber()
   vault.sharePriceCalculated = principals / shares
-  vault.netBalance = _.sum(strategies.map((item) => item.netBalance))
+  vault.netBalance = _.sum(strategies.map((item) => item.netBalance)) ?? 0
   vault.currentBalance = vault.principalsCalculated + vault.netBalance
   vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))
   vault.strategies = strategies

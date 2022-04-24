@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
+import { BN } from 'src/utils/common'
 
 const Suggest = ({ vault }) => {
   const [strategies, setStrategies] = useState()
@@ -75,11 +76,13 @@ const Suggest = ({ vault }) => {
     return <CapSkeleton />
   }
 
+  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
+
   return (
     <div className="vault-suggest">
       <div className="vault-suggest-change">
         <div>Uninvested:</div>
-        <div>{unallocated}</div>
+        <div>{BN(unallocated).div(decimalsBN).toString()}</div>
       </div>
       <Table
         rowKey="id"
@@ -88,7 +91,8 @@ const Suggest = ({ vault }) => {
           changePercentage,
           savePercentage,
           changeLeverage,
-          showModal
+          showModal,
+          decimalsBN
         )}
         dataSource={strategies}
         bordered
@@ -132,7 +136,8 @@ const getColumns = (
   changePercentage,
   savePercentage,
   changeLeverage,
-  showModal
+  showModal,
+  decimalsBN
 ) => [
   {
     title: 'Name',
@@ -184,7 +189,11 @@ const getColumns = (
     dataIndex: 'percentage',
     key: 'percentage',
     render: (percentage) => {
-      return <div>{Number(vault.unallocated) * Number(percentage)}</div>
+      return (
+        <div>
+          {BN(vault.unallocated).times(percentage).div(decimalsBN).toString()}
+        </div>
+      )
     },
   },
   {
@@ -235,6 +244,7 @@ const renforceStrategies = (vault, strategies) => {
   if (!vault) {
     return []
   }
+  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
   return strategies.map((strategy) => {
     const { protocol, tokens } = strategy
     strategy.principal = Number(vault.unallocated) * strategy.percentage
@@ -244,7 +254,9 @@ const renforceStrategies = (vault, strategies) => {
 
     if (!protocol.isLeverage) {
       strategy.leverage = 1
-      strategy.suggestions.push(`${strategy.principal} ${vault.name}`)
+      strategy.suggestions.push(
+        `${BN(strategy.principal).div(decimalsBN).toString()} ${vault.name}`
+      )
       return strategy
     }
 

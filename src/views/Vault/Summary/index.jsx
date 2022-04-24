@@ -4,7 +4,7 @@ import React from 'react'
 import { Card } from 'antd'
 import classnames from 'classnames'
 import CapTooltip from 'src/components/CapTooltip'
-import { toPercentage } from 'src/utils/common'
+import { BN, toPercentage } from 'src/utils/common'
 
 const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
   if (!vaults) {
@@ -13,6 +13,11 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
   return (
     <div className="vault-summary">
       {vaults.map((vault) => {
+        const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
+        const currentBalance = BN(vault.currentBalance)
+          .div(decimalsBN)
+          .toNumber()
+        const unallocated = BN(vault.unallocated).div(decimalsBN).toNumber()
         return (
           <Card
             key={vault.id}
@@ -27,20 +32,18 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
             <div>
               <div>Vault total</div>
               <div>
-                <CapTooltip title={vault.currentBalance}>
-                  {vault.currentBalance.toFixed(3)}
+                <CapTooltip title={currentBalance}>
+                  {currentBalance.toFixed(3)}
                 </CapTooltip>
               </div>
-              <div>$200000</div>
             </div>
             <div>
               <div>Uninvested</div>
               <div>
-                <CapTooltip title={vault.unallocated}>
-                  {Number(vault.unallocated).toFixed(3)}
+                <CapTooltip title={unallocated}>
+                  {Number(unallocated).toFixed(3)}
                 </CapTooltip>
               </div>
-              <div>$40000</div>
             </div>
             <div>
               <div>Apy</div>
