@@ -23,6 +23,7 @@ const Vaults = () => {
   return (
     <div className="page vault">
       <Summary
+        vaults={vaults}
         selectedVaultName={selectedVaultName}
         selectVaultName={setSelectedVaultName}
       ></Summary>

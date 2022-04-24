@@ -25,6 +25,9 @@ export const scaleDown = (num, decimals) => {
 }
 
 export const toPercentage = (num) => {
+  if (!num) {
+    return null
+  }
   return `${(num * 100).toFixed(2)}%`
 }
 

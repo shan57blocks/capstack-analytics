@@ -3,83 +3,52 @@ import './index.less'
 import React from 'react'
 import { Card } from 'antd'
 import classnames from 'classnames'
-import { VAULT } from '../const'
+import CapTooltip from 'src/components/CapTooltip'
+import { toPercentage } from 'src/utils/common'
 
 const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
+  if (!vaults) {
+    return null
+  }
   return (
     <div className="vault-summary">
-      <Card
-        size="small"
-        title="ETH Vault"
-        style={{ width: 300 }}
-        onClick={() => selectVaultName(VAULT.ETH)}
-        className={classnames({
-          'vault-summary-selected': selectedVaultName === VAULT.ETH,
-        })}
-      >
-        <div>
-          <div>Vault total</div>
-          <div>27</div>
-          <div>$200000</div>
-        </div>
-        <div>
-          <div>Uninvested</div>
-          <div>10</div>
-          <div>$40000</div>
-        </div>
-        <div>
-          <div>Apy</div>
-          <div>15%</div>
-        </div>
-      </Card>
-      <Card
-        size="small"
-        title="USD Vault"
-        style={{ width: 300 }}
-        onClick={() => selectVaultName(VAULT.USD)}
-        className={classnames({
-          'vault-summary-selected': selectedVaultName === VAULT.USD,
-        })}
-      >
-        <div>
-          <div>Vault total</div>
-          <div>27</div>
-          <div>$200000</div>
-        </div>
-        <div>
-          <div>Uninvested</div>
-          <div>10</div>
-          <div>$40000</div>
-        </div>
-        <div>
-          <div>Apy</div>
-          <div>15%</div>
-        </div>
-      </Card>
-      <Card
-        size="small"
-        title="BTC Vault"
-        style={{ width: 300 }}
-        onClick={() => selectVaultName(VAULT.BTC)}
-        className={classnames({
-          'vault-summary-selected': selectedVaultName === VAULT.BTC,
-        })}
-      >
-        <div>
-          <div>Vault total</div>
-          <div>27</div>
-          <div>$200000</div>
-        </div>
-        <div>
-          <div>Uninvested</div>
-          <div>10</div>
-          <div>$40000</div>
-        </div>
-        <div>
-          <div>Apy</div>
-          <div>15%</div>
-        </div>
-      </Card>
+      {vaults.map((vault) => {
+        return (
+          <Card
+            key={vault.id}
+            size="small"
+            title={`${vault.name} Vault`}
+            style={{ width: 300 }}
+            onClick={() => selectVaultName(vault.name)}
+            className={classnames({
+              'vault-summary-selected': selectedVaultName === vault.name,
+            })}
+          >
+            <div>
+              <div>Vault total</div>
+              <div>
+                <CapTooltip title={vault.currentBalance}>
+                  {vault.currentBalance.toFixed(3)}
+                </CapTooltip>
+              </div>
+              <div>$200000</div>
+            </div>
+            <div>
+              <div>Uninvested</div>
+              <div>
+                <CapTooltip title={vault.unallocated}>
+                  {Number(vault.unallocated).toFixed(3)}
+                </CapTooltip>
+              </div>
+              <div>$40000</div>
+            </div>
+            <div>
+              <div>Apy</div>
+              <div>{toPercentage(vault.apy)}</div>
+            </div>
+          </Card>
+        )
+      })}
     </div>
   )
 }

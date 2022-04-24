@@ -113,6 +113,7 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
 
         let priceChanges = []
         let isAlert = false
+        const { relativePriceTokenSymbol } = record.positions[0].debtRatio
         record.positions.forEach((position) => {
           const { liquidationPricePercentages = [] } = position.debtRatio || {}
           liquidationPricePercentages.forEach((priceChange) => {
@@ -132,9 +133,10 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
               const direction = change > 0 ? 'increases' : 'decreases'
               const or = index < priceChanges.length - 1 ? ' or ' : ''
               return (
-                <span key={index}>
-                  ETH {direction} by {toPercentage(change)} {or}
-                </span>
+                <div key={index}>
+                  {relativePriceTokenSymbol} {direction} by{' '}
+                  {toPercentage(change)} {or}
+                </div>
               )
             })}
           </div>
