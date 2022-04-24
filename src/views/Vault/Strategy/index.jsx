@@ -42,7 +42,9 @@ const Strategy = ({ vault }) => {
     <div className="vault-strategies">
       <Table
         columns={getColumns(showModal, harvestLimit, liquidationLimit)}
-        dataSource={strategies}
+        dataSource={strategies.filter(
+          (strategy) => !!strategy.positions.length
+        )}
         pagination={false}
         rowKey="id"
         bordered

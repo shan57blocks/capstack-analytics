@@ -4,6 +4,7 @@ import { Form, Input, message, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
 import { BN } from 'src/utils/common'
 import api from 'src/utils/api'
+import { VAULT_STATUS } from '../const'
 
 const Profit = ({ vault }) => {
   const [form] = Form.useForm()
@@ -31,6 +32,10 @@ const Profit = ({ vault }) => {
 
   if (!vault) {
     return null
+  }
+
+  if (vault.status === VAULT_STATUS.OPEN) {
+    return <div>Please close all the positions first.</div>
   }
 
   return (

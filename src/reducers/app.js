@@ -11,6 +11,7 @@ import {
 } from 'src/actions/app'
 import { mapPosition, mapStrategy } from 'src/utils/apy'
 import { BN, deepClone } from 'src/utils/common'
+import { VAULT_STATUS } from 'src/views/Vault/const'
 
 const initState = {
   loading: false,
@@ -21,6 +22,7 @@ const initState = {
   positionStrategies: {},
   strategyPositions: {},
   strategies: {},
+  status: null,
 }
 
 const app = handleActions(
@@ -40,12 +42,20 @@ const app = handleActions(
     [GET_VAULTS]: (state, { payload }) => {
       const positionStrategies = {}
       const strategies = {}
+
       payload.forEach((vault) => {
         vault.strategies.forEach((strategy) => {
-          const token = strategy.positions[0].tokens.find(
-            (token) => token.id === strategy.tokenId
-          )
-          const decimals = `1e${token.decimals}`
+          strategy.positions.forEach((position) => {
+            if (!position.closed) {
+              vault.status = VAULT_STATUS.OPEN
+            }
+          })
+        })
+      })
+
+      payload.forEach((vault) => {
+        vault.strategies.forEach((strategy) => {
+          const decimals = `1e${strategy.token.decimals}`
           const decimalsBN = BN(decimals)
           strategy.principals = BN(strategy.principals)
             .div(decimalsBN)

@@ -142,8 +142,8 @@ const getColumns = (
   {
     title: 'Protocol',
     dataIndex: 'positions',
-    render: (positions) => {
-      const [{ protocol }] = positions
+    render: (_, strategy) => {
+      const { protocol } = strategy
       return (
         <div>
           {protocol.name} ({protocol.chain})
@@ -193,7 +193,7 @@ const getColumns = (
     key: 'leverage',
     width: 160,
     render: (leverage, strategy) => {
-      const [{ protocol }] = strategy.positions
+      const { protocol } = strategy
       return (
         <InputNumber
           disabled={!protocol.isLeverage}
@@ -236,7 +236,7 @@ const renforceStrategies = (vault, strategies) => {
     return []
   }
   return strategies.map((strategy) => {
-    const [{ protocol, tokens }] = strategy.positions
+    const { protocol, tokens } = strategy
     strategy.principal = Number(vault.unallocated) * strategy.percentage
     strategy.suggestions = []
     strategy.leverage = strategy.leverage ?? 3

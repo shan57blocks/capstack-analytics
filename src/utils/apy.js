@@ -148,10 +148,9 @@ export const mapPosition = (position) => {
 export const mapStrategy = (strategy, positions, positionStrategies) => {
   const [firstPosition] = positions
   const tokenIndex = firstPosition.tokens.findIndex(
-    (token) => token.id === strategy.tokenId
+    (token) => token.id === strategy.token.id
   )
   const tokenPrice = firstPosition.currentHistory.assets[tokenIndex].price
-  const decimals = `1e${firstPosition.tokens[tokenIndex].decimals}`
   const principalsBN = BN(strategy.principals)
 
   strategy.interest = 0

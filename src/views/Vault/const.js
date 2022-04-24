@@ -30,3 +30,7 @@ export const Chains = {
     name: 'Solana',
   },
 }
+
+export const VAULT_STATUS = {
+  OPEN: 'OPEN',
+}

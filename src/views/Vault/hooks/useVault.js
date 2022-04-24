@@ -19,7 +19,10 @@ export const useVault = () => {
       setStrategyFetched(true)
       vaults.forEach((vault) => {
         vault.strategies
-          .filter((strategy) => !strategy.sharedPosition)
+          .filter(
+            (strategy) =>
+              !strategy.sharedPosition && !!strategy.positions.length
+          )
           .forEach((strategy) => {
             dispatch(appAction.getPositionsByStrategy(strategy.id))
           })
