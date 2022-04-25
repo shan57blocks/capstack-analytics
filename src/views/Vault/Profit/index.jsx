@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { BN } from 'src/utils/common'
 import api from 'src/utils/api'
 import { VAULT_STATUS } from '../const'
+import { profitDistribution } from 'src/views/service/vault'
 
 const Profit = ({ vault, status }) => {
   const [form] = Form.useForm()
@@ -24,9 +25,7 @@ const Profit = ({ vault, status }) => {
 
   const onFinish = async (values) => {
     setIsModalVisible(false)
-    await api.post(
-      `/vaults/${vault.id}/profit-distribution?feeTxHash=${values.feeTxHash}`
-    )
+    await profitDistribution(vault, values.feeTxHash)
     message.success(`Profit has been distributed successfully.`)
   }
 
@@ -116,7 +115,9 @@ const getSummaryColumns = (showModal) => [
     render: (_, record) => {
       let fee = BN(0)
       record.strategies.forEach((strategy) => {
-        fee = fee.plus(BN(strategy.managementFee))
+        if (strategy.managementFee) {
+          fee = fee.plus(BN(strategy.managementFee))
+        }
       })
       return <div>{fee.toString()}</div>
     },
@@ -126,7 +127,9 @@ const getSummaryColumns = (showModal) => [
     render: (_, record) => {
       let fee = BN(0)
       record.strategies.forEach((strategy) => {
-        fee = fee.plus(BN(strategy.performanceFee))
+        if (strategy.performanceFee) {
+          fee = fee.plus(BN(strategy.performanceFee))
+        }
       })
       return <div>{fee.toString()}</div>
     },
@@ -136,9 +139,12 @@ const getSummaryColumns = (showModal) => [
     render: (_, record) => {
       let fee = BN(0)
       record.strategies.forEach((strategy) => {
-        fee = fee
-          .plus(BN(strategy.performanceFee))
-          .plus(BN(strategy.managementFee))
+        if (strategy.performanceFee) {
+          fee = fee.plus(BN(strategy.performanceFee))
+        }
+        if (strategy.managementFee) {
+          fee = fee.plus(BN(strategy.managementFee))
+        }
       })
       return <div>{fee.toString()}</div>
     },

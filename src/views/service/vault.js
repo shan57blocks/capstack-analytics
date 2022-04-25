@@ -7,3 +7,9 @@ export const startPosition = (strategy, payload) => {
     payload
   )
 }
+
+export const profitDistribution = (vault, feeTxHash) => {
+  return api.post(
+    `/process/vaults/${vault.id}/profit-distribution?feeTxHash=${feeTxHash}`
+  )
+}
