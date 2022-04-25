@@ -13,7 +13,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
-import { BN } from 'src/utils/common'
+import { BN, scaleDown } from 'src/utils/common'
 
 const Suggest = ({ vault }) => {
   const [strategies, setStrategies] = useState()
@@ -244,7 +244,7 @@ const renforceStrategies = (vault, strategies) => {
   if (!vault) {
     return []
   }
-  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
+  const { decimals } = vault.priceToken
   return strategies.map((strategy) => {
     const { protocol, tokens } = strategy
     strategy.principal = Number(vault.unallocated) * strategy.percentage
@@ -255,22 +255,28 @@ const renforceStrategies = (vault, strategies) => {
     if (!protocol.isLeverage) {
       strategy.leverage = 1
       strategy.suggestions.push(
-        `${BN(strategy.principal).div(decimalsBN).toString()} ${vault.name}`
+        `${scaleDown(strategy.principal, decimals)} ${vault.name}`
       )
       return strategy
     }
 
-    if (strategy.positions.length > 1) {
+    if (strategy.positionCount > 1) {
       const principal0 = (principal * leverage) / (2 * leverage - 2)
       const borrow0 = principal0 * (leverage - 1)
 
       const principal1 = (principal * (leverage - 2)) / (2 * leverage - 2)
       const borrow1 = principal1 * (leverage - 1)
       strategy.suggestions.push(
-        `${principal0} ${vault.name}, borrow ${borrow0} ${tokens[1].symbol}`
+        `${scaleDown(principal0, decimals)} ${vault.name}, borrow ${scaleDown(
+          borrow0,
+          decimals
+        )} ${tokens[1].symbol}`
       )
       strategy.suggestions.push(
-        `${principal1} ${vault.name}, borrow ${borrow1} ${tokens[0].symbol}`
+        `${scaleDown(principal1, decimals)} ${vault.name}, borrow ${scaleDown(
+          borrow1,
+          decimals
+        )} ${tokens[0].symbol}`
       )
       return strategy
     }
