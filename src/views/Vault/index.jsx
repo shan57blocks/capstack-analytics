@@ -12,11 +12,13 @@ import Strategy from './Strategy'
 import Suggest from './Suggest'
 import Summary from './Summary'
 import Transfer from './Transfer'
+import { useStatus } from './hooks/useStatus'
 
 const { TabPane } = Tabs
 
 const Vaults = () => {
   const { vaults } = useVault()
+  const status = useStatus()
   const [selectedVaultName, setSelectedVaultName] = useState(VAULT.ETH)
   const vault = vaults?.find((vault) => vault.name === selectedVaultName)
 
@@ -32,10 +34,10 @@ const Vaults = () => {
           <Strategy vault={vault} />
         </TabPane>
         <TabPane tab="Profit Distribution" key="2">
-          <Profit vault={vault} />
+          <Profit vault={vault} status={status} />
         </TabPane>
         <TabPane tab="Investment Suggestion" key="3">
-          <Suggest vault={vault} />
+          <Suggest vault={vault} status={status} />
         </TabPane>
         <TabPane tab="Investors" key="4">
           <Investor />

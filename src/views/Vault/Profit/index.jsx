@@ -6,7 +6,7 @@ import { BN } from 'src/utils/common'
 import api from 'src/utils/api'
 import { VAULT_STATUS } from '../const'
 
-const Profit = ({ vault }) => {
+const Profit = ({ vault, status }) => {
   const [form] = Form.useForm()
   const [isModalVisible, setIsModalVisible] = useState(false)
 
@@ -34,7 +34,7 @@ const Profit = ({ vault }) => {
     return null
   }
 
-  if (vault.status === VAULT_STATUS.OPEN) {
+  if (status[vault.name] === VAULT_STATUS.OPEN) {
     return <div>Please close all the positions first.</div>
   }
 

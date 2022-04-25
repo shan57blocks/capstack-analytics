@@ -14,10 +14,10 @@ import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
 import { BN } from 'src/utils/common'
-import { TXType } from '../const'
+import { TXType, VAULT_STATUS } from '../const'
 import { startPosition } from 'src/views/service/vault'
 
-const Suggest = ({ vault }) => {
+const Suggest = ({ vault, status }) => {
   const [form] = Form.useForm()
   const [strategies, setStrategies] = useState()
   const [selectedStrategy, setSelectedStrategy] = useState()
@@ -74,6 +74,18 @@ const Suggest = ({ vault }) => {
 
   if (!vault) {
     return <CapSkeleton />
+  }
+
+  if (
+    status[vault.name] === VAULT_STATUS.OPEN ||
+    status[vault.name] === VAULT_STATUS.SETTLE
+  ) {
+    return (
+      <div>
+        Please close all the positions and confirm the profit distribution
+        first.
+      </div>
+    )
   }
 
   return (

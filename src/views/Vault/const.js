@@ -33,6 +33,7 @@ export const Chains = {
 
 export const VAULT_STATUS = {
   OPEN: 'OPEN',
+  SETTLE: 'SETTLE',
 }
 
 export const TXType = {
@@ -42,4 +43,9 @@ export const TXType = {
   Adjust: 'Adjust',
   Harvest: 'Harvest',
   Close: 'Close',
+}
+
+export const InvestStatus = {
+  InvestRequested: 'Invest requested',
+  WithdrawlRequested: 'Withdrawl requested',
 }
