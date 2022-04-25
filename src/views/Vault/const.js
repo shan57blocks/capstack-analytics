@@ -34,3 +34,12 @@ export const Chains = {
 export const VAULT_STATUS = {
   OPEN: 'OPEN',
 }
+
+export const TXType = {
+  Transfer: 'Transfer',
+  Swap: 'Swap',
+  Open: 'Open',
+  Adjust: 'Adjust',
+  Harvest: 'Harvest',
+  Close: 'Close',
+}

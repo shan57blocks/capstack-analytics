@@ -13,11 +13,14 @@ import {
 import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
-import { BN, scaleDown } from 'src/utils/common'
+import { BN } from 'src/utils/common'
+import { TXType } from '../const'
+import { startPosition } from 'src/views/service/vault'
 
 const Suggest = ({ vault }) => {
+  const [form] = Form.useForm()
   const [strategies, setStrategies] = useState()
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedStrategy, setSelectedStrategy] = useState()
   const unallocated = vault ? Number(vault.unallocated) : 0
 
   useEffect(() => {
@@ -56,33 +59,28 @@ const Suggest = ({ vault }) => {
     message.success('The target has been updated successfully.')
   }
 
-  const showModal = () => {
-    setIsModalVisible(true)
-  }
-
   const handleOk = () => {
-    setIsModalVisible(false)
+    form.submit()
   }
 
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
-
-  const onFinish = (values) => {
-    console.log('Success:', values)
+  const onFinish = async (values) => {
+    const payload = {
+      hash: values.openTxHash,
+      type: TXType.Open,
+    }
+    await startPosition(selectedStrategy, payload)
+    message.success('The position has been added successfully.')
   }
 
   if (!vault) {
     return <CapSkeleton />
   }
 
-  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
-
   return (
     <div className="vault-suggest">
       <div className="vault-suggest-change">
         <div>Uninvested:</div>
-        <div>{BN(unallocated).div(decimalsBN).toString()}</div>
+        <div>{unallocated}</div>
       </div>
       <Table
         rowKey="id"
@@ -91,19 +89,19 @@ const Suggest = ({ vault }) => {
           changePercentage,
           savePercentage,
           changeLeverage,
-          showModal,
-          decimalsBN
+          setSelectedStrategy
         )}
         dataSource={strategies}
         bordered
       />
       <Modal
         title="Open Position"
-        visible={isModalVisible}
+        visible={!!selectedStrategy}
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={() => setSelectedStrategy(null)}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -111,16 +109,7 @@ const Suggest = ({ vault }) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="TX Hash 1" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 2" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 3" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 4" name="type">
+          <Form.Item label="Open TX Hash" name="openTxHash">
             <Input />
           </Form.Item>
         </Form>
@@ -136,8 +125,7 @@ const getColumns = (
   changePercentage,
   savePercentage,
   changeLeverage,
-  showModal,
-  decimalsBN
+  selectStrategy
 ) => [
   {
     title: 'Name',
@@ -189,11 +177,7 @@ const getColumns = (
     dataIndex: 'percentage',
     key: 'percentage',
     render: (percentage) => {
-      return (
-        <div>
-          {BN(vault.unallocated).times(percentage).div(decimalsBN).toString()}
-        </div>
-      )
+      return <div>{BN(vault.unallocated).times(percentage).toString()}</div>
     },
   },
   {
@@ -234,7 +218,7 @@ const getColumns = (
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <a onClick={showModal}>Open Position</a>
+        <a onClick={() => selectStrategy(record)}>Open Position</a>
       </Space>
     ),
   },
@@ -244,7 +228,6 @@ const renforceStrategies = (vault, strategies) => {
   if (!vault) {
     return []
   }
-  const { decimals } = vault.priceToken
   return strategies.map((strategy) => {
     const { protocol, tokens } = strategy
     strategy.principal = Number(vault.unallocated) * strategy.percentage
@@ -254,9 +237,7 @@ const renforceStrategies = (vault, strategies) => {
 
     if (!protocol.isLeverage) {
       strategy.leverage = 1
-      strategy.suggestions.push(
-        `${scaleDown(strategy.principal, decimals)} ${vault.name}`
-      )
+      strategy.suggestions.push(`${strategy.principal} ${vault.name}`)
       return strategy
     }
 
@@ -267,16 +248,10 @@ const renforceStrategies = (vault, strategies) => {
       const principal1 = (principal * (leverage - 2)) / (2 * leverage - 2)
       const borrow1 = principal1 * (leverage - 1)
       strategy.suggestions.push(
-        `${scaleDown(principal0, decimals)} ${vault.name}, borrow ${scaleDown(
-          borrow0,
-          decimals
-        )} ${tokens[1].symbol}`
+        `${principal0} ${vault.name}, borrow ${borrow0} ${tokens[1].symbol}`
       )
       strategy.suggestions.push(
-        `${scaleDown(principal1, decimals)} ${vault.name}, borrow ${scaleDown(
-          borrow1,
-          decimals
-        )} ${tokens[0].symbol}`
+        `${principal1} ${vault.name}, borrow ${borrow1} ${tokens[0].symbol}`
       )
       return strategy
     }

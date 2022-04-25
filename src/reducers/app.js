@@ -3,14 +3,14 @@ import {
   APP_CLOSE_LOADING,
   APP_SHOW_LOADING,
   GET_CONFIGS,
-  GET_INVESTORS,
   GET_INVESTOR_TXS,
+  GET_INVESTORS,
   GET_POSITION_BY_ID,
   GET_STRATEGY_POSITIONS,
   GET_VAULTS,
 } from 'src/actions/app'
 import { mapPosition, mapStrategy } from 'src/utils/apy'
-import { BN, deepClone } from 'src/utils/common'
+import { deepClone } from 'src/utils/common'
 import { VAULT_STATUS } from 'src/views/Vault/const'
 
 const initState = {
@@ -55,21 +55,6 @@ const app = handleActions(
 
       payload.forEach((vault) => {
         vault.strategies.forEach((strategy) => {
-          const decimals = `1e${strategy.token.decimals}`
-          const decimalsBN = BN(decimals)
-          strategy.principals = BN(strategy.principals)
-            .div(decimalsBN)
-            .toString()
-          strategy.unallocated = BN(strategy.unallocated)
-            .div(decimalsBN)
-            .toString()
-          strategy.profit = BN(strategy.profit).div(decimalsBN).toString()
-          strategy.managementFee = BN(strategy.managementFee)
-            .div(decimalsBN)
-            .toString()
-          strategy.performanceFee = BN(strategy.performanceFee)
-            .div(decimalsBN)
-            .toString()
           strategies[strategy.id] = strategy
           strategy.positions.forEach((position) => {
             if (!positionStrategies[position.id]) {
