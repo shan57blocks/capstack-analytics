@@ -9,6 +9,7 @@ import {
   Table,
   Button,
   message,
+  Spin,
 } from 'antd'
 import React, { useEffect, useState } from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
@@ -19,6 +20,7 @@ import { startPosition } from 'src/views/service/vault'
 
 const Suggest = ({ vault, status }) => {
   const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
   const [strategies, setStrategies] = useState()
   const [selectedStrategy, setSelectedStrategy] = useState()
   const unallocated = vault ? Number(vault.unallocated) : 0
@@ -68,12 +70,22 @@ const Suggest = ({ vault, status }) => {
       hash: values.openTxHash,
       type: TXType.Open,
     }
-    await startPosition(selectedStrategy, payload)
-    message.success('The position has been added successfully.')
+    try {
+      setLoading(true)
+      setSelectedStrategy(null)
+      await startPosition(selectedStrategy, payload)
+      message.success('The position has been added successfully.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!vault) {
     return <CapSkeleton />
+  }
+
+  if (!status[vault.name]) {
+    return <div>Vault is empty.</div>
   }
 
   if (
@@ -82,8 +94,10 @@ const Suggest = ({ vault, status }) => {
   ) {
     return (
       <div>
-        Please close all the positions and confirm the profit distribution
-        first.
+        <div>Please make sure you have done the steps below:</div>
+        <div>1, Close all the positions</div>
+        <div>2, Confirm the profit distribution</div>
+        <div>3, Settle all the withdrawls and deposits</div>
       </div>
     )
   }
@@ -126,6 +140,7 @@ const Suggest = ({ vault, status }) => {
           </Form.Item>
         </Form>
       </Modal>
+      {loading && <Spin />}
     </div>
   )
 }

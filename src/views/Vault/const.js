@@ -34,6 +34,7 @@ export const Chains = {
 export const VAULT_STATUS = {
   OPEN: 'OPEN',
   SETTLE: 'SETTLE',
+  SETTLED: 'SETTLED',
 }
 
 export const TXType = {

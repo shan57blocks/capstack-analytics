@@ -233,15 +233,12 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
 }
 
 export const mapVault = (vault, strategies) => {
-  const { principals, shares, priceToken } = vault
-  const principalsBN = BN(principals)
-  const sharesBN = BN(shares)
-  const decimals = `1e${priceToken.decimals}`
-  vault.principalsCalculated = principalsBN.div(decimals).toNumber()
-  vault.sharesCalculated = sharesBN.div(decimals).toNumber()
-  vault.sharePriceCalculated = principals / shares
-  vault.netBalance = _.sum(strategies.map((item) => item.netBalance)) ?? 0
-  vault.currentBalance = vault.principalsCalculated + vault.netBalance
+  let netBalance = BN(0)
+  strategies.forEach((strategy) => {
+    netBalance = netBalance.plus(BN(strategy.netBalance ?? 0))
+  })
+  vault.netBalance = netBalance.toString()
+  vault.currentBalance = BN(vault.principals).plus(BN(vault.netBalance))
   vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))
   vault.strategies = strategies
   return vault

@@ -13,3 +13,13 @@ export const profitDistribution = (vault, feeTxHash) => {
     `/process/vaults/${vault.id}/profit-distribution?feeTxHash=${feeTxHash}`
   )
 }
+
+export const settleWithdrawl = (vault, investorTx, feeTxHash) => {
+  return api.post(
+    `/process/vaults/${vault.id}/withdrawl-settlement?investorTxId=${investorTx.id}&feeTxHash=${feeTxHash}`
+  )
+}
+
+export const settleDeposits = (vaultId) => {
+  return api.post(`/process/vaults/${vaultId}/invest-settlement`)
+}

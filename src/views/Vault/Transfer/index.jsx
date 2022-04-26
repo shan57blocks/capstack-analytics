@@ -1,16 +1,28 @@
 import './index.less'
 
-import { Button, Form, Input, message, Modal, Select, Space, Table } from 'antd'
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Space,
+  Table,
+  Spin,
+} from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
-import { BN, formatTime } from 'src/utils/common'
+import { formatTime } from 'src/utils/common'
+import { settleDeposits, settleWithdrawl } from 'src/views/service/vault'
 
 const { Option } = Select
 
 const Transfer = ({ vault }) => {
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
   const [txForm] = Form.useForm()
   const [settleForm] = Form.useForm()
   const { investorTxs, investors } = useSelector((state) => state.app)
@@ -37,21 +49,39 @@ const Transfer = ({ vault }) => {
   const onTxFinish = async (values) => {
     setAddVisible(false)
     values.vaultId = vault.id
-    await api.post(`/investors/transactions`, values)
-    txForm.resetFields()
-    dispatch(appAction.getInvestorTxs())
-    message.success(`Transaction has been added successfully.`)
+    try {
+      setLoading(true)
+      await api.post(`/investors/transactions`, values)
+      txForm.resetFields()
+      dispatch(appAction.getInvestorTxs())
+      message.success(`Transaction has been added successfully.`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const onSettleFinish = async (values) => {
-    const tx = selectedTx
     setSelectedTx()
-    await api.post(
-      `/investors/transactions/${tx.id}/settlements?txHash=${values.txHash}`
-    )
-    settleForm.resetFields()
-    dispatch(appAction.getInvestorTxs())
-    message.success(`Transaction has been settled successfully.`)
+    try {
+      setLoading(true)
+      await settleWithdrawl(vault, selectedTx, values.txHash)
+      settleForm.resetFields()
+      dispatch(appAction.getInvestorTxs())
+      message.success(`Transaction has been settled successfully.`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onSettleDeposits = async () => {
+    try {
+      setLoading(true)
+      await settleDeposits(vault.id)
+      dispatch(appAction.getInvestorTxs())
+      message.success(`Deposits have been settled successfully.`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const onValuesChange = (values) => {
@@ -64,8 +94,6 @@ const Transfer = ({ vault }) => {
     return null
   }
 
-  const decimalsBN = BN(`1e${vault.priceToken.decimals}`)
-
   return (
     <div className="vault-transfer">
       <Button
@@ -75,8 +103,15 @@ const Transfer = ({ vault }) => {
       >
         Add
       </Button>
+      <Button
+        className="vault-transfer-settle"
+        onClick={onSettleDeposits}
+        type="primary"
+      >
+        Confirm Deposit
+      </Button>
       <Table
-        columns={getColumns(investors, setSelectedTx, decimalsBN)}
+        columns={getColumns(investors, setSelectedTx)}
         dataSource={investorTxs}
         bordered
         rowKey="id"
@@ -158,13 +193,14 @@ const Transfer = ({ vault }) => {
           </Form.Item>
         </Form>
       </Modal>
+      {loading && <Spin />}
     </div>
   )
 }
 
 export default Transfer
 
-const getColumns = (investors, selectTx, decimalsBN) => [
+const getColumns = (investors, selectTx) => [
   {
     title: 'Investor',
     dataIndex: 'investorId',
@@ -179,7 +215,7 @@ const getColumns = (investors, selectTx, decimalsBN) => [
     dataIndex: 'amount',
     key: 'amount',
     render: (amount) => {
-      return <span>{BN(amount).div(decimalsBN).toString()}</span>
+      return <span>{amount}</span>
     },
   },
   {

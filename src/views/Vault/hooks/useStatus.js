@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { BN } from 'src/utils/common'
 import { InvestStatus, VAULT, VAULT_STATUS } from '../const'
 
 export const useStatus = () => {
@@ -35,6 +36,14 @@ export const useStatus = () => {
             )
           ) {
             status[vault.name] = VAULT_STATUS.SETTLE
+          }
+        }
+        if (!status[vault.name]) {
+          if (
+            BN(vault.shares).times(BN(vault.sharePrice)).toString() ===
+            vault.unallocated
+          ) {
+            status[vault.name] = VAULT_STATUS.SETTLED
           }
         }
       })

@@ -3,9 +3,9 @@ import './index.less'
 import { Form, Input, message, Modal, Space, Table } from 'antd'
 import React, { useState } from 'react'
 import { BN } from 'src/utils/common'
-import api from 'src/utils/api'
-import { VAULT_STATUS } from '../const'
 import { profitDistribution } from 'src/views/service/vault'
+
+import { VAULT_STATUS } from '../const'
 
 const Profit = ({ vault, status }) => {
   const [form] = Form.useForm()
@@ -33,8 +33,16 @@ const Profit = ({ vault, status }) => {
     return null
   }
 
+  if (vault.shares === '0') {
+    return <div>Vault is empty.</div>
+  }
+
   if (status[vault.name] === VAULT_STATUS.OPEN) {
     return <div>Please close all the positions first.</div>
+  }
+
+  if (status[vault.name] === VAULT_STATUS.SETTLED) {
+    return <div>Please invest the positions first.</div>
   }
 
   return (
@@ -180,15 +188,5 @@ const getStrategyColumns = () => [
     title: 'Profit',
     dataIndex: 'profit',
     key: 'profit',
-  },
-  {
-    title: 'Management Fee',
-    dataIndex: 'managementFee',
-    key: 'managementFee',
-  },
-  {
-    title: 'Performance Fee',
-    dataIndex: 'performanceFee',
-    key: 'performanceFee',
   },
 ]
