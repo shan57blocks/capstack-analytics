@@ -5,15 +5,17 @@ import React, { useState } from 'react'
 
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { TXType } from '../const'
 import {
   adjustPosition,
   closePosition,
   harvestPosition,
 } from 'src/views/service/vault'
+import * as appAction from 'src/actions/app'
 
 const Strategy = ({ vault }) => {
+  const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const { configs } = useSelector((state) => state.app)
@@ -67,6 +69,7 @@ const Strategy = ({ vault }) => {
       setActionType(null)
       await harvestPosition(vault, selectedStrategy, payload)
       message.success('The position has been harvested successfully.')
+      dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
     }
@@ -87,6 +90,7 @@ const Strategy = ({ vault }) => {
       setActionType(null)
       await adjustPosition(vault, selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
+      dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
     }
@@ -107,6 +111,7 @@ const Strategy = ({ vault }) => {
       setActionType(null)
       await closePosition(selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
+      dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
     }

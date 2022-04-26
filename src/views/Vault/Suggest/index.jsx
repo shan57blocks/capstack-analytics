@@ -1,24 +1,28 @@
 import './index.less'
 
 import {
+  Button,
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Space,
-  Table,
-  Button,
-  message,
   Spin,
+  Table,
 } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import * as appAction from 'src/actions/app'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
 import { BN } from 'src/utils/common'
-import { TXType, VAULT_STATUS } from '../const'
 import { startPosition } from 'src/views/service/vault'
 
+import { TXType, VAULT_STATUS } from '../const'
+
 const Suggest = ({ vault, status }) => {
+  const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [strategies, setStrategies] = useState()
@@ -75,6 +79,7 @@ const Suggest = ({ vault, status }) => {
       setSelectedStrategy(null)
       await startPosition(selectedStrategy, payload)
       message.success('The position has been added successfully.')
+      dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
     }
@@ -82,10 +87,6 @@ const Suggest = ({ vault, status }) => {
 
   if (!vault) {
     return <CapSkeleton />
-  }
-
-  if (!status[vault.name]) {
-    return <div>Vault is empty.</div>
   }
 
   if (

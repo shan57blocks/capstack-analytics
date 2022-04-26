@@ -1,14 +1,18 @@
 import './index.less'
 
-import { Form, Input, message, Modal, Space, Table } from 'antd'
+import { Form, Input, message, Modal, Space, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { BN } from 'src/utils/common'
 import { profitDistribution } from 'src/views/service/vault'
+import * as appAction from 'src/actions/app'
 
 import { VAULT_STATUS } from '../const'
+import { useDispatch } from 'react-redux'
 
 const Profit = ({ vault, status }) => {
+  const dispatch = useDispatch()
   const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -24,9 +28,15 @@ const Profit = ({ vault, status }) => {
   }
 
   const onFinish = async (values) => {
-    setIsModalVisible(false)
-    await profitDistribution(vault, values.feeTxHash)
-    message.success(`Profit has been distributed successfully.`)
+    try {
+      setLoading(true)
+      setIsModalVisible(false)
+      await profitDistribution(vault, values.feeTxHash)
+      message.success(`Profit has been distributed successfully.`)
+      dispatch(appAction.getVaults())
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!vault) {
@@ -89,6 +99,7 @@ const Profit = ({ vault, status }) => {
           </Form.Item>
         </Form>
       </Modal>
+      {loading && <Spin />}
     </div>
   )
 }

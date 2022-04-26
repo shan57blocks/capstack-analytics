@@ -41,6 +41,15 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
               </div>
             </div>
             <div>
+              <div>Share Price</div>
+              <div>
+                {' '}
+                <CapTooltip title={vault.sharePrice}>
+                  {Number(vault.sharePrice).toFixed(3)}
+                </CapTooltip>
+              </div>
+            </div>
+            <div>
               <div>Apy</div>
               <div>{toPercentage(vault.apy)}</div>
             </div>

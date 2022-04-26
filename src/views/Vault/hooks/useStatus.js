@@ -39,6 +39,10 @@ export const useStatus = () => {
           }
         }
         if (!status[vault.name]) {
+          const current = BN(vault.shares)
+            .times(BN(vault.sharePrice))
+            .minus(BN(vault.unallocated))
+            .toString()
           if (
             BN(vault.shares).times(BN(vault.sharePrice)).toString() ===
             vault.unallocated
