@@ -4,6 +4,7 @@ import React from 'react'
 import CapSkeleton from 'src/components/CapSkeleton'
 import CapTooltip from 'src/components/CapTooltip'
 import { formatTime, isEmpty, toPercentage } from 'src/utils/common'
+import { TXType } from '../const'
 
 export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
   {
@@ -268,9 +269,9 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
     key: 'action',
     render: (_, record) => (
       <div className="action">
-        <a onClick={showModal}>Harvest</a>
-        <a onClick={showModal}>Adjust</a>
-        <a onClick={showModal}>Close</a>
+        <a onClick={() => showModal(TXType.Harvest, record)}>Harvest</a>
+        <a onClick={() => showModal(TXType.Adjust, record)}>Adjust</a>
+        <a onClick={() => showModal(TXType.Close, record)}>Close</a>
       </div>
     ),
   },

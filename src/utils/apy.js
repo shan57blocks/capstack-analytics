@@ -239,7 +239,14 @@ export const mapVault = (vault, strategies) => {
   })
   vault.netBalance = netBalance.toString()
   vault.currentBalance = BN(vault.principals).plus(BN(vault.netBalance))
-  vault.apy = _.sum(strategies.map((item) => item.netApy * item.percentage))
+  vault.apy = _.sum(
+    strategies.map((item) => {
+      if (!item.netApy) {
+        return 0
+      }
+      return item.netApy * item.percentage
+    })
+  )
   vault.strategies = strategies
   return vault
 }

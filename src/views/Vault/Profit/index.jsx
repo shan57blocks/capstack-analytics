@@ -100,13 +100,6 @@ const getSummaryColumns = (showModal) => [
     title: 'Principals',
     dataIndex: 'principals',
     key: 'principals',
-    render: (_, record) => {
-      let principals = BN(0)
-      record.strategies.forEach((strategy) => {
-        principals = principals.plus(BN(strategy.principals))
-      })
-      return <div>{principals.toString()}</div>
-    },
   },
   {
     title: 'Total Profit',

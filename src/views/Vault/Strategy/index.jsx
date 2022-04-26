@@ -1,13 +1,21 @@
 import './index.less'
 
-import { Table, Modal, Form, Input, Select } from 'antd'
+import { Table, Modal, Form, Input, Select, Spin, message } from 'antd'
 import React, { useState } from 'react'
 
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
 import { useSelector } from 'react-redux'
+import { TXType } from '../const'
+import {
+  adjustPosition,
+  closePosition,
+  harvestPosition,
+} from 'src/views/service/vault'
 
 const Strategy = ({ vault }) => {
+  const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
   const { configs } = useSelector((state) => state.app)
   const { value: harvestLimit } =
     configs.find((config) => config.property === `Harvest_${vault?.name}`) || {}
@@ -15,23 +23,93 @@ const Strategy = ({ vault }) => {
     configs.find(
       (config) => config.property === `Liquidation_${vault?.name}`
     ) || {}
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [actionType, setActionType] = useState()
+  const [selectedStrategy, setSelectedStrategy] = useState()
   const { strategies } = vault || {}
 
-  const showModal = () => {
-    setIsModalVisible(true)
+  const showModal = (actionType, record) => {
+    setActionType(actionType)
+    setSelectedStrategy(record)
   }
 
   const handleOk = () => {
-    setIsModalVisible(false)
+    form.submit()
   }
 
   const handleCancel = () => {
-    setIsModalVisible(false)
+    setActionType()
   }
 
   const onFinish = (values) => {
-    console.log('Success:', values)
+    if (actionType === TXType.Harvest) {
+      onHarvest(values)
+    }
+    if (actionType === TXType.Adjust) {
+      onAdjust(values)
+    }
+    if (actionType === TXType.Close) {
+      onClose(values)
+    }
+  }
+
+  const onHarvest = async (values) => {
+    const payload = []
+    Object.keys(values).forEach((key) => {
+      if (values[key]) {
+        payload.push({
+          hash: values[key],
+          type: key === TXType.Harvest ? TXType.Harvest : TXType.Swap,
+        })
+      }
+    })
+    try {
+      setLoading(true)
+      setActionType(null)
+      await harvestPosition(vault, selectedStrategy, payload)
+      message.success('The position has been harvested successfully.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onAdjust = async (values) => {
+    const payload = []
+    Object.keys(values).forEach((key) => {
+      if (values[key]) {
+        payload.push({
+          hash: values[key],
+          type: key === TXType.Adjust ? TXType.Adjust : TXType.Swap,
+        })
+      }
+    })
+    try {
+      setLoading(true)
+      setActionType(null)
+      await adjustPosition(vault, selectedStrategy, payload)
+      message.success('The position has been adjusted successfully.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onClose = async (values) => {
+    const payload = []
+    Object.keys(values).forEach((key) => {
+      if (values[key]) {
+        payload.push({
+          hash: values[key],
+          type: key === TXType.Close ? TXType.Close : TXType.Swap,
+        })
+      }
+    })
+    try {
+      setLoading(true)
+      setActionType(null)
+      await closePosition(selectedStrategy, payload)
+      message.success('The position has been adjusted successfully.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!strategies) {
@@ -52,11 +130,12 @@ const Strategy = ({ vault }) => {
       />
       <Modal
         title="Strategy Operation"
-        visible={isModalVisible}
+        visible={actionType}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -64,23 +143,59 @@ const Strategy = ({ vault }) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="Select Position" name="type">
-            <Select />
-          </Form.Item>
-          <Form.Item label="TX Hash 1" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 2" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 3" name="type">
-            <Input />
-          </Form.Item>
-          <Form.Item label="TX Hash 4" name="type">
-            <Input />
-          </Form.Item>
+          {actionType === TXType.Harvest && (
+            <>
+              {selectedStrategy.positions.length > 1 && (
+                <Form.Item label="Position" name="positionId" required>
+                  <Select>
+                    {selectedStrategy.postions.map((position, index) => (
+                      <Select.Option key={position.id} value={position.id}>
+                        Position {index}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
+              <Form.Item label="Harvest Hash" name={TXType.Harvest} required>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 1" name="swapHash1">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 2" name="swapHash2">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 3" name="swapHash3">
+                <Input />
+              </Form.Item>
+            </>
+          )}
+          {actionType === TXType.Adjust && (
+            <>
+              <Form.Item label="Harvest Hash" name={TXType.Adjust} required>
+                <Input />
+              </Form.Item>
+            </>
+          )}
+          {actionType === TXType.Close && (
+            <>
+              <Form.Item label="Close Hash" name={TXType.Close} required>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 1" name="swapHash1">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 2" name="swapHash2">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Swap Hash 3" name="swapHash3">
+                <Input />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
+      {loading && <Spin />}
     </div>
   )
 }
