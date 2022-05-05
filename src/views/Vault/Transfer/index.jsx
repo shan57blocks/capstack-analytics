@@ -53,8 +53,8 @@ const Transfer = ({ vault }) => {
       setLoading(true)
       await api.post(`/investors/transactions`, values)
       txForm.resetFields()
-      dispatch(appAction.getVaults())
       dispatch(appAction.getInvestorTxs())
+      dispatch(appAction.getVaults())
       message.success(`Transaction has been added successfully.`)
     } finally {
       setLoading(false)
@@ -67,8 +67,8 @@ const Transfer = ({ vault }) => {
       setLoading(true)
       await settleWithdrawl(vault, selectedTx, values.txHash)
       settleForm.resetFields()
-      dispatch(appAction.getVaults())
       dispatch(appAction.getInvestorTxs())
+      dispatch(appAction.getVaults())
       message.success(`Transaction has been settled successfully.`)
     } finally {
       setLoading(false)
@@ -79,8 +79,8 @@ const Transfer = ({ vault }) => {
     try {
       setLoading(true)
       await settleDeposits(vault.id)
-      dispatch(appAction.getVaults())
       dispatch(appAction.getInvestorTxs())
+      dispatch(appAction.getVaults())
       message.success(`Deposits have been settled successfully.`)
     } finally {
       setLoading(false)

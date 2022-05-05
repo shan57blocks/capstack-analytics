@@ -89,10 +89,7 @@ const Suggest = ({ vault, status }) => {
     return <CapSkeleton />
   }
 
-  if (
-    status[vault.name] === VAULT_STATUS.OPEN ||
-    status[vault.name] === VAULT_STATUS.SETTLE
-  ) {
+  if (status[vault.name] === VAULT_STATUS.SETTLE) {
     return (
       <div>
         <div>Please make sure you have done the steps below:</div>
