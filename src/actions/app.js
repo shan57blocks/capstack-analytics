@@ -10,6 +10,7 @@ export const GET_INVESTORS = 'GET_INVESTORS'
 export const GET_INVESTOR_TXS = 'GET_INVESTOR_TXS'
 export const GET_STRATEGY_POSITIONS = 'GET_STRATEGY_POSITIONS'
 export const GET_POSITION_BY_ID = 'GET_POSITION_BY_ID'
+export const GET_POSITION_HISTORIES = 'GET_POSITION_HISTORIES'
 
 export const showLoadingBar = createAction(APP_SHOW_LOADING)
 
@@ -37,4 +38,10 @@ export const getPositionById = createAction(
   GET_POSITION_BY_ID,
   (positionId) => api.get(`/positions/${positionId}`),
   (positionId, strategyIds) => ({ positionId, strategyIds })
+)
+
+export const getPositionHistories = createAction(
+  GET_POSITION_HISTORIES,
+  (positionId) => api.get(`/positions/${positionId}/histories`),
+  (positionId) => positionId
 )

@@ -89,16 +89,16 @@ const Suggest = ({ vault, status }) => {
     return <CapSkeleton />
   }
 
-  if (status[vault.name] === VAULT_STATUS.SETTLE) {
-    return (
-      <div>
-        <div>Please make sure you have done the steps below:</div>
-        <div>1, Close all the positions</div>
-        <div>2, Confirm the profit distribution</div>
-        <div>3, Settle all the withdrawls and deposits</div>
-      </div>
-    )
-  }
+  // if (status[vault.name] === VAULT_STATUS.SETTLE) {
+  //   return (
+  //     <div>
+  //       <div>Please make sure you have done the steps below:</div>
+  //       <div>1, Close all the positions</div>
+  //       <div>2, Confirm the profit distribution</div>
+  //       <div>3, Settle all the withdrawls and deposits</div>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="vault-suggest">

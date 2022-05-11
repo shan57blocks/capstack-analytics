@@ -8,6 +8,7 @@ import {
   GET_POSITION_BY_ID,
   GET_STRATEGY_POSITIONS,
   GET_VAULTS,
+  GET_POSITION_HISTORIES,
 } from 'src/actions/app'
 import { mapPosition, mapStrategy } from 'src/utils/apy'
 import { deepClone } from 'src/utils/common'
@@ -99,6 +100,25 @@ const app = handleActions(
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload, meta }) => {
+      const strategies = deepClone(state.strategies)
+      const strategyPositions = deepClone(state.strategyPositions)
+      meta.strategyIds.forEach((id) => {
+        const strategy = strategies[id]
+        const positions = [mapPosition(payload)]
+        strategyPositions[id] = positions
+        strategies[id] = mapStrategy(
+          strategy,
+          positions,
+          state.positionStrategies
+        )
+      })
+      return {
+        ...state,
+        strategyPositions,
+        strategies,
+      }
+    },
+    [GET_POSITION_HISTORIES]: (state, { payload, meta }) => {
       const strategies = deepClone(state.strategies)
       const strategyPositions = deepClone(state.strategyPositions)
       meta.strategyIds.forEach((id) => {

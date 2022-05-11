@@ -43,17 +43,17 @@ const Profit = ({ vault, status }) => {
     return null
   }
 
-  if (vault.shares === '0') {
-    return <div>Vault is empty.</div>
-  }
+  // if (vault.shares === '0') {
+  //   return <div>Vault is empty.</div>
+  // }
 
-  if (status[vault.name] === VAULT_STATUS.OPEN) {
-    return <div>Please close all the positions first.</div>
-  }
+  // if (status[vault.name] === VAULT_STATUS.OPEN) {
+  //   return <div>Please close all the positions first.</div>
+  // }
 
-  if (status[vault.name] === VAULT_STATUS.SETTLED) {
-    return <div>Please invest the positions first.</div>
-  }
+  // if (status[vault.name] === VAULT_STATUS.SETTLED) {
+  //   return <div>Please invest the positions first.</div>
+  // }
 
   return (
     <div className="vault-profit">
