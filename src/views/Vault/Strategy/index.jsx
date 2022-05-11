@@ -1,17 +1,13 @@
 import './index.less'
 
-import { Table, Modal, Form, Input, Select, Spin, message } from 'antd'
+import { Table, Modal, Form, Input, Select, Spin, message, Button } from 'antd'
 import React, { useState } from 'react'
 
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
 import { useDispatch, useSelector } from 'react-redux'
 import { TXType } from '../const'
-import {
-  adjustPosition,
-  closePosition,
-  harvestPosition,
-} from 'src/views/service/vault'
+import vaultService from 'src/views/service/vault'
 import * as appAction from 'src/actions/app'
 
 const Strategy = ({ vault }) => {
@@ -67,7 +63,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await harvestPosition(vault, selectedStrategy, payload)
+      await vaultService.harvestPosition(vault, selectedStrategy, payload)
       message.success('The position has been harvested successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -88,7 +84,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await adjustPosition(vault, selectedStrategy, payload)
+      await vaultService.adjustPosition(vault, selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -109,7 +105,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await closePosition(selectedStrategy, payload)
+      await vaultService.closePosition(selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -123,6 +119,9 @@ const Strategy = ({ vault }) => {
 
   return (
     <div className="vault-strategies">
+      <div className="vault-strategies-action">
+        <Button type="primary">Next Step: Profit Distribution</Button>
+      </div>
       <Table
         columns={getColumns(showModal, harvestLimit, liquidationLimit)}
         dataSource={strategies.filter(

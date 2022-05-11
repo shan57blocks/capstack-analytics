@@ -17,9 +17,9 @@ import * as appAction from 'src/actions/app'
 import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
 import { BN } from 'src/utils/common'
-import { startPosition } from 'src/views/service/vault'
 
-import { TXType, VAULT_STATUS } from '../const'
+import { TXType } from '../const'
+import vaultService from 'src/views/service/vault'
 
 const Suggest = ({ vault, status }) => {
   const dispatch = useDispatch()
@@ -77,7 +77,7 @@ const Suggest = ({ vault, status }) => {
     try {
       setLoading(true)
       setSelectedStrategy(null)
-      await startPosition(selectedStrategy, payload)
+      await vaultService.startPosition(selectedStrategy, payload)
       message.success('The position has been added successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -102,9 +102,12 @@ const Suggest = ({ vault, status }) => {
 
   return (
     <div className="vault-suggest">
-      <div className="vault-suggest-change">
-        <div>Uninvested:</div>
-        <div>{unallocated}</div>
+      <div className="vault-suggest-header">
+        <div className="vault-suggest-header-change">
+          <div>Uninvested:</div>
+          <div>{unallocated}</div>
+        </div>
+        <Button type="primary">Next Step: Strategies</Button>
       </div>
       <Table
         rowKey="id"

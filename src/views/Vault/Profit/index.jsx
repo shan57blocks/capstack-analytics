@@ -1,13 +1,12 @@
 import './index.less'
 
-import { Form, Input, message, Modal, Space, Spin, Table } from 'antd'
+import { Button, Form, Input, message, Modal, Space, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { BN } from 'src/utils/common'
-import { profitDistribution } from 'src/views/service/vault'
 import * as appAction from 'src/actions/app'
 
-import { VAULT_STATUS } from '../const'
 import { useDispatch } from 'react-redux'
+import vaultService from 'src/views/service/vault'
 
 const Profit = ({ vault, status }) => {
   const dispatch = useDispatch()
@@ -31,7 +30,7 @@ const Profit = ({ vault, status }) => {
     try {
       setLoading(true)
       setIsModalVisible(false)
-      await profitDistribution(vault, values.feeTxHash)
+      await vaultService.profitDistribution(vault, values.feeTxHash)
       message.success(`Profit has been distributed successfully.`)
       dispatch(appAction.getVaults())
     } finally {
@@ -57,6 +56,9 @@ const Profit = ({ vault, status }) => {
 
   return (
     <div className="vault-profit">
+      <div className="vault-profit-action">
+        <Button type="primary">Next Step: Transfer Out</Button>
+      </div>
       <div className="vault-profit-title">Summary</div>
       <Table
         className="vault-profit-summary"

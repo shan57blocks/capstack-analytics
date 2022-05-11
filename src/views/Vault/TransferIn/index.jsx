@@ -16,11 +16,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 import { formatTime } from 'src/utils/common'
-import { settleDeposits, settleWithdrawl } from 'src/views/service/vault'
+import vaultService from 'src/views/service/vault'
 
 const { Option } = Select
 
-const Transfer = ({ vault }) => {
+const TransferIn = ({ vault }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [txForm] = Form.useForm()
@@ -65,7 +65,7 @@ const Transfer = ({ vault }) => {
     setSelectedTx()
     try {
       setLoading(true)
-      await settleWithdrawl(vault, selectedTx, values.txHash)
+      await vaultService.settleWithdrawl(vault, selectedTx, values.txHash)
       settleForm.resetFields()
       dispatch(appAction.getInvestorTxs())
       dispatch(appAction.getVaults())
@@ -78,7 +78,7 @@ const Transfer = ({ vault }) => {
   const onSettleDeposits = async () => {
     try {
       setLoading(true)
-      await settleDeposits(vault.id)
+      await vaultService.settleDeposits(vault.id)
       dispatch(appAction.getInvestorTxs())
       dispatch(appAction.getVaults())
       message.success(`Deposits have been settled successfully.`)
@@ -99,20 +99,22 @@ const Transfer = ({ vault }) => {
 
   return (
     <div className="vault-transfer">
-      <Button
-        className="vault-transfer-add"
-        onClick={showAddModal}
-        type="primary"
-      >
-        Add
-      </Button>
-      <Button
-        className="vault-transfer-settle"
-        onClick={onSettleDeposits}
-        type="primary"
-      >
-        Confirm Deposit
-      </Button>
+      <div className="vault-transfer-action">
+        <Button
+          className="vault-transfer-action-add"
+          onClick={showAddModal}
+          type="primary"
+        >
+          Add
+        </Button>
+        <Button
+          className="vault-transfer-action-settle"
+          onClick={onSettleDeposits}
+          type="primary"
+        >
+          Next Step: Investment Suggestion
+        </Button>
+      </div>
       <Table
         columns={getColumns(investors, setSelectedTx)}
         dataSource={investorTxs}
@@ -201,7 +203,7 @@ const Transfer = ({ vault }) => {
   )
 }
 
-export default Transfer
+export default TransferIn
 
 const getColumns = (investors, selectTx) => [
   {
