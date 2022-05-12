@@ -3,16 +3,14 @@ import './index.less'
 import { Tabs } from 'antd'
 import React, { useState } from 'react'
 
-import Config from './Config'
 import { VAULT } from './const'
+import Deposit from './Deposit'
+import { useStatus } from './hooks/useStatus'
 import { useVault } from './hooks/useVault'
-import Investor from './Investor'
 import Profit from './Profit'
 import Strategy from './Strategy'
 import Suggest from './Suggest'
 import Summary from './Summary'
-import Deposit from './Deposit'
-import { useStatus } from './hooks/useStatus'
 import Withdraw from './Withdraw'
 
 const { TabPane } = Tabs

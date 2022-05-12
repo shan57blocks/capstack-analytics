@@ -1,14 +1,14 @@
 import './index.less'
 
+import { SettingOutlined } from '@ant-design/icons'
 import { Card, Modal, Tabs } from 'antd'
 import classnames from 'classnames'
 import React, { useState } from 'react'
 import CapTooltip from 'src/components/CapTooltip'
 import { toPercentage } from 'src/utils/common'
-import { SettingOutlined } from '@ant-design/icons'
-import Investor from '../Investor'
+
 import Config from '../Config'
-import Deposit from '../Deposit'
+import Investor from '../Investor'
 import Transfer from '../Transfer'
 
 const { TabPane } = Tabs
