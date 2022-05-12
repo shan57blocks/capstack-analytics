@@ -8,8 +8,8 @@ import {
   Modal,
   Select,
   Space,
-  Table,
   Spin,
+  Table,
 } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,7 +20,7 @@ import vaultService from 'src/views/service/vault'
 
 const { Option } = Select
 
-const TransferIn = ({ vault }) => {
+const Transfer = ({ vault }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [txForm] = Form.useForm()
@@ -75,18 +75,6 @@ const TransferIn = ({ vault }) => {
     }
   }
 
-  const onSettleDeposits = async () => {
-    try {
-      setLoading(true)
-      await vaultService.settleDeposits(vault.id)
-      dispatch(appAction.getInvestorTxs())
-      dispatch(appAction.getVaults())
-      message.success(`Deposits have been settled successfully.`)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const onValuesChange = (values) => {
     if (values.status) {
       setStatus(values.status)
@@ -106,13 +94,6 @@ const TransferIn = ({ vault }) => {
           type="primary"
         >
           Add
-        </Button>
-        <Button
-          className="vault-transfer-action-settle"
-          onClick={onSettleDeposits}
-          type="primary"
-        >
-          Next Step: Investment Suggestion
         </Button>
       </div>
       <Table
@@ -203,7 +184,7 @@ const TransferIn = ({ vault }) => {
   )
 }
 
-export default TransferIn
+export default Transfer
 
 const getColumns = (investors, selectTx) => [
   {

@@ -1,16 +1,6 @@
 import './index.less'
 
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Spin,
-} from 'antd'
+import { Button, Form, Input, message, Modal, Select, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
@@ -20,7 +10,7 @@ import vaultService from 'src/views/service/vault'
 
 const { Option } = Select
 
-const TransferOut = ({ vault }) => {
+const Withdraw = ({ vault }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [txForm] = Form.useForm()
@@ -112,7 +102,7 @@ const TransferOut = ({ vault }) => {
           onClick={onSettleDeposits}
           type="primary"
         >
-          Next Step: Transfer In
+          Next Step: Deposit Settlement
         </Button>
       </div>
       <Table
@@ -203,7 +193,7 @@ const TransferOut = ({ vault }) => {
   )
 }
 
-export default TransferOut
+export default Withdraw
 
 const getColumns = (investors, selectTx) => [
   {
@@ -235,16 +225,5 @@ const getColumns = (investors, selectTx) => [
     render: (requestTime) => {
       return <div>{formatTime(requestTime, 'MM/DD/YYYY HH:mm')}</div>
     },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        {record.status === 'Withdrawl requested' && (
-          <a onClick={() => selectTx(record)}>Settle</a>
-        )}
-      </Space>
-    ),
   },
 ]

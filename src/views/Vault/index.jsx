@@ -11,9 +11,9 @@ import Profit from './Profit'
 import Strategy from './Strategy'
 import Suggest from './Suggest'
 import Summary from './Summary'
-import TransferIn from './TransferIn'
+import Deposit from './Deposit'
 import { useStatus } from './hooks/useStatus'
-import TransferOut from './TransferOut'
+import Withdraw from './Withdraw'
 
 const { TabPane } = Tabs
 
@@ -31,26 +31,20 @@ const Vaults = () => {
         selectVaultName={setSelectedVaultName}
       ></Summary>
       <Tabs className="vault-detail" defaultActiveKey="0" type="card">
-        <TabPane tab="Transfers In" key="0">
-          <TransferIn vault={vault} />
+        <TabPane tab="Deposit Settlement" key="0">
+          <Deposit vault={vault} />
         </TabPane>
-        <TabPane tab="Investment Suggestion" key="3">
+        <TabPane tab="Investment Suggestion" key="1">
           <Suggest vault={vault} status={status} />
         </TabPane>
-        <TabPane tab="Strategies" key="1">
+        <TabPane tab="Strategies" key="2">
           <Strategy vault={vault} />
         </TabPane>
-        <TabPane tab="Profit Distribution" key="2">
+        <TabPane tab="Profit Distribution" key="3">
           <Profit vault={vault} status={status} />
         </TabPane>
-        <TabPane tab="Transfers Out" key="5">
-          <TransferOut vault={vault} />
-        </TabPane>
-        <TabPane tab="Investors" key="4">
-          <Investor />
-        </TabPane>
-        <TabPane tab="Configuration" key="6">
-          <Config vaultName={selectedVaultName} />
+        <TabPane tab="Withdrawl Settlement" key="4">
+          <Withdraw vault={vault} />
         </TabPane>
       </Tabs>
     </div>
