@@ -20,10 +20,6 @@ const Withdraw = ({ vault }) => {
   const [status, setStatus] = useState()
   const [selectedTx, setSelectedTx] = useState()
 
-  const showAddModal = () => {
-    setAddVisible(true)
-  }
-
   const handleAddOk = () => {
     txForm.submit()
   }
@@ -90,13 +86,6 @@ const Withdraw = ({ vault }) => {
   return (
     <div className="vault-transfer">
       <div className="vault-transfer-action">
-        <Button
-          className="vault-transfer-action-add"
-          onClick={showAddModal}
-          type="primary"
-        >
-          Add
-        </Button>
         <Button
           className="vault-transfer-action-settle"
           onClick={onSettleDeposits}

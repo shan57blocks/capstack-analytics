@@ -103,11 +103,11 @@ const Suggest = ({ vault, status }) => {
   return (
     <div className="vault-suggest">
       <div className="vault-suggest-header">
+        <Button type="primary">Next Step: Strategies</Button>
         <div className="vault-suggest-header-change">
           <div>Uninvested:</div>
           <div>{unallocated}</div>
         </div>
-        <Button type="primary">Next Step: Strategies</Button>
       </div>
       <Table
         rowKey="id"
