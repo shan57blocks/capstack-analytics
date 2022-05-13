@@ -83,6 +83,11 @@ const Deposit = ({ vault }) => {
     return null
   }
 
+  const txs = investorTxs.map((item) => {
+    item.status = 'Invest Requested'
+    return item
+  })
+
   return (
     <div className="vault-transfer">
       <div className="vault-transfer-action">
@@ -96,7 +101,7 @@ const Deposit = ({ vault }) => {
       </div>
       <Table
         columns={getColumns(investors, setSelectedTx)}
-        dataSource={investorTxs}
+        dataSource={txs}
         bordered
         rowKey="id"
       />

@@ -1,16 +1,6 @@
 import './index.less'
 
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Space,
-  Spin,
-  Table,
-} from 'antd'
+import { Button, Form, Input, message, Modal, Select, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
@@ -216,16 +206,5 @@ const getColumns = (investors, selectTx) => [
     render: (requestTime) => {
       return <div>{formatTime(requestTime, 'MM/DD/YYYY HH:mm')}</div>
     },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        {record.status === 'Withdrawl requested' && (
-          <a onClick={() => selectTx(record)}>Settle</a>
-        )}
-      </Space>
-    ),
   },
 ]

@@ -163,15 +163,6 @@ const getSummaryColumns = (showModal) => [
       return <div>{fee.toString()}</div>
     },
   },
-  {
-    title: 'Action',
-    key: 'action',
-    render: () => (
-      <Space size="middle">
-        <a onClick={showModal}>Confirm</a>
-      </Space>
-    ),
-  },
 ]
 
 const getStrategyColumns = () => [

@@ -9,8 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { TXType } from '../const'
 import vaultService from 'src/views/service/vault'
 import * as appAction from 'src/actions/app'
+import vaultJson from './vault.json'
 
 const Strategy = ({ vault }) => {
+  vault = vaultJson
   const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
