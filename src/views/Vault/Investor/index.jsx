@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 
-import { Chains } from '../const'
+import { ChainTypes } from '../const'
 
 const { Option } = Select
 
@@ -57,7 +57,7 @@ const Investor = () => {
     },
     {
       title: 'Chain',
-      dataIndex: 'chain',
+      dataIndex: 'chainType',
       key: 'chain',
     },
     {
@@ -113,12 +113,16 @@ const Investor = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="chain" label="Chain" rules={[{ required: true }]}>
+          <Form.Item
+            name="chainType"
+            label="Chain Type"
+            rules={[{ required: true }]}
+          >
             <Select placeholder="Select chain" allowClear>
-              {Object.values(Chains).map((chain) => {
+              {Object.values(ChainTypes).map((chainType) => {
                 return (
-                  <Option key={chain.id} value={chain.name}>
-                    {chain.name}
+                  <Option key={chainType.name} value={chainType.name}>
+                    {chainType.name}
                   </Option>
                 )
               })}

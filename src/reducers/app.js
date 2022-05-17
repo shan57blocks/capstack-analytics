@@ -13,9 +13,6 @@ import {
 import { mapPosition, mapStrategy } from 'src/utils/apy'
 import { deepClone } from 'src/utils/common'
 import { VAULT_STATUS } from 'src/views/Vault/const'
-import vaults from './vaults.json'
-import configs from './configs.json'
-import transactions from './transactions.json'
 
 const initState = {
   loading: false,
@@ -44,8 +41,6 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
-      payload = vaults
-
       const positionStrategies = {}
       const strategies = {}
 
@@ -143,28 +138,18 @@ const app = handleActions(
       }
     },
     [GET_INVESTORS]: (state, { payload }) => {
-      payload = [
-        {
-          id: 1,
-          name: '57blocks',
-          wallet: '0x7c43375fc06ded6169db079a3f5f9b75fa0cec1d',
-          chain: 'Ethereum',
-        },
-      ]
       return {
         ...state,
         investors: payload,
       }
     },
     [GET_INVESTOR_TXS]: (state, { payload }) => {
-      payload = transactions
       return {
         ...state,
         investorTxs: payload,
       }
     },
     [GET_CONFIGS]: (state, { payload }) => {
-      payload = configs
       return {
         ...state,
         configs: payload,

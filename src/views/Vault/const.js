@@ -31,7 +31,24 @@ export const Chains = {
   },
 }
 
+export const ChainTypeEnum = {
+  EVM: 'EVM',
+  Solana: 'Solana',
+}
+
+export const ChainTypes = {
+  [ChainTypeEnum.EVM]: {
+    length: 42,
+    name: ChainTypeEnum.EVM,
+  },
+  [ChainTypeEnum.Solana]: {
+    length: 44,
+    name: ChainTypeEnum.Solana,
+  },
+}
+
 export const VAULT_STATUS = {
+  DepositSettling: 'DepositSettling',
   OPEN: 'OPEN',
   SETTLE: 'SETTLE',
   SETTLED: 'SETTLED',

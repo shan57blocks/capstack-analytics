@@ -1,8 +1,0 @@
-[
-  { "id": 14883, "property": "Liquidation_ETH", "value": "40" },
-  { "id": 14884, "property": "Harvest_ETH", "value": "200" },
-  { "id": 14885, "property": "Liquidation_USD", "value": "13" },
-  { "id": 14886, "property": "Harvest_USD", "value": "200" },
-  { "id": 14887, "property": "Liquidation_BTC", "value": "14" },
-  { "id": 14888, "property": "Harvest_BTC", "value": "200" }
-]

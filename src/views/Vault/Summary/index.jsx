@@ -1,7 +1,7 @@
 import './index.less'
 
 import { SettingOutlined } from '@ant-design/icons'
-import { Card, Modal, Tabs } from 'antd'
+import { Button, Card, Modal, Tabs } from 'antd'
 import classnames from 'classnames'
 import React, { useState } from 'react'
 import CapTooltip from 'src/components/CapTooltip'
@@ -93,7 +93,6 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
         width={1000}
         title="Vault Operation"
         visible={!!selectedVault}
-        // onOk={handleOk}
         onCancel={hideVaultOpe}
       >
         <Tabs className="vault-detail" defaultActiveKey="1" type="card">
@@ -109,8 +108,12 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
         width={1000}
         title="General Operation"
         visible={showGeneralOpe}
-        // onOk={handleOk}
         onCancel={hideGeneralOpe}
+        footer={[
+          <Button key="cancel" onClick={hideGeneralOpe}>
+            Cancel
+          </Button>,
+        ]}
       >
         <Tabs className="vault-detail" defaultActiveKey="1" type="card">
           <TabPane tab="Investors" key="1">

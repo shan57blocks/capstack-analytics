@@ -16,21 +16,17 @@ export const showLoadingBar = createAction(APP_SHOW_LOADING)
 
 export const closeLoadingBar = createAction(APP_CLOSE_LOADING)
 
-// export const getVaults = createAction(GET_VAULTS, () => api.get(`/vaults`))
-export const getVaults = createAction(GET_VAULTS)
+export const getVaults = createAction(GET_VAULTS, () => api.get(`/vaults`))
 
-// export const getInvestors = createAction(GET_INVESTORS, () =>
-//   api.get(`/investors`)
-// )
-export const getInvestors = createAction(GET_INVESTORS)
+export const getInvestors = createAction(GET_INVESTORS, () =>
+  api.get(`/investors`)
+)
 
-// export const getInvestorTxs = createAction(GET_INVESTOR_TXS, () =>
-//   api.get(`/investors/transactions`)
-// )
-export const getInvestorTxs = createAction(GET_INVESTOR_TXS)
+export const getInvestorTxs = createAction(GET_INVESTOR_TXS, () =>
+  api.get(`/investors/transactions`)
+)
 
-// export const getConfigs = createAction(GET_CONFIGS, () => api.get(`/configs`))
-export const getConfigs = createAction(GET_CONFIGS)
+export const getConfigs = createAction(GET_CONFIGS, () => api.get(`/configs`))
 
 export const getPositionsByStrategy = createAction(
   GET_STRATEGY_POSITIONS,
