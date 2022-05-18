@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import { BN } from 'src/utils/common'
-import vaultService from 'src/views/service/vault'
+import vaultService from 'src/service/vault'
 
 import { VAULT_STATUS } from '../const'
 

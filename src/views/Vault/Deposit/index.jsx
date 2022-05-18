@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import { BN, formatTime } from 'src/utils/common'
-import vaultService from 'src/views/service/vault'
+import vaultService from 'src/service/vault'
 
 import { InvestStatus, VAULT_STATUS } from '../const'
 

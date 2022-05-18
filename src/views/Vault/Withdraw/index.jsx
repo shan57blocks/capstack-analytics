@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 import { formatTime } from 'src/utils/common'
-import vaultService from 'src/views/service/vault'
+import vaultService from 'src/service/vault'
 import { VAULT_STATUS } from '../const'
 
 const { Option } = Select

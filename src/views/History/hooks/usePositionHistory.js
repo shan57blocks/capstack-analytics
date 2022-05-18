@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import useFetch from 'src/hooks/useFetch'
-import positionService from 'src/views/service/position'
+import positionService from 'src/service/position'
 
 const usePositionHistory = () => {
   const { id: positionId } = useParams()

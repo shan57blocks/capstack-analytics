@@ -18,10 +18,10 @@ import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
 import { BN } from 'src/utils/common'
 
-import { TXType, VAULT_STATUS } from '../const'
-import vaultService from 'src/views/service/vault'
+import { VAULT_STATUS } from '../const'
+import vaultService from 'src/service/vault'
 
-const Suggest = ({ vault, status }) => {
+const Suggest = ({ vault }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
@@ -70,14 +70,15 @@ const Suggest = ({ vault, status }) => {
   }
 
   const onFinish = async (values) => {
-    const payload = {
-      hash: values.openTxHash,
-      type: TXType.Open,
-    }
+    const { id: strategyId, pool } = selectedStrategy
     try {
       setLoading(true)
       setSelectedStrategy(null)
-      await vaultService.startPosition(selectedStrategy, payload)
+      await vaultService.openPosition(
+        strategyId,
+        values.openTxHash,
+        pool.protocol.geckoId
+      )
       message.success('The position has been added successfully.')
       dispatch(appAction.getVaults())
     } finally {

@@ -7,7 +7,7 @@ import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
 import { useDispatch, useSelector } from 'react-redux'
 import { TXType, VAULT_STATUS } from '../const'
-import vaultService from 'src/views/service/vault'
+import vaultService from 'src/service/vault'
 import * as appAction from 'src/actions/app'
 import vaultJson from './vault.json'
 

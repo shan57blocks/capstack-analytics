@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 import { formatTime } from 'src/utils/common'
-import vaultService from 'src/views/service/vault'
+import vaultService from 'src/service/vault'
 import { Chains } from '../const'
 
 const { Option } = Select
@@ -69,6 +69,8 @@ const Transfer = ({ vault }) => {
     return null
   }
 
+  const txs = investorTxs.filter((tx) => tx.vaultId === vault.id)
+
   return (
     <div className="vault-transfer">
       <div className="vault-transfer-action">
@@ -82,7 +84,7 @@ const Transfer = ({ vault }) => {
       </div>
       <Table
         columns={getColumns(investors, setSelectedTx)}
-        dataSource={investorTxs}
+        dataSource={txs}
         bordered
         rowKey="id"
       />
