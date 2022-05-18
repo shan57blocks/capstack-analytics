@@ -28,6 +28,7 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
   if (!vaults) {
     return null
   }
+
   return (
     <div className="vault-summary">
       <div className="vault-summary-vault">

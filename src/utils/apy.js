@@ -232,13 +232,16 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
   return strategy
 }
 
-export const mapVault = (vault, strategies) => {
+export const mapVault = (vault) => {
+  const { strategies } = vault
   let netBalance = BN(0)
   strategies.forEach((strategy) => {
     netBalance = netBalance.plus(BN(strategy.netBalance ?? 0))
   })
-  vault.netBalance = netBalance.toString()
-  vault.currentBalance = BN(vault.principals).plus(BN(vault.netBalance))
+  vault.netBalance = netBalance.toNumber()
+  vault.currentBalance = BN(vault.principals)
+    .plus(BN(vault.netBalance))
+    .toNumber()
   vault.apy = _.sum(
     strategies.map((item) => {
       if (!item.netApy) {

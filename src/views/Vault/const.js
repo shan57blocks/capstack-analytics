@@ -53,9 +53,6 @@ export const VAULT_STATUS = {
   Operating: 'Operating',
   ProfitDistributing: 'ProfitDistributing',
   WithdrawalSettling: 'WithdrawalSettling',
-  OPEN: 'OPEN',
-  SETTLE: 'SETTLE',
-  SETTLED: 'SETTLED',
 }
 
 export const TXType = {

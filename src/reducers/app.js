@@ -6,13 +6,9 @@ import {
   GET_INVESTOR_TXS,
   GET_INVESTORS,
   GET_POSITION_BY_ID,
-  GET_STRATEGY_POSITIONS,
-  GET_VAULTS,
   GET_POSITION_HISTORIES,
+  GET_VAULTS,
 } from 'src/actions/app'
-import { mapPosition, mapStrategy } from 'src/utils/apy'
-import { deepClone } from 'src/utils/common'
-import { VAULT_STATUS } from 'src/views/Vault/const'
 
 const initState = {
   loading: false,
@@ -20,10 +16,6 @@ const initState = {
   investors: [],
   investorTxs: [],
   vaults: null,
-  positionStrategies: {},
-  strategyPositions: {},
-  strategies: {},
-  status: null,
 }
 
 const app = handleActions(
@@ -41,100 +33,19 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
-      const positionStrategies = {}
-      const strategies = {}
-
-      payload.forEach((vault) => {
-        vault.strategies.forEach((strategy) => {
-          strategy.positions.forEach((position) => {
-            if (!position.closed) {
-              vault.status = VAULT_STATUS.OPEN
-            }
-          })
-        })
-      })
-
-      payload.forEach((vault) => {
-        vault.strategies.forEach((strategy) => {
-          strategies[strategy.id] = strategy
-          strategy.positions.forEach((position) => {
-            if (!positionStrategies[position.id]) {
-              positionStrategies[position.id] = []
-            }
-            positionStrategies[position.id].push(strategy)
-          })
-        })
-      })
-      Object.values(positionStrategies).forEach((strategies) => {
-        if (strategies.length > 1) {
-          strategies.forEach((strategy) => {
-            strategy.sharedPosition = true
-          })
-        }
-      })
-
       return {
         ...state,
         vaults: payload,
-        positionStrategies,
-        strategies,
       }
     },
-    [GET_STRATEGY_POSITIONS]: (state, { payload, meta }) => {
-      const { strategyId } = meta
-      const strategies = deepClone(state.strategies)
-      const strategyPositions = deepClone(state.strategyPositions)
-      const strategy = strategies[strategyId]
-
-      const positions = payload.map((position) => mapPosition(position))
-      strategyPositions[strategyId] = positions
-      strategies[strategyId] = mapStrategy(
-        strategy,
-        positions,
-        state.positionStrategies
-      )
+    [GET_POSITION_BY_ID]: (state, { payload }) => {
       return {
         ...state,
-        strategyPositions,
-        strategies,
       }
     },
-    [GET_POSITION_BY_ID]: (state, { payload, meta }) => {
-      const strategies = deepClone(state.strategies)
-      const strategyPositions = deepClone(state.strategyPositions)
-      meta.strategyIds.forEach((id) => {
-        const strategy = strategies[id]
-        const positions = [mapPosition(payload)]
-        strategyPositions[id] = positions
-        strategies[id] = mapStrategy(
-          strategy,
-          positions,
-          state.positionStrategies
-        )
-      })
+    [GET_POSITION_HISTORIES]: (state, { payload }) => {
       return {
         ...state,
-        strategyPositions,
-        strategies,
-      }
-    },
-    [GET_POSITION_HISTORIES]: (state, { payload, meta }) => {
-      const strategies = deepClone(state.strategies)
-      const strategyPositions = deepClone(state.strategyPositions)
-      meta.strategyIds.forEach((id) => {
-        const strategy = strategies[id]
-        const positions = [mapPosition(payload)]
-        strategyPositions[id] = positions
-        strategies[id] = mapStrategy(
-          strategy,
-          positions,
-          state.positionStrategies
-        )
-      })
-      return {
-        ...state,
-        strategyPositions,
-        strategies,
       }
     },
     [GET_INVESTORS]: (state, { payload }) => {
