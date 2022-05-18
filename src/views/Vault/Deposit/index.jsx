@@ -1,12 +1,13 @@
 import './index.less'
 
 import { Button, Form, Input, message, Modal, Select, Spin, Table } from 'antd'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
-import { formatTime } from 'src/utils/common'
+import { BN, formatTime } from 'src/utils/common'
 import vaultService from 'src/views/service/vault'
+import { InvestStatus, VAULT_STATUS } from '../const'
 
 const { Option } = Select
 
@@ -79,25 +80,39 @@ const Deposit = ({ vault }) => {
     }
   }
 
+  const [txs, totalInvestRequested] = useMemo(() => {
+    if (!investorTxs) {
+      return []
+    }
+
+    const txs = investorTxs.filter(
+      (tx) => tx.status === InvestStatus.InvestRequested
+    )
+    let totalInvestRequested = BN(0)
+    txs.forEach((tx) => {
+      totalInvestRequested = totalInvestRequested.plus(BN(tx.amount))
+    })
+
+    return [txs, totalInvestRequested.toString()]
+  }, [investorTxs])
+
   if (!investorTxs || !investors || !vault) {
     return null
   }
 
-  const txs = investorTxs.map((item) => {
-    item.status = 'Invest Requested'
-    return item
-  })
-
   return (
-    <div className="vault-transfer">
-      <div className="vault-transfer-action">
-        <Button
-          className="vault-transfer-action-settle"
-          onClick={onSettleDeposits}
-          type="primary"
-        >
-          Next Step: Investment Suggestion
-        </Button>
+    <div className="vault-deposit">
+      <div className="vault-deposit-action">
+        {vault.status === VAULT_STATUS.DepositSettling && (
+          <Button
+            className="vault-deposit-action-settle"
+            onClick={onSettleDeposits}
+            type="primary"
+          >
+            Next Step: Investment Suggestion
+          </Button>
+        )}
+        <span>Total Invest Requested: {totalInvestRequested}</span>
       </div>
       <Table
         columns={getColumns(investors, setSelectedTx)}

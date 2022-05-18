@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
       return (
         <div className="error-boundary">
           <img src={errorPage} alt="error" />
-          <h2>抱歉, 系统出了点问题, 请稍后访问或联系管理员。</h2>
+          <h2>Oops, something is wrong.</h2>
         </div>
       )
     }

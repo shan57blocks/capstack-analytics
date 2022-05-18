@@ -28,8 +28,12 @@ const Vaults = () => {
         selectedVaultName={selectedVaultName}
         selectVaultName={setSelectedVaultName}
       ></Summary>
-      <Tabs className="vault-detail" defaultActiveKey="0" type="card">
-        <TabPane tab="Deposit Settlement" key="0">
+      <Tabs
+        className={`vault-detail ${vault?.status}`}
+        defaultActiveKey="0"
+        type="card"
+      >
+        <TabPane tab="Deposit Settlement" key="0" className="testtest">
           <Deposit vault={vault} />
         </TabPane>
         <TabPane tab="Investment Suggestion" key="1">

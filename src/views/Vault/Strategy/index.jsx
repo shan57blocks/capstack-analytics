@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import { getColumns } from './Column'
 import { positionColumns } from './PositionColumn'
 import { useDispatch, useSelector } from 'react-redux'
-import { TXType } from '../const'
+import { TXType, VAULT_STATUS } from '../const'
 import vaultService from 'src/views/service/vault'
 import * as appAction from 'src/actions/app'
 import vaultJson from './vault.json'
@@ -122,7 +122,9 @@ const Strategy = ({ vault }) => {
   return (
     <div className="vault-strategies">
       <div className="vault-strategies-action">
-        <Button type="primary">Next Step: Profit Distribution</Button>
+        {vault.status === VAULT_STATUS.Operating && (
+          <Button type="primary">Next Step: Profit Distribution</Button>
+        )}
       </div>
       <Table
         columns={getColumns(showModal, harvestLimit, liquidationLimit)}

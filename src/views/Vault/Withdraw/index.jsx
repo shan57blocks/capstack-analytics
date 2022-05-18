@@ -7,6 +7,7 @@ import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 import { formatTime } from 'src/utils/common'
 import vaultService from 'src/views/service/vault'
+import { VAULT_STATUS } from '../const'
 
 const { Option } = Select
 
@@ -81,6 +82,10 @@ const Withdraw = ({ vault }) => {
 
   if (!investorTxs || !investors || !vault) {
     return null
+  }
+
+  if (vault.status !== VAULT_STATUS.WithdrawalSettling) {
+    return <div>Please first confirm the profit distribution.</div>
   }
 
   const txs = investorTxs.map((item) => {

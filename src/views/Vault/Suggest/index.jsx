@@ -18,7 +18,7 @@ import CapSkeleton from 'src/components/CapSkeleton'
 import api from 'src/utils/api'
 import { BN } from 'src/utils/common'
 
-import { TXType } from '../const'
+import { TXType, VAULT_STATUS } from '../const'
 import vaultService from 'src/views/service/vault'
 
 const Suggest = ({ vault, status }) => {
@@ -89,16 +89,9 @@ const Suggest = ({ vault, status }) => {
     return <CapSkeleton />
   }
 
-  // if (status[vault.name] === VAULT_STATUS.SETTLE) {
-  //   return (
-  //     <div>
-  //       <div>Please make sure you have done the steps below:</div>
-  //       <div>1, Close all the positions</div>
-  //       <div>2, Confirm the profit distribution</div>
-  //       <div>3, Settle all the withdrawls and deposits</div>
-  //     </div>
-  //   )
-  // }
+  if (vault.status !== VAULT_STATUS.PositionOpening) {
+    return <div>Please first confirm the deposit settlement.</div>
+  }
 
   return (
     <div className="vault-suggest">
@@ -164,7 +157,7 @@ const getColumns = (
     title: 'Protocol',
     dataIndex: 'positions',
     render: (_, strategy) => {
-      const { protocol } = strategy
+      const { protocol } = strategy.pool
       return (
         <div>
           {protocol.name} ({protocol.chain})
@@ -214,7 +207,7 @@ const getColumns = (
     key: 'leverage',
     width: 160,
     render: (leverage, strategy) => {
-      const { protocol } = strategy
+      const { protocol } = strategy.pool
       return (
         <InputNumber
           disabled={!protocol.isLeverage}
@@ -257,7 +250,8 @@ const renforceStrategies = (vault, strategies) => {
     return []
   }
   return strategies.map((strategy) => {
-    const { protocol, tokens } = strategy
+    const { pool } = strategy
+    const { protocol, tokens } = pool
     strategy.principal = Number(vault.unallocated) * strategy.percentage
     strategy.suggestions = []
     strategy.leverage = strategy.leverage ?? 3

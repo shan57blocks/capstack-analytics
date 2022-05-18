@@ -7,6 +7,7 @@ import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
 import { formatTime } from 'src/utils/common'
 import vaultService from 'src/views/service/vault'
+import { Chains } from '../const'
 
 const { Option } = Select
 
@@ -17,7 +18,6 @@ const Transfer = ({ vault }) => {
   const [settleForm] = Form.useForm()
   const { investorTxs, investors } = useSelector((state) => state.app)
   const [addVisible, setAddVisible] = useState(false)
-  const [status, setStatus] = useState()
   const [selectedTx, setSelectedTx] = useState()
 
   const showAddModal = () => {
@@ -65,12 +65,6 @@ const Transfer = ({ vault }) => {
     }
   }
 
-  const onValuesChange = (values) => {
-    if (values.status) {
-      setStatus(values.status)
-    }
-  }
-
   if (!investorTxs || !investors || !vault) {
     return null
   }
@@ -105,7 +99,6 @@ const Transfer = ({ vault }) => {
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onTxFinish}
-          onValuesChange={onValuesChange}
           autoComplete="off"
         >
           <Form.Item
@@ -129,24 +122,24 @@ const Transfer = ({ vault }) => {
               <Option value="Withdrawl requested">Withdrawl requested</Option>
             </Select>
           </Form.Item>
-          {status === 'Invest requested' && (
-            <Form.Item
-              label="TX Hash"
-              name="txHash"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          )}
-          {status === 'Withdrawl requested' && (
-            <Form.Item
-              label="Amount"
-              name="amount"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          )}
+          <Form.Item label="TX Hash" name="txHash" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="chainEnum"
+            label="Chain"
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Select chain" allowClear>
+              {Object.values(Chains).map((chain) => {
+                return (
+                  <Option key={chain.name} value={chain.name}>
+                    {chain.name}
+                  </Option>
+                )
+              })}
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal

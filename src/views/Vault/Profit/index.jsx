@@ -1,14 +1,15 @@
 import './index.less'
 
-import { Button, Form, Input, message, Modal, Space, Spin, Table } from 'antd'
+import { Button, Form, Input, message, Modal, Spin, Table } from 'antd'
 import React, { useState } from 'react'
-import { BN } from 'src/utils/common'
-import * as appAction from 'src/actions/app'
-
 import { useDispatch } from 'react-redux'
+import * as appAction from 'src/actions/app'
+import { BN } from 'src/utils/common'
 import vaultService from 'src/views/service/vault'
 
-const Profit = ({ vault, status }) => {
+import { VAULT_STATUS } from '../const'
+
+const Profit = ({ vault }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
@@ -42,17 +43,9 @@ const Profit = ({ vault, status }) => {
     return null
   }
 
-  // if (vault.shares === '0') {
-  //   return <div>Vault is empty.</div>
-  // }
-
-  // if (status[vault.name] === VAULT_STATUS.OPEN) {
-  //   return <div>Please close all the positions first.</div>
-  // }
-
-  // if (status[vault.name] === VAULT_STATUS.SETTLED) {
-  //   return <div>Please invest the positions first.</div>
-  // }
+  if (vault.status !== VAULT_STATUS.profitDistribution) {
+    return <div>Please first confirm the close of all the postions.</div>
+  }
 
   return (
     <div className="vault-profit">

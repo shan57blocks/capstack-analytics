@@ -94,6 +94,11 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
         title="Vault Operation"
         visible={!!selectedVault}
         onCancel={hideVaultOpe}
+        footer={[
+          <Button key="cancel" onClick={hideVaultOpe}>
+            Cancel
+          </Button>,
+        ]}
       >
         <Tabs className="vault-detail" defaultActiveKey="1" type="card">
           <TabPane tab="Transfer In/Out" key="1">
@@ -107,7 +112,7 @@ const Summary = ({ vaults, selectedVaultName, selectVaultName }) => {
       <Modal
         width={1000}
         title="General Operation"
-        visible={showGeneralOpe}
+        visible={!!showGeneralOpe}
         onCancel={hideGeneralOpe}
         footer={[
           <Button key="cancel" onClick={hideGeneralOpe}>

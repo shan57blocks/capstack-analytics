@@ -15,19 +15,19 @@ export const ChainEnum = {
 export const Chains = {
   [ChainEnum.Ethereum]: {
     id: 1,
-    name: 'Ethereum',
+    name: ChainEnum.Ethereum,
   },
   [ChainEnum.BSC]: {
     id: 7,
-    name: 'BSC',
+    name: ChainEnum.BSC,
   },
   [ChainEnum.Avalanche]: {
     id: 63,
-    name: 'Avalanche',
+    name: ChainEnum.Avalanche,
   },
   [ChainEnum.Solana]: {
     id: 54,
-    name: 'Solana',
+    name: ChainEnum.Solana,
   },
 }
 
@@ -49,6 +49,10 @@ export const ChainTypes = {
 
 export const VAULT_STATUS = {
   DepositSettling: 'DepositSettling',
+  PositionOpening: 'PositionOpening',
+  Operating: 'Operating',
+  ProfitDistributing: 'ProfitDistributing',
+  WithdrawalSettling: 'WithdrawalSettling',
   OPEN: 'OPEN',
   SETTLE: 'SETTLE',
   SETTLED: 'SETTLED',
