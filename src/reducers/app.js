@@ -9,6 +9,8 @@ import {
   GET_POSITION_HISTORIES,
   GET_VAULTS,
 } from 'src/actions/app'
+import { mapVault } from 'src/utils/apy'
+import { VAULT } from 'src/views/Vault/const'
 
 const initState = {
   loading: false,
@@ -16,6 +18,7 @@ const initState = {
   investors: [],
   investorTxs: [],
   vaults: null,
+  positions: {},
 }
 
 const app = handleActions(
@@ -33,14 +36,18 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
+      const vaults = payload
+        .filter((vault) => !!VAULT[vault.name])
+        .map((vault) => mapVault(vault))
       return {
         ...state,
-        vaults: payload,
+        vaults,
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload }) => {
       return {
         ...state,
+        positions: { ...state.positions, [payload.id]: payload },
       }
     },
     [GET_POSITION_HISTORIES]: (state, { payload }) => {

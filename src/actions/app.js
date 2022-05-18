@@ -16,7 +16,17 @@ export const showLoadingBar = createAction(APP_SHOW_LOADING)
 
 export const closeLoadingBar = createAction(APP_CLOSE_LOADING)
 
-export const getVaults = createAction(GET_VAULTS, () => api.get(`/vaults`))
+export const getVaults = createAction(GET_VAULTS, async (dispatch) => {
+  const vaults = await api.get(`/vaults`)
+  vaults.forEach((vault) => {
+    vault.strategies.forEach((strategy) => {
+      strategy.positions.forEach((position) => {
+        dispatch(getPositionById(position.id))
+      })
+    })
+  })
+  return vaults
+})
 
 export const getInvestors = createAction(GET_INVESTORS, () =>
   api.get(`/investors`)
@@ -28,16 +38,8 @@ export const getInvestorTxs = createAction(GET_INVESTOR_TXS, () =>
 
 export const getConfigs = createAction(GET_CONFIGS, () => api.get(`/configs`))
 
-export const getPositionsByStrategy = createAction(
-  GET_STRATEGY_POSITIONS,
-  (strategyId) => api.get(`/positions?strategyId=${strategyId}`),
-  (strategyId) => ({ strategyId })
-)
-
-export const getPositionById = createAction(
-  GET_POSITION_BY_ID,
-  (positionId) => api.get(`/positions/${positionId}`),
-  (positionId, strategyIds) => ({ positionId, strategyIds })
+export const getPositionById = createAction(GET_POSITION_BY_ID, (positionId) =>
+  api.get(`/positions/${positionId}`)
 )
 
 export const getPositionHistories = createAction(

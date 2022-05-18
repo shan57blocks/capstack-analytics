@@ -13,7 +13,7 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(appAction.getVaults())
+    dispatch(appAction.getVaults(dispatch))
     dispatch(appAction.getConfigs())
     dispatch(appAction.getInvestors())
     dispatch(appAction.getInvestorTxs())

@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 
 import { VAULT, VAULT_STATUS } from './const'
 import Deposit from './Deposit'
-import { useVault } from './hooks/useVault'
 import Profit from './Profit'
 import Strategy from './Strategy'
 import Suggest from './Suggest'
@@ -13,6 +12,7 @@ import Summary from './Summary'
 import Withdraw from './Withdraw'
 import useParamsSearch from 'src/hooks/useParamsSearch'
 import { useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
 
 const { TabPane } = Tabs
 
@@ -26,7 +26,7 @@ const vaultStatusTab = {
 
 const Vaults = () => {
   const history = useHistory()
-  const { vaults } = useVault()
+  const { vaults } = useSelector((state) => state.app)
   const { vaultName = VAULT.ETH } = useParamsSearch()
   const [activeKey, setActiveKey] = useState()
   const vault = vaults?.find((vault) => vault.name === vaultName) || {}

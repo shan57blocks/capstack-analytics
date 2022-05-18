@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { BN } from './common'
 
 const ONE_YEAR_SECONDS = 365 * 24 * 3600
@@ -234,23 +233,13 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
 
 export const mapVault = (vault) => {
   const { strategies } = vault
-  let netBalance = BN(0)
-  strategies.forEach((strategy) => {
-    netBalance = netBalance.plus(BN(strategy.netBalance ?? 0))
-  })
-  vault.netBalance = netBalance.toNumber()
+  vault.netBalance = strategies
+    .reduce((pre, curr) => pre.plus(BN(curr.netBalance ?? 0)), BN(0))
+    .toNumber()
   vault.currentBalance = BN(vault.principals)
     .plus(BN(vault.netBalance))
     .toNumber()
-  vault.apy = _.sum(
-    strategies.map((item) => {
-      if (!item.netApy) {
-        return 0
-      }
-      return item.netApy * item.percentage
-    })
-  )
-  vault.strategies = strategies
+  vault.apy = 0
   return vault
 }
 
