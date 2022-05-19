@@ -36,12 +36,19 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
-      const vaults = loadShareStrategies(payload)
+      const { vaults } = state
+      const newVaults = loadShareStrategies(payload)
         .filter((vault) => !!VAULT[vault.name])
-        .map((vault) => mapVault(vault))
+        .map((vault) => {
+          const oldVault = vaults?.find((oldVault) => oldVault.id === vault.id)
+          if (oldVault) {
+            vault.strategies = oldVault.strategies
+          }
+          return mapVault(vault)
+        })
       return {
         ...state,
-        vaults,
+        vaults: newVaults,
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload }) => {
@@ -52,7 +59,7 @@ const app = handleActions(
             if (position.id === payload.id) {
               return mapPosition(payload)
             }
-            return mapPosition(position)
+            return position
           })
           return mapStrategy(strategy)
         })

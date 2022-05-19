@@ -81,6 +81,7 @@ class Api {
               message: `Server error [${error.response.status}]`,
             })
           } else {
+            message.error(error.response.data.message)
             reject(error.response.data)
           }
         } else {

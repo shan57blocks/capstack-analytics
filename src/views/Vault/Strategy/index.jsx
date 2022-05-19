@@ -23,6 +23,7 @@ const Strategy = ({ vault }) => {
     ) || {}
   const [actionType, setActionType] = useState()
   const [selectedStrategy, setSelectedStrategy] = useState()
+  const [swapHashes, setSwapHashes] = useState([{ id: 1 }])
   const { strategies } = vault || {}
 
   const showModal = (actionType, record) => {
@@ -35,7 +36,17 @@ const Strategy = ({ vault }) => {
   }
 
   const handleCancel = () => {
+    clearSwapHash()
     setActionType()
+    form.resetFields()
+  }
+
+  const addSwapHash = () => {
+    setSwapHashes([...swapHashes, { id: swapHashes.length + 1 }])
+  }
+
+  const clearSwapHash = () => {
+    setSwapHashes([{ id: 1 }])
   }
 
   const onFinish = (values) => {
@@ -51,19 +62,21 @@ const Strategy = ({ vault }) => {
   }
 
   const onHarvest = async (values) => {
-    const payload = []
+    values.swapTxHashes = []
     Object.keys(values).forEach((key) => {
-      if (values[key]) {
-        payload.push({
-          hash: values[key],
-          type: key === TXType.Harvest ? TXType.Harvest : TXType.Swap,
-        })
+      if (key.startsWith('swapHash') && values[key]) {
+        values.swapTxHashes.push(values[key])
       }
     })
+    const positionId = values.positionId ?? selectedStrategy.positions[0].id
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.harvestPosition(vault, selectedStrategy, payload)
+      await vaultService.harvestPosition(
+        selectedStrategy.id,
+        positionId,
+        values
+      )
       message.success('The position has been harvested successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -72,19 +85,11 @@ const Strategy = ({ vault }) => {
   }
 
   const onAdjust = async (values) => {
-    const payload = []
-    Object.keys(values).forEach((key) => {
-      if (values[key]) {
-        payload.push({
-          hash: values[key],
-          type: key === TXType.Adjust ? TXType.Adjust : TXType.Swap,
-        })
-      }
-    })
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.adjustPosition(vault, selectedStrategy, payload)
+      const positionId = values.positionId ?? selectedStrategy.positions[0].id
+      await vaultService.adjustPosition(selectedStrategy.id, positionId, values)
       message.success('The position has been adjusted successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -93,20 +98,18 @@ const Strategy = ({ vault }) => {
   }
 
   const onClose = async (values) => {
-    const payload = []
+    values.swapTxHashes = []
     Object.keys(values).forEach((key) => {
-      if (values[key]) {
-        payload.push({
-          hash: values[key],
-          type: key === TXType.Close ? TXType.Close : TXType.Swap,
-        })
+      if (key.startsWith('swapHash') && values[key]) {
+        values.swapTxHashes.push(values[key])
       }
     })
+    const positionId = values.positionId ?? selectedStrategy.positions[0].id
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.closePosition(selectedStrategy, payload)
-      message.success('The position has been adjusted successfully.')
+      await vaultService.closePosition(selectedStrategy.id, positionId, values)
+      message.success('The position has been closed successfully.')
       dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
@@ -162,40 +165,54 @@ const Strategy = ({ vault }) => {
                   </Select>
                 </Form.Item>
               )}
-              <Form.Item label="Harvest Hash" name={TXType.Harvest} required>
+              <Form.Item label="Harvest Hash" name="harvestTxHash" required>
                 <Input />
               </Form.Item>
-              <Form.Item label="Swap Hash 1" name="swapHash1">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Swap Hash 2" name="swapHash2">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Swap Hash 3" name="swapHash3">
-                <Input />
+              {swapHashes.map((swapHash) => {
+                return (
+                  <Form.Item
+                    key={swapHash.id}
+                    label={`Swap Hash ${swapHash.id}`}
+                    name={`swapHash${swapHash.id}`}
+                  >
+                    <Input />
+                  </Form.Item>
+                )
+              })}
+              <Form.Item wrapperCol={{ offset: 8 }}>
+                <Button type="primary" onClick={addSwapHash}>
+                  Add Swap Hash
+                </Button>
               </Form.Item>
             </>
           )}
           {actionType === TXType.Adjust && (
             <>
-              <Form.Item label="Harvest Hash" name={TXType.Adjust} required>
+              <Form.Item label="Harvest Hash" name="adjustTxHash" required>
                 <Input />
               </Form.Item>
             </>
           )}
           {actionType === TXType.Close && (
             <>
-              <Form.Item label="Close Hash" name={TXType.Close} required>
+              <Form.Item label="Close Hash" name="closeTxHash" required>
                 <Input />
               </Form.Item>
-              <Form.Item label="Swap Hash 1" name="swapHash1">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Swap Hash 2" name="swapHash2">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Swap Hash 3" name="swapHash3">
-                <Input />
+              {swapHashes.map((swapHash) => {
+                return (
+                  <Form.Item
+                    key={swapHash.id}
+                    label={`Swap Hash ${swapHash.id}`}
+                    name={`swapHash${swapHash.id}`}
+                  >
+                    <Input />
+                  </Form.Item>
+                )
+              })}
+              <Form.Item wrapperCol={{ offset: 8 }}>
+                <Button type="primary" onClick={addSwapHash}>
+                  Add Swap Hash
+                </Button>
               </Form.Item>
             </>
           )}
@@ -225,6 +242,7 @@ const expandable = {
           size="small"
           bordered
           pagination={false}
+          rowKey="id"
         />
       </div>
     )

@@ -16,17 +16,22 @@ export const showLoadingBar = createAction(APP_SHOW_LOADING)
 
 export const closeLoadingBar = createAction(APP_CLOSE_LOADING)
 
-export const getVaults = createAction(GET_VAULTS, async (dispatch) => {
-  const vaults = await api.get(`/vaults`)
-  vaults.forEach((vault) => {
-    vault.strategies.forEach((strategy) => {
-      strategy.positions.forEach((position) => {
-        dispatch(getPositionById(position.id))
+export const getVaults = createAction(
+  GET_VAULTS,
+  async (dispatch, loadPosition = false) => {
+    const vaults = await api.get(`/vaults`)
+    if (loadPosition) {
+      vaults.forEach((vault) => {
+        vault.strategies.forEach((strategy) => {
+          strategy.positions.forEach((position) => {
+            dispatch(getPositionById(position.id))
+          })
+        })
       })
-    })
-  })
-  return vaults
-})
+    }
+    return vaults
+  }
+)
 
 export const getInvestors = createAction(GET_INVESTORS, () =>
   api.get(`/investors`)
