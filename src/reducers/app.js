@@ -9,7 +9,7 @@ import {
   GET_POSITION_HISTORIES,
   GET_VAULTS,
 } from 'src/actions/app'
-import { mapStrategy, mapVault } from 'src/utils/apy'
+import { mapPosition, mapStrategy, mapVault } from 'src/utils/apy'
 import { deepClone } from 'src/utils/common'
 import { VAULT } from 'src/views/Vault/const'
 
@@ -50,9 +50,9 @@ const app = handleActions(
         vault.strategies = vault.strategies.map((strategy) => {
           strategy.positions = strategy.positions.map((position) => {
             if (position.id === payload.id) {
-              return payload
+              return mapPosition(payload)
             }
-            return position
+            return mapPosition(position)
           })
           return mapStrategy(strategy)
         })

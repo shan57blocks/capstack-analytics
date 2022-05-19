@@ -14,12 +14,13 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
   },
   {
     title: 'Protocol',
-    render: (_, record) => {
-      const [position = {}] = record.positions
+    key: 'pool',
+    dataIndex: 'pool',
+    render: (pool) => {
       return (
         <div>
-          <div>{position.protocol?.name}</div>
-          <div>({position.protocol?.chain})</div>
+          <div>{pool.protocol.name}</div>
+          <div>({pool.protocol.chain})</div>
         </div>
       )
     },
@@ -60,6 +61,26 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
     },
   },
   {
+    title: 'Net Estimated',
+    key: 'netBalance',
+    dataIndex: 'netBalance',
+    render: (_, record) => {
+      if (isEmpty(record.netBalance)) {
+        return <CapSkeleton />
+      }
+      return (
+        <div>
+          <CapTooltip title={record.netBalance}>
+            <div>{record.netBalance.toFixed(3)}</div>
+          </CapTooltip>
+          <CapTooltip title={record.netValue}>
+            <div>${record.netValue?.toFixed(3)}</div>
+          </CapTooltip>
+        </div>
+      )
+    },
+  },
+  {
     title: 'Interest',
     key: 'interest',
     dataIndex: 'interest',
@@ -79,7 +100,7 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
     },
   },
   {
-    title: 'Fee',
+    title: 'Yield + Price change + Slippage + Swapping fees',
     key: 'fee',
     dataIndex: 'fee',
     render: (_, record) => {

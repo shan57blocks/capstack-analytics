@@ -60,7 +60,6 @@ export const calApy = (startPosition, currentPosition) => {
       feeInterest: currentFeeInterest,
       fee: currentFee,
       currentValue,
-      tokenId: currentPosition.tokens[index].id,
     }
   })
 
@@ -127,7 +126,6 @@ export const calApy = (startPosition, currentPosition) => {
 }
 
 export const mapPosition = (position) => {
-  position.symbol = position.tokens.map((token) => token.symbol).join('/')
   position.histories = position.histories
     .map((history) => {
       if (!history.borrows) {
@@ -136,7 +134,6 @@ export const mapPosition = (position) => {
       if (!history.rewards) {
         history.rewards = []
       }
-      history.tokens = position.tokens
       return calApy(position, history)
     })
     .sort(sortTimestamp)
