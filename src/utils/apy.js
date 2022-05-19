@@ -144,11 +144,14 @@ export const mapPosition = (position) => {
   return position
 }
 
-export const mapStrategy = (strategy, positions, positionStrategies) => {
+export const mapStrategy = (strategy) => {
+  if (!strategy.positions.length) {
+    return strategy
+  }
+  const { tokens } = strategy.pool
+  const { positions } = strategy
   const [firstPosition] = positions
-  const tokenIndex = firstPosition.tokens.findIndex(
-    (token) => token.id === strategy.token.id
-  )
+  const tokenIndex = tokens.findIndex((token) => token.id === strategy.token.id)
   const tokenPrice = firstPosition.currentHistory.assets[tokenIndex].price
   const principalsBN = BN(strategy.principals)
 
@@ -192,7 +195,7 @@ export const mapStrategy = (strategy, positions, positionStrategies) => {
       strategy.holdValue += source.holdValue
     }
 
-    if (positionStrategies[position.id].length > 1) {
+    if (strategy.share) {
       const tokenDetail = currentHistory.tokenDetails.find(
         (item) => item.tokenId === tokens[tokenIndex].id
       )

@@ -9,7 +9,8 @@ import {
   GET_POSITION_HISTORIES,
   GET_VAULTS,
 } from 'src/actions/app'
-import { mapVault } from 'src/utils/apy'
+import { mapStrategy, mapVault } from 'src/utils/apy'
+import { deepClone } from 'src/utils/common'
 import { VAULT } from 'src/views/Vault/const'
 
 const initState = {
@@ -18,7 +19,6 @@ const initState = {
   investors: [],
   investorTxs: [],
   vaults: null,
-  positions: {},
 }
 
 const app = handleActions(
@@ -36,7 +36,7 @@ const app = handleActions(
       }
     },
     [GET_VAULTS]: (state, { payload }) => {
-      const vaults = payload
+      const vaults = loadShareStrategies(payload)
         .filter((vault) => !!VAULT[vault.name])
         .map((vault) => mapVault(vault))
       return {
@@ -45,9 +45,21 @@ const app = handleActions(
       }
     },
     [GET_POSITION_BY_ID]: (state, { payload }) => {
+      const vaults = deepClone(state.vaults)
+      vaults.forEach((vault) => {
+        vault.strategies = vault.strategies.map((strategy) => {
+          strategy.positions = strategy.positions.map((position) => {
+            if (position.id === payload.id) {
+              return payload
+            }
+            return position
+          })
+          return mapStrategy(strategy)
+        })
+      })
       return {
         ...state,
-        positions: { ...state.positions, [payload.id]: payload },
+        vaults,
       }
     },
     [GET_POSITION_HISTORIES]: (state, { payload }) => {
@@ -78,3 +90,21 @@ const app = handleActions(
 )
 
 export default app
+
+const loadShareStrategies = (vaults) => {
+  const strategyMap = {}
+  const poolStrategies = {}
+  vaults.forEach((vault) => {
+    vault.strategies.forEach((strategy) => {
+      strategyMap[strategy.id] = strategy
+      const { pool } = strategy
+      if (!poolStrategies[pool.id]) {
+        poolStrategies[pool.id] = strategy.id
+      } else {
+        strategy.share = true
+        strategyMap[poolStrategies[pool.id]].share = true
+      }
+    })
+  })
+  return vaults
+}
