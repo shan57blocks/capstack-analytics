@@ -65,7 +65,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.harvestPosition(vault, selectedStrategy, payload)
+      // await vaultService.harvestPosition(vault, selectedStrategy, payload)
       message.success('The position has been harvested successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -86,7 +86,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.adjustPosition(vault, selectedStrategy, payload)
+      // await vaultService.adjustPosition(vault, selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -107,7 +107,7 @@ const Strategy = ({ vault }) => {
     try {
       setLoading(true)
       setActionType(null)
-      await vaultService.closePosition(selectedStrategy, payload)
+      // await vaultService.closePosition(selectedStrategy, payload)
       message.success('The position has been adjusted successfully.')
       dispatch(appAction.getVaults())
     } finally {
@@ -154,7 +154,7 @@ const Strategy = ({ vault }) => {
               {selectedStrategy.positions.length > 1 && (
                 <Form.Item label="Position" name="positionId" required>
                   <Select>
-                    {selectedStrategy.postions.map((position, index) => (
+                    {selectedStrategy.positions.map((position, index) => (
                       <Select.Option key={position.id} value={position.id}>
                         Position {index}
                       </Select.Option>

@@ -37,8 +37,8 @@ const Investor = () => {
 
   const onFinish = async (values) => {
     const method = values.id ? 'put' : 'post'
-    await api[method](`/investors`, values)
-    dispatch(appAction.getInvestors())
+    // await api[method](`/investors`, values)
+    // dispatch(appAction.getInvestors())
     handleCancel()
     message.success(`Investor has been created successfully.`)
   }

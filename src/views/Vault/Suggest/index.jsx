@@ -61,7 +61,7 @@ const Suggest = ({ vault, status }) => {
       message.error('The total target is more than 100%.')
       return
     }
-    await api.put(`/vaults/strategies/${strategyId}?percentage=${percentage}`)
+    // await api.put(`/vaults/strategies/${strategyId}?percentage=${percentage}`)
     message.success('The target has been updated successfully.')
   }
 
@@ -77,9 +77,9 @@ const Suggest = ({ vault, status }) => {
     try {
       setLoading(true)
       setSelectedStrategy(null)
-      await vaultService.startPosition(selectedStrategy, payload)
+      // await vaultService.startPosition(selectedStrategy, payload)
       message.success('The position has been added successfully.')
-      dispatch(appAction.getVaults())
+      // dispatch(appAction.getVaults())
     } finally {
       setLoading(false)
     }

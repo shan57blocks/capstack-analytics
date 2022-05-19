@@ -41,10 +41,10 @@ const Transfer = ({ vault }) => {
     values.vaultId = vault.id
     try {
       setLoading(true)
-      await api.post(`/investors/transactions`, values)
-      txForm.resetFields()
-      dispatch(appAction.getInvestorTxs())
-      dispatch(appAction.getVaults())
+      // await api.post(`/investors/transactions`, values)
+      // txForm.resetFields()
+      // dispatch(appAction.getInvestorTxs())
+      // dispatch(appAction.getVaults())
       message.success(`Transaction has been added successfully.`)
     } finally {
       setLoading(false)

@@ -39,8 +39,8 @@ const Config = ({ vaultName }) => {
     const config = vaultConfigs[type]
     const originConfig = originConfigs[type]
     if (config.value !== originConfig.value) {
-      await api.put(`/configs`, config)
-      dispatch(appAction.getConfigs())
+      // await api.put(`/configs`, config)
+      // dispatch(appAction.getConfigs())
       message.success('Config has been updated successfully.')
     } else {
       message.warn('Config has not been changed.')

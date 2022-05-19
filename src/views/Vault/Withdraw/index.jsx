@@ -64,9 +64,9 @@ const Withdraw = ({ vault }) => {
   const onSettleDeposits = async () => {
     try {
       setLoading(true)
-      await vaultService.settleDeposits(vault.id)
-      dispatch(appAction.getInvestorTxs())
-      dispatch(appAction.getVaults())
+      // await vaultService.settleDeposits(vault.id)
+      // dispatch(appAction.getInvestorTxs())
+      // dispatch(appAction.getVaults())
       message.success(`Deposits have been settled successfully.`)
     } finally {
       setLoading(false)
