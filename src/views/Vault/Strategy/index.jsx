@@ -4,7 +4,7 @@ import { Table, Modal, Form, Input, Select, Spin, message, Button } from 'antd'
 import React, { useState } from 'react'
 
 import { getColumns } from './Column'
-import { positionColumns } from './PositionColumn'
+import { getPositionColumns } from './PositionColumn'
 import { useDispatch, useSelector } from 'react-redux'
 import { TXType, VAULT_STATUS } from '../const'
 import vaultService from 'src/service/vault'
@@ -209,16 +209,24 @@ const Strategy = ({ vault }) => {
 export default Strategy
 
 const expandable = {
-  expandedRowRender: (record) => (
-    <div className="vault-strategies-positions">
-      <div className="vault-strategies-positions-title">Positions</div>
-      <Table
-        columns={positionColumns}
-        dataSource={record.positions}
-        size="small"
-        bordered
-        pagination={false}
-      />
-    </div>
-  ),
+  expandedRowRender: (strategy) => {
+    const { pool, positions } = strategy
+    const [firstPosition] = positions
+    const tokenIndex = pool.tokens.findIndex(
+      (token) => token.id === strategy.token.id
+    )
+    const tokenPrice = firstPosition?.currentHistory.assets[tokenIndex].price
+    return (
+      <div className="vault-strategies-positions">
+        <div className="vault-strategies-positions-title">Positions</div>
+        <Table
+          columns={getPositionColumns(tokenPrice)}
+          dataSource={positions}
+          size="small"
+          bordered
+          pagination={false}
+        />
+      </div>
+    )
+  },
 }

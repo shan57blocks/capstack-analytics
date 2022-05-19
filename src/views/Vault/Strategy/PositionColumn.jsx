@@ -1,19 +1,19 @@
 import React from 'react'
 import CapTooltip from 'src/components/CapTooltip'
-import { formatTime } from 'src/utils/common'
+import { BN, formatTime } from 'src/utils/common'
 
-export const positionColumns = [
+export const getPositionColumns = (tokenPrice) => [
   {
     title: 'Principals',
     render: (position) => {
-      const { principals, tokens } = position
+      const { principals } = position
       return (
         <div>
           {principals.map((principal, index) => {
             return (
               <div key={index}>
                 <CapTooltip title={principal.balance}>
-                  {principal.balance.toFixed(3)} {tokens[index].symbol}
+                  {Number(principal.balance).toFixed(3)} {principal.symbol}
                 </CapTooltip>
               </div>
             )
@@ -28,14 +28,14 @@ export const positionColumns = [
       return (
         <div>
           {position.startAssets.map((asset, index) => {
-            const { startBorrows, tokens } = position
+            const { startBorrows } = position
             return (
               <div key={index}>
                 <CapTooltip title={asset.balance}>
-                  {asset.balance.toFixed(3)} {tokens[index].symbol}
+                  {Number(asset.balance).toFixed(3)} {asset.symbol}
                 </CapTooltip>
                 <CapTooltip title={startBorrows[index].balance}>
-                  ({startBorrows[index].balance.toFixed(3)} Borrow)
+                  ({Number(startBorrows[index].balance).toFixed(3)} Borrow)
                 </CapTooltip>
               </div>
             )
@@ -51,7 +51,6 @@ export const positionColumns = [
   {
     title: 'Current Position',
     render: (position) => {
-      const { tokens } = position
       const { assets, borrows, timestamp } = position.currentHistory
       return (
         <div>
@@ -60,10 +59,10 @@ export const positionColumns = [
               return (
                 <div key={index}>
                   <CapTooltip title={asset.balance}>
-                    {asset.balance.toFixed(3)} {tokens[index].symbol}
+                    {Number(asset.balance).toFixed(3)} {asset.symbol}
                   </CapTooltip>
                   <CapTooltip title={borrows[index].balance}>
-                    ({borrows[index].balance.toFixed(3)} Borrow)
+                    ({Number(borrows[index].balance).toFixed(3)} Borrow)
                   </CapTooltip>
                 </div>
               )
@@ -75,32 +74,16 @@ export const positionColumns = [
     },
   },
   {
-    title: 'Current Value',
-    render: (position) => {
-      const { assets } = position.currentHistory
-      return (
-        <div>
-          {assets.map((asset, index) => {
-            return (
-              <div key={index}>
-                <CapTooltip title={asset.balance * asset.price}>
-                  ${(asset.balance * asset.price).toFixed(3)}
-                </CapTooltip>
-              </div>
-            )
-          })}
-        </div>
-      )
-    },
-  },
-  {
     title: 'Interest',
     render: (position) => {
       const { interest, interestApy } = position.currentHistory
+      const interestAmount = BN(interest).div(tokenPrice).toNumber()
       return (
         <div>
           <div>
-            <CapTooltip title={interest}>${interest.toFixed(3)}</CapTooltip>
+            <CapTooltip title={interestAmount}>
+              {interestAmount.toFixed(3)}
+            </CapTooltip>
           </div>
           <div>APY: {(interestApy * 100).toFixed(2)}%</div>
         </div>
@@ -111,10 +94,11 @@ export const positionColumns = [
     title: 'Yield + Price change + Slippage + Swapping fees',
     render: (position) => {
       const { fee, feeApy } = position.currentHistory
+      const feeAmount = BN(fee).div(tokenPrice).toNumber()
       return (
         <div>
           <div>
-            <CapTooltip title={fee}>${fee.toFixed(3)}</CapTooltip>
+            <CapTooltip title={feeAmount}>{feeAmount.toFixed(3)}</CapTooltip>
           </div>
           <div>APY: {(feeApy * 100).toFixed(2)}%</div>
         </div>
@@ -125,10 +109,11 @@ export const positionColumns = [
     title: 'IL',
     render: (position) => {
       const { IL, ilApy } = position.currentHistory
+      const ILAmount = BN(IL).div(tokenPrice).toNumber()
       return (
         <div>
           <div>
-            <CapTooltip title={IL}>${IL.toFixed(3)}</CapTooltip>
+            <CapTooltip title={ILAmount}>{ILAmount.toFixed(3)}</CapTooltip>
           </div>
           <div>Loss: {(ilApy * 100).toFixed(2)}%</div>
         </div>
@@ -139,20 +124,21 @@ export const positionColumns = [
     title: 'Rewards',
     render: (position) => {
       const { rewardValue, rewardsApy, rewards } = position.currentHistory
+      const rewardAmount = BN(rewardValue).div(tokenPrice).toNumber()
       return (
         <div>
           {rewards.map((reward) => {
             return (
               <div key={reward.symbol}>
                 <CapTooltip title={reward.balance}>
-                  {reward.balance.toFixed(3)} {reward.symbol}
+                  {Number(reward.balance).toFixed(3)} {reward.symbol}
                 </CapTooltip>
               </div>
             )
           })}
           <div>
-            <CapTooltip title={rewardValue}>
-              ${rewardValue.toFixed(3)}
+            <CapTooltip title={rewardAmount}>
+              {rewardAmount.toFixed(3)}
             </CapTooltip>
           </div>
           <div>APY: {(rewardsApy * 100).toFixed(2)}%</div>
@@ -164,11 +150,12 @@ export const positionColumns = [
     title: 'Net Without IL',
     render: (position) => {
       const { netWithoutIL, netWithoutIlApy } = position.currentHistory
+      const netWithoutILAmount = BN(netWithoutIL).div(tokenPrice).toNumber()
       return (
         <div>
           <div>
-            <CapTooltip title={netWithoutIL}>
-              ${netWithoutIL.toFixed(3)}
+            <CapTooltip title={netWithoutILAmount}>
+              {netWithoutILAmount.toFixed(3)}
             </CapTooltip>
           </div>
           <div>APY: {(netWithoutIlApy * 100).toFixed(2)}%</div>
@@ -180,10 +167,13 @@ export const positionColumns = [
     title: 'Net',
     render: (position) => {
       const { netValue, netApy } = position.currentHistory
+      const netValueAmount = BN(netValue).div(tokenPrice).toNumber()
       return (
         <div>
           <div>
-            <CapTooltip title={netValue}>${netValue.toFixed(3)}</CapTooltip>
+            <CapTooltip title={netValueAmount}>
+              {netValueAmount.toFixed(3)}
+            </CapTooltip>
           </div>
           <div>APY: {(netApy * 100).toFixed(2)}%</div>
         </div>
