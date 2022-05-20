@@ -1,13 +1,25 @@
 import './index.less'
 
-import { Button, Form, Input, message, Modal, Select, Spin, Table } from 'antd'
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Select,
+  Space,
+  Spin,
+  Table,
+} from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
 import api from 'src/utils/api'
-import { formatTime } from 'src/utils/common'
+import { BN, formatTime } from 'src/utils/common'
 import vaultService from 'src/service/vault'
-import { Chains } from '../const'
+import { Chains, InvestStatus, VAULT_STATUS } from '../const'
+import investorService from 'src/service/investor'
 
 const { Option } = Select
 
@@ -18,7 +30,9 @@ const Transfer = ({ vault }) => {
   const [settleForm] = Form.useForm()
   const { investorTxs, investors } = useSelector((state) => state.app)
   const [addVisible, setAddVisible] = useState(false)
+  const [status, setStatus] = useState()
   const [selectedTx, setSelectedTx] = useState()
+  const [maxAmount, setMaxAmount] = useState()
 
   const showAddModal = () => {
     setAddVisible(true)
@@ -52,17 +66,42 @@ const Transfer = ({ vault }) => {
   }
 
   const onSettleFinish = async (values) => {
+    values.txId = selectedTx.id
     setSelectedTx()
     try {
       setLoading(true)
-      await vaultService.settleWithdrawl(vault, selectedTx, values.txHash)
+      await vaultService.settleWithdrawal(vault.id, values)
       settleForm.resetFields()
       dispatch(appAction.getInvestorTxs())
       dispatch(appAction.getVaults())
-      message.success(`Transaction has been settled successfully.`)
+      message.success(`Withdrawal has been settled successfully.`)
     } finally {
       setLoading(false)
     }
+  }
+
+  const onValuesChange = async (values) => {
+    if (values.investorId) {
+      const investorShare = await investorService.getInvestorShare(
+        values.investorId,
+        vault.id
+      )
+      const maxAmount = BN(investorShare.shares)
+        .times(BN(vault.sharePrice))
+        .toNumber()
+      setMaxAmount(maxAmount)
+    }
+    if (values.status) {
+      setStatus(values.status)
+    }
+  }
+
+  const settleWithdrawal = (tx) => {
+    if (vault.status !== VAULT_STATUS.WithdrawalSettling) {
+      message.warn('Vault is not in withdrawal settling status.')
+      return
+    }
+    setSelectedTx(tx)
   }
 
   if (!investorTxs || !investors || !vault) {
@@ -83,7 +122,7 @@ const Transfer = ({ vault }) => {
         </Button>
       </div>
       <Table
-        columns={getColumns(investors, setSelectedTx)}
+        columns={getColumns(investors, settleWithdrawal)}
         dataSource={txs}
         bordered
         rowKey="id"
@@ -93,6 +132,7 @@ const Transfer = ({ vault }) => {
         visible={addVisible}
         onOk={handleAddOk}
         onCancel={handleAddCancel}
+        wrapClassName="vault-transfer-modal"
       >
         <Form
           form={txForm}
@@ -101,6 +141,7 @@ const Transfer = ({ vault }) => {
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onTxFinish}
+          onValuesChange={onValuesChange}
           autoComplete="off"
         >
           <Form.Item
@@ -124,24 +165,45 @@ const Transfer = ({ vault }) => {
               <Option value="Withdrawl requested">Withdrawl requested</Option>
             </Select>
           </Form.Item>
-          <Form.Item label="TX Hash" name="txHash" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="chainEnum"
-            label="Chain"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select chain" allowClear>
-              {Object.values(Chains).map((chain) => {
-                return (
-                  <Option key={chain.name} value={chain.name}>
-                    {chain.name}
-                  </Option>
-                )
-              })}
-            </Select>
-          </Form.Item>
+          {status === InvestStatus.InvestRequested && (
+            <Form.Item
+              label="TX Hash"
+              name="txHash"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          )}
+          {status === InvestStatus.WithdrawlRequested && maxAmount >= 0 && (
+            <Form.Item
+              label="Amount"
+              name="amount"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                placeholder={`Max amount: ${maxAmount}`}
+                min={0}
+                max={maxAmount}
+              />
+            </Form.Item>
+          )}
+          {status === InvestStatus.InvestRequested && (
+            <Form.Item
+              name="chainEnum"
+              label="Chain"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select chain" allowClear>
+                {Object.values(Chains).map((chain) => {
+                  return (
+                    <Option key={chain.name} value={chain.name}>
+                      {chain.name}
+                    </Option>
+                  )
+                })}
+              </Select>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
       <Modal
@@ -162,6 +224,21 @@ const Transfer = ({ vault }) => {
           <Form.Item label="TX Hash" name="txHash" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
+          <Form.Item
+            name="chainEnum"
+            label="Chain"
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Select chain" allowClear>
+              {Object.values(Chains).map((chain) => {
+                return (
+                  <Option key={chain.name} value={chain.name}>
+                    {chain.name}
+                  </Option>
+                )
+              })}
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
       {loading && <Spin />}
@@ -171,7 +248,7 @@ const Transfer = ({ vault }) => {
 
 export default Transfer
 
-const getColumns = (investors, selectTx) => [
+const getColumns = (investors, settleWithdrawal) => [
   {
     title: 'Investor',
     dataIndex: 'investorId',
@@ -201,5 +278,16 @@ const getColumns = (investors, selectTx) => [
     render: (requestTime) => {
       return <div>{formatTime(requestTime, 'MM/DD/YYYY HH:mm')}</div>
     },
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        {record.status === 'Withdrawl requested' && (
+          <a onClick={() => settleWithdrawal(record)}>Settle</a>
+        )}
+      </Space>
+    ),
   },
 ]

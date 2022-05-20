@@ -40,6 +40,12 @@ const enterDepositSettling = (vaultId) => {
   return api.post(`/vaults/${vaultId}/enter-deposit-settling`)
 }
 
+const settleWithdrawal = (vaultId, payload) => {
+  return api.post(
+    `/vaults/${vaultId}/settle-withdrawal?txId=${payload.txId}&txHash=${payload.txHash}&chain=${payload.chainEnum}`
+  )
+}
+
 const vaultService = {
   openPosition,
   harvestPosition,
@@ -50,6 +56,7 @@ const vaultService = {
   enterProfitDistributing,
   enterWithdrawalSettling,
   enterDepositSettling,
+  settleWithdrawal,
 }
 
 export default vaultService
