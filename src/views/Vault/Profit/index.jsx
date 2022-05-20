@@ -1,61 +1,64 @@
 import './index.less'
 
-import { Button, Form, Input, message, Modal, Spin, Table } from 'antd'
+import { Button, message, Modal, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import * as appAction from 'src/actions/app'
-import { BN } from 'src/utils/common'
 import vaultService from 'src/service/vault'
+import { BN } from 'src/utils/common'
 
 import { VAULT_STATUS } from '../const'
 
+const { confirm } = Modal
+
 const Profit = ({ vault }) => {
   const dispatch = useDispatch()
-  const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const [isModalVisible, setIsModalVisible] = useState(false)
 
-  const showModal = () => {
-    setIsModalVisible(true)
-  }
-
-  const handleOk = () => {
-    form.submit()
-  }
-
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
-
-  const onFinish = async (values) => {
+  const enterWithdrawalSettling = async () => {
     try {
       setLoading(true)
-      setIsModalVisible(false)
-      await vaultService.profitDistribution(vault, values.feeTxHash)
-      message.success(`Profit has been distributed successfully.`)
+      await vaultService.enterWithdrawalSettling(vault.id)
       dispatch(appAction.getVaults())
+      message.success(`Entering investment suggestion successfully.`)
     } finally {
       setLoading(false)
     }
+  }
+
+  const confirmEnterWithdrawalSettling = () => {
+    confirm({
+      title: 'Are you sure to enter withdrawal settling?',
+      content:
+        'After enter withdrawal settling, the profit will be distributed and the share price will be recalculated.',
+      onOk() {
+        enterWithdrawalSettling()
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
   }
 
   if (!vault) {
     return null
   }
 
-  if (vault.status !== VAULT_STATUS.profitDistribution) {
+  if (vault.status !== VAULT_STATUS.ProfitDistributing) {
     return <div>Please first confirm the close of all the postions.</div>
   }
 
   return (
     <div className="vault-profit">
       <div className="vault-profit-action">
-        <Button type="primary">Next Step: Transfer Out</Button>
+        <Button type="primary" onClick={confirmEnterWithdrawalSettling}>
+          Next Step: Withdrawal Settling
+        </Button>
       </div>
       <div className="vault-profit-title">Summary</div>
       <Table
         className="vault-profit-summary"
-        columns={getSummaryColumns(showModal)}
+        columns={summaryColumns}
         dataSource={[vault]}
         bordered
         rowKey="id"
@@ -64,36 +67,12 @@ const Profit = ({ vault }) => {
 
       <div className="vault-profit-title">Detail</div>
       <Table
-        columns={getStrategyColumns(showModal)}
+        columns={strategyColumns}
         dataSource={vault?.strategies}
         bordered
         rowKey="id"
         pagination={false}
       />
-      <Modal
-        title="Confirm Profit Distribution"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Fee TX Hash"
-            name="feeTxHash"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
       {loading && <Spin />}
     </div>
   )
@@ -101,7 +80,7 @@ const Profit = ({ vault }) => {
 
 export default Profit
 
-const getSummaryColumns = (showModal) => [
+const summaryColumns = [
   {
     title: 'Principals',
     dataIndex: 'principals',
@@ -158,7 +137,7 @@ const getSummaryColumns = (showModal) => [
   },
 ]
 
-const getStrategyColumns = () => [
+const strategyColumns = [
   {
     title: 'Strategy',
     dataIndex: 'name',

@@ -72,7 +72,7 @@ const Vaults = () => {
         <TabPane tab="Profit Distribution" key="3">
           <Profit vault={vault} />
         </TabPane>
-        <TabPane tab="Withdrawl Settlement" key="4">
+        <TabPane tab="Withdrawal Settlement" key="4">
           <Withdraw vault={vault} />
         </TabPane>
       </Tabs>

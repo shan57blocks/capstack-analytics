@@ -1,9 +1,5 @@
 import api from 'src/utils/api'
 
-const enterPositionOpening = (vaultId) => {
-  return api.post(`/vaults/${vaultId}/enter-position-opening`)
-}
-
 const openPosition = (strategyId, hash, protocol) => {
   const url = `/vaults/strategies/${strategyId}/open-positions?hash=${hash}&protocol=${protocol}`
   return api.post(url)
@@ -24,12 +20,36 @@ const closePosition = (strategyId, positionId, payload) => {
   return api.post(url, payload)
 }
 
+const enterPositionOpening = (vaultId) => {
+  return api.post(`/vaults/${vaultId}/enter-position-opening`)
+}
+
+const enterOperating = (vaultId) => {
+  return api.post(`/vaults/${vaultId}/enter-operating`)
+}
+
+const enterProfitDistributing = (vaultId) => {
+  return api.post(`/vaults/${vaultId}/enter-profit-distributing`)
+}
+
+const enterWithdrawalSettling = (vaultId) => {
+  return api.post(`/vaults/${vaultId}/enter-withdrwal-settling`)
+}
+
+const enterDepositSettling = (vaultId) => {
+  return api.post(`/vaults/${vaultId}/enter-deposit-settling`)
+}
+
 const vaultService = {
   openPosition,
   harvestPosition,
   adjustPosition,
   closePosition,
   enterPositionOpening,
+  enterOperating,
+  enterProfitDistributing,
+  enterWithdrawalSettling,
+  enterDepositSettling,
 }
 
 export default vaultService

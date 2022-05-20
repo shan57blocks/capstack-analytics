@@ -10,6 +10,8 @@ import { TXType, VAULT_STATUS } from '../const'
 import vaultService from 'src/service/vault'
 import * as appAction from 'src/actions/app'
 
+const { confirm } = Modal
+
 const Strategy = ({ vault }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
@@ -116,6 +118,38 @@ const Strategy = ({ vault }) => {
     }
   }
 
+  const enterProfitDistribing = async () => {
+    try {
+      setLoading(true)
+      await vaultService.enterProfitDistributing(vault.id)
+      dispatch(appAction.getVaults())
+      message.success(`Entering investment suggestion successfully.`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const confirmEnterProfitDistribing = () => {
+    const allClosed = vault.strategies.every((strategy) =>
+      strategy.positions.every((position) => position.closed)
+    )
+
+    if (!allClosed) {
+      message.warn('Please first close all the positions.')
+      return
+    }
+
+    confirm({
+      title: 'Are you sure to enter profit distributing?',
+      onOk() {
+        enterProfitDistribing()
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
+  }
+
   if (!strategies) {
     return null
   }
@@ -124,7 +158,9 @@ const Strategy = ({ vault }) => {
     <div className="vault-strategies">
       <div className="vault-strategies-action">
         {vault.status === VAULT_STATUS.Operating && (
-          <Button type="primary">Next Step: Profit Distribution</Button>
+          <Button type="primary" onClick={confirmEnterProfitDistribing}>
+            Next Step: Profit Distribution
+          </Button>
         )}
       </div>
       <Table

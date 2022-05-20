@@ -21,6 +21,8 @@ import { BN } from 'src/utils/common'
 import { VAULT_STATUS } from '../const'
 import vaultService from 'src/service/vault'
 
+const { confirm } = Modal
+
 const Suggest = ({ vault }) => {
   const dispatch = useDispatch()
   const [form] = Form.useForm()
@@ -86,6 +88,31 @@ const Suggest = ({ vault }) => {
     }
   }
 
+  const enterOperating = async () => {
+    try {
+      setLoading(true)
+      await vaultService.enterOperating(vault.id)
+      dispatch(appAction.getVaults())
+      message.success(`Entering investment suggestion successfully.`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const confirmEnterOperating = () => {
+    confirm({
+      title: 'Are you sure to enter strategy operating?',
+      content:
+        'After enter strategy operating, you can no longer open positions.',
+      onOk() {
+        enterOperating()
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
+  }
+
   if (!vault) {
     return <CapSkeleton />
   }
@@ -97,7 +124,9 @@ const Suggest = ({ vault }) => {
   return (
     <div className="vault-suggest">
       <div className="vault-suggest-header">
-        <Button type="primary">Next Step: Strategies</Button>
+        <Button type="primary" onClick={confirmEnterOperating}>
+          Next Step: Strategies
+        </Button>
         <div className="vault-suggest-header-change">
           <div>Uninvested:</div>
           <div>{unallocated}</div>

@@ -288,13 +288,19 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
   {
     title: 'Action',
     key: 'action',
-    render: (_, record) => (
-      <div className="action">
-        <a onClick={() => showModal(TXType.Harvest, record)}>Harvest</a>
-        <a onClick={() => showModal(TXType.Adjust, record)}>Adjust</a>
-        <a onClick={() => showModal(TXType.Close, record)}>Close</a>
-      </div>
-    ),
+    render: (_, record) => {
+      const allClosed = record.positions.every((position) => position.closed)
+      if (allClosed) {
+        return <div>Position closed</div>
+      }
+      return (
+        <div className="action">
+          <a onClick={() => showModal(TXType.Harvest, record)}>Harvest</a>
+          <a onClick={() => showModal(TXType.Adjust, record)}>Adjust</a>
+          <a onClick={() => showModal(TXType.Close, record)}>Close</a>
+        </div>
+      )
+    },
   },
 ]
 

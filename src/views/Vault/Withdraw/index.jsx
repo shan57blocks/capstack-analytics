@@ -1,83 +1,44 @@
 import './index.less'
 
-import { Button, Form, Input, message, Modal, Select, Spin, Table } from 'antd'
+import { Button, message, Modal, Spin, Table } from 'antd'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as appAction from 'src/actions/app'
-import api from 'src/utils/api'
-import { formatTime } from 'src/utils/common'
 import vaultService from 'src/service/vault'
-import { VAULT_STATUS } from '../const'
+import { formatTime } from 'src/utils/common'
 
-const { Option } = Select
+import { InvestStatus, VAULT_STATUS } from '../const'
+
+const { confirm } = Modal
 
 const Withdraw = ({ vault }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
-  const [txForm] = Form.useForm()
-  const [settleForm] = Form.useForm()
   const { investorTxs, investors } = useSelector((state) => state.app)
-  const [addVisible, setAddVisible] = useState(false)
-  const [status, setStatus] = useState()
-  const [selectedTx, setSelectedTx] = useState()
 
-  const handleAddOk = () => {
-    txForm.submit()
-  }
-
-  const handleAddCancel = () => {
-    setAddVisible(false)
-  }
-
-  const handleSettleOk = () => {
-    settleForm.submit()
-  }
-
-  const onTxFinish = async (values) => {
-    setAddVisible(false)
-    values.vaultId = vault.id
+  const enterDepositSettling = async () => {
     try {
       setLoading(true)
-      await api.post(`/investors/transactions`, values)
-      txForm.resetFields()
-      dispatch(appAction.getInvestorTxs())
+      await vaultService.enterDepositSettling(vault.id)
       dispatch(appAction.getVaults())
-      message.success(`Transaction has been added successfully.`)
+      message.success(`Entering investment suggestion successfully.`)
     } finally {
       setLoading(false)
     }
   }
 
-  const onSettleFinish = async (values) => {
-    setSelectedTx()
-    try {
-      setLoading(true)
-      await vaultService.settleWithdrawl(vault, selectedTx, values.txHash)
-      settleForm.resetFields()
-      dispatch(appAction.getInvestorTxs())
-      dispatch(appAction.getVaults())
-      message.success(`Transaction has been settled successfully.`)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const onSettleDeposits = async () => {
-    try {
-      setLoading(true)
-      await vaultService.settleDeposits(vault.id)
-      dispatch(appAction.getInvestorTxs())
-      dispatch(appAction.getVaults())
-      message.success(`Deposits have been settled successfully.`)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const onValuesChange = (values) => {
-    if (values.status) {
-      setStatus(values.status)
-    }
+  const confirmDepositSettling = () => {
+    confirm({
+      title: 'Are you sure to enter deposit settling?',
+      content:
+        'After enter strategy operating, all the withdrawals will be settled.',
+      onOk() {
+        enterDepositSettling()
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
   }
 
   if (!investorTxs || !investors || !vault) {
@@ -88,105 +49,27 @@ const Withdraw = ({ vault }) => {
     return <div>Please first confirm the profit distribution.</div>
   }
 
-  const txs = investorTxs.map((item) => {
-    item.status = 'Withdrawl Requested'
-    return item
+  const txs = investorTxs.filter((item) => {
+    return item.status === InvestStatus.WithdrawlRequested
   })
 
   return (
-    <div className="vault-transfer">
-      <div className="vault-transfer-action">
+    <div className="vault-withdrawal">
+      <div className="vault-withdrawal-action">
         <Button
-          className="vault-transfer-action-settle"
-          onClick={onSettleDeposits}
+          className="vault-withdrawal-action-settle"
+          onClick={confirmDepositSettling}
           type="primary"
         >
           Next Step: Deposit Settlement
         </Button>
       </div>
       <Table
-        columns={getColumns(investors, setSelectedTx)}
+        columns={getColumns(investors)}
         dataSource={txs}
         bordered
         rowKey="id"
       />
-      <Modal
-        title="Add Transfer"
-        visible={addVisible}
-        onOk={handleAddOk}
-        onCancel={handleAddCancel}
-      >
-        <Form
-          form={txForm}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onTxFinish}
-          onValuesChange={onValuesChange}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Investor"
-            name="investorId"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              {investors.map((investor) => {
-                return (
-                  <Option key={investor.id} value={investor.id}>
-                    {investor.name}
-                  </Option>
-                )
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Status" name="status" rules={[{ required: true }]}>
-            <Select>
-              <Option value="Invest requested">Invest requested</Option>
-              <Option value="Withdrawl requested">Withdrawl requested</Option>
-            </Select>
-          </Form.Item>
-          {status === 'Invest requested' && (
-            <Form.Item
-              label="TX Hash"
-              name="txHash"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          )}
-          {status === 'Withdrawl requested' && (
-            <Form.Item
-              label="Amount"
-              name="amount"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-          )}
-        </Form>
-      </Modal>
-      <Modal
-        title="Settle Withdrawl"
-        visible={!!selectedTx}
-        onOk={handleSettleOk}
-        onCancel={setSelectedTx}
-      >
-        <Form
-          form={settleForm}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onSettleFinish}
-          autoComplete="off"
-        >
-          <Form.Item label="TX Hash" name="txHash" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
       {loading && <Spin />}
     </div>
   )
@@ -194,7 +77,7 @@ const Withdraw = ({ vault }) => {
 
 export default Withdraw
 
-const getColumns = (investors, selectTx) => [
+const getColumns = (investors) => [
   {
     title: 'Investor',
     dataIndex: 'investorId',
