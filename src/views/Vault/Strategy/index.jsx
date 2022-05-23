@@ -273,7 +273,7 @@ const expandable = {
       <div className="vault-strategies-positions">
         <div className="vault-strategies-positions-title">Positions</div>
         <Table
-          columns={getPositionColumns(tokenPrice)}
+          columns={getPositionColumns(tokenPrice, strategy.token.id)}
           dataSource={positions}
           size="small"
           bordered

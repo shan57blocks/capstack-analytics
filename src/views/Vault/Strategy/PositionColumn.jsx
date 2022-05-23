@@ -2,7 +2,7 @@ import React from 'react'
 import CapTooltip from 'src/components/CapTooltip'
 import { BN, formatTime } from 'src/utils/common'
 
-export const getPositionColumns = (tokenPrice) => [
+export const getPositionColumns = (tokenPrice, strategyTokenId) => [
   {
     title: 'Principals',
     render: (position) => {
@@ -13,7 +13,9 @@ export const getPositionColumns = (tokenPrice) => [
             return (
               <div key={index}>
                 <CapTooltip title={principal.balance}>
-                  <a href={`/#/position-history/${position.id}`}>
+                  <a
+                    href={`/#/position-history/${position.id}?strategyTokenId=${strategyTokenId}`}
+                  >
                     {Number(principal.balance).toFixed(3)} {principal.symbol}
                   </a>
                 </CapTooltip>
