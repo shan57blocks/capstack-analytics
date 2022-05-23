@@ -142,7 +142,10 @@ export const mapPosition = (position) => {
 }
 
 export const mapStrategy = (strategy) => {
-  if (!strategy.positions.length || !strategy.positions[0].currentHistory) {
+  if (
+    !strategy.positions.length ||
+    strategy.positions.some((position) => !position.currentHistory)
+  ) {
     return strategy
   }
   const { tokens } = strategy.pool
