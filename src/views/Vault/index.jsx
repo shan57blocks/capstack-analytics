@@ -2,6 +2,10 @@ import './index.less'
 
 import { Tabs } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
+import * as appAction from 'src/actions/app'
+import useParamsSearch from 'src/hooks/useParamsSearch'
 
 import { VAULT, VAULT_STATUS } from './const'
 import Deposit from './Deposit'
@@ -10,9 +14,6 @@ import Strategy from './Strategy'
 import Suggest from './Suggest'
 import Summary from './Summary'
 import Withdraw from './Withdraw'
-import useParamsSearch from 'src/hooks/useParamsSearch'
-import { useHistory } from 'react-router'
-import { useSelector } from 'react-redux'
 
 const { TabPane } = Tabs
 
@@ -25,11 +26,19 @@ const vaultStatusTab = {
 }
 
 const Vaults = () => {
+  const dispatch = useDispatch()
   const history = useHistory()
   const { vaults } = useSelector((state) => state.app)
   const { vaultName = VAULT.ETH } = useParamsSearch()
   const [activeKey, setActiveKey] = useState()
   const vault = vaults?.find((vault) => vault.name === vaultName) || {}
+
+  useEffect(() => {
+    dispatch(appAction.getVaults(dispatch, true))
+    dispatch(appAction.getConfigs())
+    dispatch(appAction.getInvestors())
+    dispatch(appAction.getInvestorTxs())
+  }, [dispatch])
 
   useEffect(() => {
     setActiveKey(vaultStatusTab[vault.status])

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Redirect, Switch } from 'react-router'
 import { Route } from 'react-router-dom'
+import PositionHistory from './PositionHistory'
 
 import Vaults from './Vault'
 
@@ -8,6 +9,10 @@ export const routes = [
   {
     path: '/vaults',
     comp: Vaults,
+  },
+  {
+    path: '/position-history/:id',
+    comp: PositionHistory,
   },
 ]
 

@@ -13,7 +13,9 @@ export const getPositionColumns = (tokenPrice) => [
             return (
               <div key={index}>
                 <CapTooltip title={principal.balance}>
-                  {Number(principal.balance).toFixed(3)} {principal.symbol}
+                  <a href={`/#/position-history/${position.id}`}>
+                    {Number(principal.balance).toFixed(3)} {principal.symbol}
+                  </a>
                 </CapTooltip>
               </div>
             )
