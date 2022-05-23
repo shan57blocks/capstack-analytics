@@ -128,7 +128,7 @@ export const calApy = (startPosition, currentPosition) => {
 export const mapPosition = (position) => {
   position.histories = position.histories
     .map((history) => {
-      if (!history.borrows) {
+      if (!history.borrows || !history.borrows.length) {
         history.borrows = genBorrows(history.assets.length)
       }
       if (!history.rewards) {
@@ -169,7 +169,7 @@ export const mapStrategy = (strategy) => {
   strategy.currentTime = firstPosition.currentHistory.timestamp
 
   positions.forEach((position) => {
-    const { currentHistory, tokens } = position
+    const { currentHistory } = position
     if (position.openDate < strategy.startTime) {
       strategy.startTime = position.openDate
     }
@@ -193,10 +193,7 @@ export const mapStrategy = (strategy) => {
     }
 
     if (strategy.share) {
-      const tokenDetail = currentHistory.tokenDetails.find(
-        (item) => item.tokenId === tokens[tokenIndex].id
-      )
-      fillStrategy(tokenDetail)
+      fillStrategy(currentHistory.tokenDetails[tokenIndex])
     } else {
       fillStrategy(currentHistory)
     }
