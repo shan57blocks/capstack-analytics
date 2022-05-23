@@ -46,6 +46,10 @@ const settleWithdrawal = (vaultId, payload) => {
   )
 }
 
+const getStrategy = (id) => {
+  return api.get(`/vaults/strategies/${id}`)
+}
+
 const vaultService = {
   openPosition,
   harvestPosition,
@@ -57,6 +61,7 @@ const vaultService = {
   enterWithdrawalSettling,
   enterDepositSettling,
   settleWithdrawal,
+  getStrategy,
 }
 
 export default vaultService

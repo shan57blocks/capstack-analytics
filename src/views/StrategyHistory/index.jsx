@@ -1,56 +1,98 @@
-import { Tooltip } from 'antd'
-import classnames from 'classnames'
-import React from 'react'
+import './index.less'
+
+import { LeftCircleOutlined } from '@ant-design/icons'
+import { Spin, Table, Tooltip } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router'
 import CapSkeleton from 'src/components/CapSkeleton'
 import CapTooltip from 'src/components/CapTooltip'
-import { formatTime, isEmpty, toPercentage } from 'src/utils/common'
-import { TXType } from '../const'
+import useParamsSearch from 'src/hooks/useParamsSearch'
+import positionService from 'src/service/position'
+import vaultService from 'src/service/vault'
+import { mapPosition, mapStrategy } from 'src/utils/apy'
+import { deepClone, formatTime, isEmpty } from 'src/utils/common'
 
-export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
-  {
-    title: 'Name',
-    key: 'name',
-    dataIndex: 'name',
-    render: (name, record) => {
-      const positionIds = record.positions
-        .map((position) => position.id)
-        .join(',')
-      return (
-        <a href={`/#/strategy-history/${record.id}?positionIds=${positionIds}`}>
-          {name}
-        </a>
+const StrategyHistory = () => {
+  const history = useHistory()
+  const { id: strategyId } = useParams()
+  const { positionIds } = useParamsSearch()
+  const [strategy, setStrategy] = useState()
+  const [strategyHistories, setStrategyHistories] = useState([])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const strategy = await vaultService.getStrategy(strategyId)
+      const ids = positionIds.split(',')
+      const positions = await Promise.all(
+        ids.map((id) => positionService.getPosition(id))
       )
-    },
-  },
-  {
-    title: 'Protocol',
-    key: 'pool',
-    dataIndex: 'pool',
-    render: (pool) => {
-      return (
+      strategy.positions = positions.map((position) => {
+        return mapPosition(position)
+      })
+      const strategyHistories = []
+      strategyHistories.push(deepClone(mapStrategy(strategy)))
+      const dateKeys = positions[0].histories.map((history) => history.dateKey)
+      dateKeys.forEach((dateKey) => {
+        const histories = []
+        positions.forEach((position) => {
+          const history = position.histories.find(
+            (history) => history.dateKey === dateKey
+          )
+          if (history) {
+            history.currentHistory = deepClone(history)
+            history.startAssets = position.startAssets
+            history.openDate = position.openDate
+            histories.push(history)
+          }
+        })
+        strategy.positions = histories
+        strategyHistories.push(deepClone(mapStrategy(strategy)))
+      })
+      setStrategy(strategy)
+      setStrategyHistories(strategyHistories)
+    }
+    fetch()
+  }, [positionIds, strategyId])
+
+  if (!strategyHistories.length) {
+    return <Spin className="cap-spin" />
+  }
+
+  const { pool } = strategy
+
+  return (
+    <div className="page position-history">
+      <div className="page position-history-title">
         <div>
-          <div>{pool.protocol.name}</div>
-          <div>({pool.protocol.chain})</div>
+          <span
+            className="page position-history-title-return"
+            onClick={() => history.push('/vaults')}
+          >
+            <LeftCircleOutlined />
+          </span>
+          <span className="page position-history-title-text">
+            {pool.name} ({pool.protocol.name}
+          </span>
+          <img width={30} src={pool.protocol.logo} alt="chain" />)
         </div>
-      )
-    },
-  },
+      </div>
+      <Table
+        rowKey="timestamp"
+        columns={getHistoryColumns()}
+        dataSource={strategyHistories}
+        size="small"
+      />
+    </div>
+  )
+}
+
+export default StrategyHistory
+
+const getHistoryColumns = () => [
   {
-    title: 'Principals',
-    key: 'principalsCalculated',
-    render: (_, record) => {
-      if (isEmpty(record.principalsCalculated)) {
-        return <CapSkeleton />
-      }
-      return (
-        <div>
-          <CapTooltip title={record.principalsCalculated}>
-            <div>{record.principalsCalculated.toFixed(3)}</div>
-          </CapTooltip>
-          <div>{formatTime(record.startTime, 'MM/DD/YYYY HH:mm')}</div>
-        </div>
-      )
-    },
+    title: 'Date',
+    dataIndex: 'currentTime',
+    render: (currentTime) => <div>{formatTime(currentTime)}</div>,
   },
   {
     title: 'Current Estimated',
@@ -137,44 +179,6 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
         return <CapSkeleton />
       }
 
-      const liquidationGap = Number(liquidationLimit) / 100
-      const getLiquidation = () => {
-        if (!record.positions[0].debtRatio) {
-          return null
-        }
-
-        let priceChanges = []
-        let isAlert = false
-        const { relativePriceTokenSymbol } = record.positions[0].debtRatio
-        record.positions.forEach((position) => {
-          const { liquidationPricePercentages = [] } = position.debtRatio || {}
-          liquidationPricePercentages.forEach((priceChange) => {
-            const priceChangeNum = Math.abs(Number(priceChange))
-            if (priceChangeNum <= liquidationGap) {
-              isAlert = true
-            }
-            priceChanges.push(priceChange)
-          })
-        })
-        priceChanges = priceChanges.sort((a, b) => Number(a) > Number(b))
-
-        return (
-          <div className={classnames({ 'liquidation-alert': isAlert })}>
-            Liquidation if{' '}
-            {priceChanges.map((change, index) => {
-              const direction = change > 0 ? 'increases' : 'decreases'
-              const or = index < priceChanges.length - 1 ? ' or ' : ''
-              return (
-                <div key={index}>
-                  {relativePriceTokenSymbol} {direction} by{' '}
-                  {toPercentage(change)} {or}
-                </div>
-              )
-            })}
-          </div>
-        )
-      }
-
       return (
         <div>
           <Tooltip title={record.ILBalance}>
@@ -183,7 +187,6 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
               {record.ILBalance.toFixed(3)} ({(record.ilApy * 100).toFixed(2)}%)
             </div>
           </Tooltip>
-          {getLiquidation()}
         </div>
       )
     },
@@ -198,11 +201,7 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
       }
       const { rewardValue, rewardBalance, rewardsApy } = record
       return (
-        <div
-          className={classnames({
-            'reward-harvest-limit': Number(harvestLimit) <= Number(rewardValue),
-          })}
-        >
+        <div>
           <CapTooltip title={rewardBalance}>
             <div>{rewardBalance.toFixed(3)}</div>
           </CapTooltip>
@@ -286,28 +285,11 @@ export const getColumns = (showModal, harvestLimit, liquidationLimit) => [
             <div>Current: {netBalance.toFixed(3)}</div>
           </Tooltip>
           <Tooltip title={yearlyTitle}>
-            <div>Yearly: {netBalanceYearly.toFixed(3)}</div>
+            <div>Yearly: {netBalanceYearly?.toFixed(3)}</div>
           </Tooltip>
           <Tooltip title={apyTitle}>
             <div>APY: {(record.netApy * 100).toFixed(2)}%</div>
           </Tooltip>
-        </div>
-      )
-    },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => {
-      const allClosed = record.positions.every((position) => position.closed)
-      if (allClosed) {
-        return <div>Position closed</div>
-      }
-      return (
-        <div className="action">
-          <a onClick={() => showModal(TXType.Harvest, record)}>Harvest</a>
-          <a onClick={() => showModal(TXType.Adjust, record)}>Adjust</a>
-          <a onClick={() => showModal(TXType.Close, record)}>Close</a>
         </div>
       )
     },
