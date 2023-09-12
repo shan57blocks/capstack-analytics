@@ -10,6 +10,7 @@ export const useStatus = () => {
     [VAULT.BTC]: null,
   })
   const { vaults, investorTxs } = useSelector((state) => state.app)
+  const [count, setCount] =useState(0)
 
   useEffect(() => {
     const status = {
