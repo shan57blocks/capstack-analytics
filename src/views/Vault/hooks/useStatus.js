@@ -3,6 +3,16 @@ import { useSelector } from 'react-redux'
 import { BN } from 'src/utils/common'
 import { InvestStatus, VAULT, VAULT_STATUS } from '../const'
 
+/**
+* @description This function, `useStatus`, is a hook that fetches the current status 
+* of vaults and returns an object with the status of each vault. It uses the 
+* `useSelector` hook to fetch the `vaults` and `investorTxs` from the global state, 
+* and then iterates over each vault to determine its status based on the current 
+* investment requests and settlements.
+* 
+* @returns { object } - The output returned by this function is an object with the 
+* status of each vault, represented by a key in the object (e.g.
+*/
 export const useStatus = () => {
   const [status, setStatus] = useState({
     [VAULT.ETH]: null,
