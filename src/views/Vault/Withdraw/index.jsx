@@ -11,6 +11,7 @@ import vaultService from 'src/views/service/vault'
 const { Option } = Select
 
 const Withdraw = ({ vault }) => {
+  const test = 1
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [txForm] = Form.useForm()
